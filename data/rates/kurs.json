@@ -1,0 +1,618 @@
+{
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-05\",\"date_from\":\"2026-01-05\",\"number\":1,\"parity\":1,\"cash_buy\":116.4805,\"cash_sell\":118.1227,\"exchange_buy\":116.9497,\"exchange_middle\":117.3016,\"exchange_sell\":117.6535}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-12": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-12\",\"date_from\":\"2026-01-12\",\"number\":4,\"parity\":1,\"cash_buy\":116.4937,\"cash_sell\":118.1361,\"exchange_buy\":116.963,\"exchange_middle\":117.3149,\"exchange_sell\":117.6668}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-15": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-15\",\"date_from\":\"2026-01-15\",\"number\":7,\"parity\":1,\"cash_buy\":116.511,\"cash_sell\":118.1536,\"exchange_buy\":116.9803,\"exchange_middle\":117.3323,\"exchange_sell\":117.6843}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-16\",\"date_from\":\"2026-01-16\",\"number\":8,\"parity\":1,\"cash_buy\":116.5278,\"cash_sell\":118.1706,\"exchange_buy\":116.9972,\"exchange_middle\":117.3492,\"exchange_sell\":117.7012}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-19\",\"date_from\":\"2026-01-19\",\"number\":9,\"parity\":1,\"cash_buy\":116.545,\"cash_sell\":118.1882,\"exchange_buy\":117.0145,\"exchange_middle\":117.3666,\"exchange_sell\":117.7187}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-21": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-21\",\"date_from\":\"2026-01-21\",\"number\":11,\"parity\":1,\"cash_buy\":116.5833,\"cash_sell\":118.2269,\"exchange_buy\":117.0529,\"exchange_middle\":117.4051,\"exchange_sell\":117.7573}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-23": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-23\",\"date_from\":\"2026-01-23\",\"number\":13,\"parity\":1,\"cash_buy\":116.589,\"cash_sell\":118.2328,\"exchange_buy\":117.0587,\"exchange_middle\":117.4109,\"exchange_sell\":117.7631}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-26\",\"date_from\":\"2026-01-26\",\"number\":14,\"parity\":1,\"cash_buy\":116.5773,\"cash_sell\":118.2209,\"exchange_buy\":117.0469,\"exchange_middle\":117.3991,\"exchange_sell\":117.7513}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-29": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-01-29\",\"date_from\":\"2026-01-29\",\"number\":17,\"parity\":1,\"cash_buy\":116.5931,\"cash_sell\":118.2369,\"exchange_buy\":117.0628,\"exchange_middle\":117.415,\"exchange_sell\":117.7672}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-02": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-02\",\"date_from\":\"2026-02-02\",\"number\":19,\"parity\":1,\"cash_buy\":116.596,\"cash_sell\":118.2398,\"exchange_buy\":117.0656,\"exchange_middle\":117.4179,\"exchange_sell\":117.7702}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-03\",\"date_from\":\"2026-02-03\",\"number\":20,\"parity\":1,\"cash_buy\":116.5957,\"cash_sell\":118.2395,\"exchange_buy\":117.0653,\"exchange_middle\":117.4176,\"exchange_sell\":117.7699}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-05\",\"date_from\":\"2026-02-05\",\"number\":22,\"parity\":1,\"cash_buy\":116.5767,\"cash_sell\":118.2203,\"exchange_buy\":117.0463,\"exchange_middle\":117.3985,\"exchange_sell\":117.7507}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-09": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-09\",\"date_from\":\"2026-02-09\",\"number\":24,\"parity\":1,\"cash_buy\":116.55,\"cash_sell\":118.1932,\"exchange_buy\":117.0195,\"exchange_middle\":117.3716,\"exchange_sell\":117.7237}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-11": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-11\",\"date_from\":\"2026-02-11\",\"number\":26,\"parity\":1,\"cash_buy\":116.5411,\"cash_sell\":118.1841,\"exchange_buy\":117.0105,\"exchange_middle\":117.3626,\"exchange_sell\":117.7147}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-13": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-13\",\"date_from\":\"2026-02-13\",\"number\":28,\"parity\":1,\"cash_buy\":116.5598,\"cash_sell\":118.2032,\"exchange_buy\":117.0294,\"exchange_middle\":117.3815,\"exchange_sell\":117.7336}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-16\",\"date_from\":\"2026-02-13\",\"number\":28,\"parity\":1,\"cash_buy\":116.5598,\"cash_sell\":118.2032,\"exchange_buy\":117.0294,\"exchange_middle\":117.3815,\"exchange_sell\":117.7336}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-19\",\"date_from\":\"2026-02-19\",\"number\":30,\"parity\":1,\"cash_buy\":116.5957,\"cash_sell\":118.2395,\"exchange_buy\":117.0653,\"exchange_middle\":117.4176,\"exchange_sell\":117.7699}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-23": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-23\",\"date_from\":\"2026-02-23\",\"number\":32,\"parity\":1,\"cash_buy\":116.5981,\"cash_sell\":118.2419,\"exchange_buy\":117.0677,\"exchange_middle\":117.42,\"exchange_sell\":117.7723}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-24": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-24\",\"date_from\":\"2026-02-24\",\"number\":33,\"parity\":1,\"cash_buy\":116.6002,\"cash_sell\":118.2442,\"exchange_buy\":117.0699,\"exchange_middle\":117.4222,\"exchange_sell\":117.7745}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-02-26\",\"date_from\":\"2026-02-26\",\"number\":35,\"parity\":1,\"cash_buy\":116.5879,\"cash_sell\":118.2317,\"exchange_buy\":117.0576,\"exchange_middle\":117.4098,\"exchange_sell\":117.762}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-02\",\"date_from\":\"2026-03-02\",\"number\":37,\"parity\":1,\"cash_buy\":116.5671,\"cash_sell\":118.2105,\"exchange_buy\":117.0366,\"exchange_middle\":117.3888,\"exchange_sell\":117.741}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-05\",\"date_from\":\"2026-03-05\",\"number\":40,\"parity\":1,\"cash_buy\":116.5792,\"cash_sell\":118.2228,\"exchange_buy\":117.0488,\"exchange_middle\":117.401,\"exchange_sell\":117.7532}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-09": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-09\",\"date_from\":\"2026-03-09\",\"number\":42,\"parity\":1,\"cash_buy\":116.5654,\"cash_sell\":118.2088,\"exchange_buy\":117.0349,\"exchange_middle\":117.3871,\"exchange_sell\":117.7393}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-11": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-11\",\"date_from\":\"2026-03-11\",\"number\":44,\"parity\":1,\"cash_buy\":116.5889,\"cash_sell\":118.2327,\"exchange_buy\":117.0586,\"exchange_middle\":117.4108,\"exchange_sell\":117.763}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-13": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-13\",\"date_from\":\"2026-03-13\",\"number\":46,\"parity\":1,\"cash_buy\":116.5918,\"cash_sell\":118.2356,\"exchange_buy\":117.0615,\"exchange_middle\":117.4137,\"exchange_sell\":117.7659}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-16\",\"date_from\":\"2026-03-16\",\"number\":47,\"parity\":1,\"cash_buy\":116.5944,\"cash_sell\":118.2382,\"exchange_buy\":117.0641,\"exchange_middle\":117.4163,\"exchange_sell\":117.7685}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-17": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-17\",\"date_from\":\"2026-03-17\",\"number\":48,\"parity\":1,\"cash_buy\":116.6044,\"cash_sell\":118.2484,\"exchange_buy\":117.0741,\"exchange_middle\":117.4264,\"exchange_sell\":117.7787}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-23": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-23\",\"date_from\":\"2026-03-23\",\"number\":52,\"parity\":1,\"cash_buy\":116.6147,\"cash_sell\":118.2589,\"exchange_buy\":117.0845,\"exchange_middle\":117.4368,\"exchange_sell\":117.7891}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-24": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-24\",\"date_from\":\"2026-03-24\",\"number\":53,\"parity\":1,\"cash_buy\":116.6192,\"cash_sell\":118.2634,\"exchange_buy\":117.089,\"exchange_middle\":117.4413,\"exchange_sell\":117.7936}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-25": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-25\",\"date_from\":\"2026-03-25\",\"number\":54,\"parity\":1,\"cash_buy\":116.6193,\"cash_sell\":118.2635,\"exchange_buy\":117.0891,\"exchange_middle\":117.4414,\"exchange_sell\":117.7937}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-26\",\"date_from\":\"2026-03-26\",\"number\":55,\"parity\":1,\"cash_buy\":116.6146,\"cash_sell\":118.2588,\"exchange_buy\":117.0844,\"exchange_middle\":117.4367,\"exchange_sell\":117.789}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-30": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-03-30\",\"date_from\":\"2026-03-30\",\"number\":57,\"parity\":1,\"cash_buy\":116.6159,\"cash_sell\":118.2601,\"exchange_buy\":117.0857,\"exchange_middle\":117.438,\"exchange_sell\":117.7903}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-03\",\"date_from\":\"2026-04-03\",\"number\":61,\"parity\":1,\"cash_buy\":116.5632,\"cash_sell\":118.2066,\"exchange_buy\":117.0327,\"exchange_middle\":117.3849,\"exchange_sell\":117.7371}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-06": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-06\",\"date_from\":\"2026-04-06\",\"number\":62,\"parity\":1,\"cash_buy\":116.5519,\"cash_sell\":118.1951,\"exchange_buy\":117.0214,\"exchange_middle\":117.3735,\"exchange_sell\":117.7256}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-10": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-10\",\"date_from\":\"2026-04-09\",\"number\":65,\"parity\":1,\"cash_buy\":116.5558,\"cash_sell\":118.199,\"exchange_buy\":117.0253,\"exchange_middle\":117.3774,\"exchange_sell\":117.7295}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-14": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-14\",\"date_from\":\"2026-04-14\",\"number\":66,\"parity\":1,\"cash_buy\":116.5549,\"cash_sell\":118.1981,\"exchange_buy\":117.0244,\"exchange_middle\":117.3765,\"exchange_sell\":117.7286}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-15": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-15\",\"date_from\":\"2026-04-15\",\"number\":67,\"parity\":1,\"cash_buy\":116.5524,\"cash_sell\":118.1956,\"exchange_buy\":117.0219,\"exchange_middle\":117.374,\"exchange_sell\":117.7261}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-16\",\"date_from\":\"2026-04-16\",\"number\":68,\"parity\":1,\"cash_buy\":116.5525,\"cash_sell\":118.1957,\"exchange_buy\":117.022,\"exchange_middle\":117.3741,\"exchange_sell\":117.7262}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-20": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-20\",\"date_from\":\"2026-04-20\",\"number\":70,\"parity\":1,\"cash_buy\":116.5594,\"cash_sell\":118.2028,\"exchange_buy\":117.029,\"exchange_middle\":117.3811,\"exchange_sell\":117.7332}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-21": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-21\",\"date_from\":\"2026-04-21\",\"number\":71,\"parity\":1,\"cash_buy\":116.5742,\"cash_sell\":118.2178,\"exchange_buy\":117.0438,\"exchange_middle\":117.396,\"exchange_sell\":117.7482}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-23": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-23\",\"date_from\":\"2026-04-23\",\"number\":73,\"parity\":1,\"cash_buy\":116.5939,\"cash_sell\":118.2377,\"exchange_buy\":117.0636,\"exchange_middle\":117.4158,\"exchange_sell\":117.768}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-24": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-24\",\"date_from\":\"2026-04-24\",\"number\":74,\"parity\":1,\"cash_buy\":116.6045,\"cash_sell\":118.2485,\"exchange_buy\":117.0742,\"exchange_middle\":117.4265,\"exchange_sell\":117.7788}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-04-27": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-04-27\",\"date_from\":\"2026-04-27\",\"number\":75,\"parity\":1,\"cash_buy\":116.6049,\"cash_sell\":118.2489,\"exchange_buy\":117.0746,\"exchange_middle\":117.4269,\"exchange_sell\":117.7792}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-04": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-04\",\"date_from\":\"2026-05-04\",\"number\":79,\"parity\":1,\"cash_buy\":116.5659,\"cash_sell\":118.2093,\"exchange_buy\":117.0354,\"exchange_middle\":117.3876,\"exchange_sell\":117.7398}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-07": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-07\",\"date_from\":\"2026-05-07\",\"number\":82,\"parity\":1,\"cash_buy\":116.5555,\"cash_sell\":118.1987,\"exchange_buy\":117.025,\"exchange_middle\":117.3771,\"exchange_sell\":117.7292}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-11": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-11\",\"date_from\":\"2026-05-11\",\"number\":84,\"parity\":1,\"cash_buy\":116.5583,\"cash_sell\":118.2017,\"exchange_buy\":117.0279,\"exchange_middle\":117.38,\"exchange_sell\":117.7321}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-12": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-12\",\"date_from\":\"2026-05-12\",\"number\":85,\"parity\":1,\"cash_buy\":116.5601,\"cash_sell\":118.2035,\"exchange_buy\":117.0297,\"exchange_middle\":117.3818,\"exchange_sell\":117.7339}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-18": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-18\",\"date_from\":\"2026-05-18\",\"number\":89,\"parity\":1,\"cash_buy\":116.5727,\"cash_sell\":118.2163,\"exchange_buy\":117.0423,\"exchange_middle\":117.3945,\"exchange_sell\":117.7467}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-19\",\"date_from\":\"2026-05-19\",\"number\":90,\"parity\":1,\"cash_buy\":116.5762,\"cash_sell\":118.2198,\"exchange_buy\":117.0458,\"exchange_middle\":117.398,\"exchange_sell\":117.7502}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-20": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-20\",\"date_from\":\"2026-05-20\",\"number\":91,\"parity\":1,\"cash_buy\":116.5782,\"cash_sell\":118.2218,\"exchange_buy\":117.0478,\"exchange_middle\":117.4,\"exchange_sell\":117.7522}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-22": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-22\",\"date_from\":\"2026-05-22\",\"number\":93,\"parity\":1,\"cash_buy\":116.592,\"cash_sell\":118.2358,\"exchange_buy\":117.0617,\"exchange_middle\":117.4139,\"exchange_sell\":117.7661}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-25": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-25\",\"date_from\":\"2026-05-25\",\"number\":94,\"parity\":1,\"cash_buy\":116.5963,\"cash_sell\":118.2401,\"exchange_buy\":117.0659,\"exchange_middle\":117.4182,\"exchange_sell\":117.7705}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-26\",\"date_from\":\"2026-05-26\",\"number\":95,\"parity\":1,\"cash_buy\":116.5989,\"cash_sell\":118.2427,\"exchange_buy\":117.0685,\"exchange_middle\":117.4208,\"exchange_sell\":117.7731}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-05-27": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-05-27\",\"date_from\":\"2026-05-27\",\"number\":96,\"parity\":1,\"cash_buy\":116.5984,\"cash_sell\":118.2422,\"exchange_buy\":117.068,\"exchange_middle\":117.4203,\"exchange_sell\":117.7726}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-01": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-01\",\"date_from\":\"2026-06-01\",\"number\":99,\"parity\":1,\"cash_buy\":116.5819,\"cash_sell\":118.2255,\"exchange_buy\":117.0515,\"exchange_middle\":117.4037,\"exchange_sell\":117.7559}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-02": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-02\",\"date_from\":\"2026-06-02\",\"number\":100,\"parity\":1,\"cash_buy\":116.5929,\"cash_sell\":118.2367,\"exchange_buy\":117.0626,\"exchange_middle\":117.4148,\"exchange_sell\":117.767}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-03\",\"date_from\":\"2026-06-03\",\"number\":101,\"parity\":1,\"cash_buy\":116.5836,\"cash_sell\":118.2272,\"exchange_buy\":117.0532,\"exchange_middle\":117.4054,\"exchange_sell\":117.7576}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-05\",\"date_from\":\"2026-06-05\",\"number\":103,\"parity\":1,\"cash_buy\":116.5543,\"cash_sell\":118.1975,\"exchange_buy\":117.0238,\"exchange_middle\":117.3759,\"exchange_sell\":117.728}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-08": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-08\",\"date_from\":\"2026-06-08\",\"number\":104,\"parity\":1,\"cash_buy\":116.5606,\"cash_sell\":118.204,\"exchange_buy\":117.0302,\"exchange_middle\":117.3823,\"exchange_sell\":117.7344}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-09": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-09\",\"date_from\":\"2026-06-09\",\"number\":105,\"parity\":1,\"cash_buy\":116.5693,\"cash_sell\":118.2127,\"exchange_buy\":117.0388,\"exchange_middle\":117.391,\"exchange_sell\":117.7432}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-11": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-11\",\"date_from\":\"2026-06-11\",\"number\":107,\"parity\":1,\"cash_buy\":116.5514,\"cash_sell\":118.1946,\"exchange_buy\":117.0209,\"exchange_middle\":117.373,\"exchange_sell\":117.7251}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-15": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-15\",\"date_from\":\"2026-06-15\",\"number\":109,\"parity\":1,\"cash_buy\":116.5623,\"cash_sell\":118.2057,\"exchange_buy\":117.0318,\"exchange_middle\":117.384,\"exchange_sell\":117.7362}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-16\",\"date_from\":\"2026-06-16\",\"number\":110,\"parity\":1,\"cash_buy\":116.5573,\"cash_sell\":118.2007,\"exchange_buy\":117.0269,\"exchange_middle\":117.379,\"exchange_sell\":117.7311}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-17": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-17\",\"date_from\":\"2026-06-17\",\"number\":111,\"parity\":1,\"cash_buy\":116.565,\"cash_sell\":118.2084,\"exchange_buy\":117.0345,\"exchange_middle\":117.3867,\"exchange_sell\":117.7389}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-19\",\"date_from\":\"2026-06-19\",\"number\":113,\"parity\":1,\"cash_buy\":116.5775,\"cash_sell\":118.2211,\"exchange_buy\":117.0471,\"exchange_middle\":117.3993,\"exchange_sell\":117.7515}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-22": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-22\",\"date_from\":\"2026-06-22\",\"number\":114,\"parity\":1,\"cash_buy\":116.5728,\"cash_sell\":118.2164,\"exchange_buy\":117.0424,\"exchange_middle\":117.3946,\"exchange_sell\":117.7468}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-25": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-25\",\"date_from\":\"2026-06-25\",\"number\":117,\"parity\":1,\"cash_buy\":116.578,\"cash_sell\":118.2216,\"exchange_buy\":117.0476,\"exchange_middle\":117.3998,\"exchange_sell\":117.752}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-26\",\"date_from\":\"2026-06-26\",\"number\":118,\"parity\":1,\"cash_buy\":116.5666,\"cash_sell\":118.21,\"exchange_buy\":117.0361,\"exchange_middle\":117.3883,\"exchange_sell\":117.7405}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-06-29": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-06-29\",\"date_from\":\"2026-06-29\",\"number\":119,\"parity\":1,\"cash_buy\":116.5547,\"cash_sell\":118.1979,\"exchange_buy\":117.0242,\"exchange_middle\":117.3763,\"exchange_sell\":117.7284}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-02": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-02\",\"date_from\":\"2026-07-02\",\"number\":122,\"parity\":1,\"cash_buy\":116.5307,\"cash_sell\":118.1737,\"exchange_buy\":117.0001,\"exchange_middle\":117.3522,\"exchange_sell\":117.7043}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-03\",\"date_from\":\"2026-07-03\",\"number\":123,\"parity\":1,\"cash_buy\":116.5436,\"cash_sell\":118.1868,\"exchange_buy\":117.0131,\"exchange_middle\":117.3652,\"exchange_sell\":117.7173}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-06": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-06\",\"date_from\":\"2026-07-06\",\"number\":124,\"parity\":1,\"cash_buy\":116.5413,\"cash_sell\":118.1843,\"exchange_buy\":117.0107,\"exchange_middle\":117.3628,\"exchange_sell\":117.7149}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-09": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-09\",\"date_from\":\"2026-07-09\",\"number\":127,\"parity\":1,\"cash_buy\":116.539,\"cash_sell\":118.182,\"exchange_buy\":117.0084,\"exchange_middle\":117.3605,\"exchange_sell\":117.7126}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-10": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-10\",\"date_from\":\"2026-07-10\",\"number\":128,\"parity\":1,\"cash_buy\":116.5427,\"cash_sell\":118.1859,\"exchange_buy\":117.0122,\"exchange_middle\":117.3643,\"exchange_sell\":117.7164}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-13": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-13\",\"date_from\":\"2026-07-13\",\"number\":129,\"parity\":1,\"cash_buy\":116.5423,\"cash_sell\":118.1853,\"exchange_buy\":117.0117,\"exchange_middle\":117.3638,\"exchange_sell\":117.7159}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-07-27": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-07-27\",\"date_from\":\"2026-07-27\",\"number\":139,\"parity\":1,\"cash_buy\":116.6085,\"cash_sell\":118.2525,\"exchange_buy\":117.0782,\"exchange_middle\":117.4305,\"exchange_sell\":117.7828}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-03\",\"date_from\":\"2026-08-03\",\"number\":144,\"parity\":1,\"cash_buy\":116.5646,\"cash_sell\":118.208,\"exchange_buy\":117.0341,\"exchange_middle\":117.3863,\"exchange_sell\":117.7385}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-04": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-04\",\"date_from\":\"2026-08-04\",\"number\":145,\"parity\":1,\"cash_buy\":116.552,\"cash_sell\":118.1952,\"exchange_buy\":117.0215,\"exchange_middle\":117.3736,\"exchange_sell\":117.7257}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-05\",\"date_from\":\"2026-08-05\",\"number\":146,\"parity\":1,\"cash_buy\":116.5619,\"cash_sell\":118.2053,\"exchange_buy\":117.0314,\"exchange_middle\":117.3836,\"exchange_sell\":117.7358}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-06": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-06\",\"date_from\":\"2026-08-06\",\"number\":147,\"parity\":1,\"cash_buy\":116.551,\"cash_sell\":118.1942,\"exchange_buy\":117.0205,\"exchange_middle\":117.3726,\"exchange_sell\":117.7247}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-12": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-12\",\"date_from\":\"2026-08-12\",\"number\":151,\"parity\":1,\"cash_buy\":116.525,\"cash_sell\":118.1678,\"exchange_buy\":116.9944,\"exchange_middle\":117.3464,\"exchange_sell\":117.6984}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-17": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-17\",\"date_from\":\"2026-08-17\",\"number\":154,\"parity\":1,\"cash_buy\":116.5295,\"cash_sell\":118.1725,\"exchange_buy\":116.9989,\"exchange_middle\":117.351,\"exchange_sell\":117.7031}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-18": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-18\",\"date_from\":\"2026-08-18\",\"number\":155,\"parity\":1,\"cash_buy\":116.5396,\"cash_sell\":118.1826,\"exchange_buy\":117.009,\"exchange_middle\":117.3611,\"exchange_sell\":117.7132}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-19\",\"date_from\":\"2026-08-19\",\"number\":156,\"parity\":1,\"cash_buy\":116.5379,\"cash_sell\":118.1809,\"exchange_buy\":117.0073,\"exchange_middle\":117.3594,\"exchange_sell\":117.7115}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-24": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-24\",\"date_from\":\"2026-08-24\",\"number\":159,\"parity\":1,\"cash_buy\":116.5484,\"cash_sell\":118.1916,\"exchange_buy\":117.0179,\"exchange_middle\":117.37,\"exchange_sell\":117.7221}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-25": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-25\",\"date_from\":\"2026-08-25\",\"number\":160,\"parity\":1,\"cash_buy\":116.5556,\"cash_sell\":118.1988,\"exchange_buy\":117.0251,\"exchange_middle\":117.3772,\"exchange_sell\":117.7293}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-27": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-27\",\"date_from\":\"2026-08-27\",\"number\":162,\"parity\":1,\"cash_buy\":116.5648,\"cash_sell\":118.2082,\"exchange_buy\":117.0343,\"exchange_middle\":117.3865,\"exchange_sell\":117.7387}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-08-31": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-08-31\",\"date_from\":\"2026-08-31\",\"number\":164,\"parity\":1,\"cash_buy\":116.5316,\"cash_sell\":118.1746,\"exchange_buy\":117.001,\"exchange_middle\":117.3531,\"exchange_sell\":117.7052}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-03\",\"date_from\":\"2026-09-03\",\"number\":167,\"parity\":1,\"cash_buy\":116.529,\"cash_sell\":118.172,\"exchange_buy\":116.9984,\"exchange_middle\":117.3505,\"exchange_sell\":117.7026}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-07": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-07\",\"date_from\":\"2026-09-07\",\"number\":169,\"parity\":1,\"cash_buy\":116.5405,\"cash_sell\":118.1835,\"exchange_buy\":117.0099,\"exchange_middle\":117.362,\"exchange_sell\":117.7141}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-08": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-08\",\"date_from\":\"2026-09-08\",\"number\":170,\"parity\":1,\"cash_buy\":116.5494,\"cash_sell\":118.1926,\"exchange_buy\":117.0189,\"exchange_middle\":117.371,\"exchange_sell\":117.7231}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-10": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-10\",\"date_from\":\"2026-09-10\",\"number\":172,\"parity\":1,\"cash_buy\":116.541,\"cash_sell\":118.184,\"exchange_buy\":117.0104,\"exchange_middle\":117.3625,\"exchange_sell\":117.7146}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-11": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-11\",\"date_from\":\"2026-09-11\",\"number\":173,\"parity\":1,\"cash_buy\":116.5365,\"cash_sell\":118.1795,\"exchange_buy\":117.0059,\"exchange_middle\":117.358,\"exchange_sell\":117.7101}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-15": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-15\",\"date_from\":\"2026-09-15\",\"number\":175,\"parity\":1,\"cash_buy\":116.5484,\"cash_sell\":118.1916,\"exchange_buy\":117.0179,\"exchange_middle\":117.37,\"exchange_sell\":117.7221}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-16": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-16\",\"date_from\":\"2026-09-16\",\"number\":176,\"parity\":1,\"cash_buy\":116.5519,\"cash_sell\":118.1951,\"exchange_buy\":117.0214,\"exchange_middle\":117.3735,\"exchange_sell\":117.7256}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-18": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-18\",\"date_from\":\"2026-09-18\",\"number\":178,\"parity\":1,\"cash_buy\":116.5789,\"cash_sell\":118.2225,\"exchange_buy\":117.0485,\"exchange_middle\":117.4007,\"exchange_sell\":117.7529}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-21": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-21\",\"date_from\":\"2026-09-21\",\"number\":179,\"parity\":1,\"cash_buy\":116.582,\"cash_sell\":118.2256,\"exchange_buy\":117.0516,\"exchange_middle\":117.4038,\"exchange_sell\":117.756}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-22": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-22\",\"date_from\":\"2026-09-22\",\"number\":180,\"parity\":1,\"cash_buy\":116.5958,\"cash_sell\":118.2396,\"exchange_buy\":117.0654,\"exchange_middle\":117.4177,\"exchange_sell\":117.77}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-23": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-23\",\"date_from\":\"2026-09-23\",\"number\":181,\"parity\":1,\"cash_buy\":116.6035,\"cash_sell\":118.2475,\"exchange_buy\":117.0732,\"exchange_middle\":117.4255,\"exchange_sell\":117.7778}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-25": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-25\",\"date_from\":\"2026-09-25\",\"number\":183,\"parity\":1,\"cash_buy\":116.6607,\"cash_sell\":118.3055,\"exchange_buy\":117.1307,\"exchange_middle\":117.4831,\"exchange_sell\":117.8355}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-28": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-28\",\"date_from\":\"2026-09-28\",\"number\":184,\"parity\":1,\"cash_buy\":116.6768,\"cash_sell\":118.3218,\"exchange_buy\":117.1468,\"exchange_middle\":117.4993,\"exchange_sell\":117.8518}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-09-30": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-09-30\",\"date_from\":\"2026-09-30\",\"number\":186,\"parity\":1,\"cash_buy\":116.6941,\"cash_sell\":118.3393,\"exchange_buy\":117.1641,\"exchange_middle\":117.5167,\"exchange_sell\":117.8693}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-06": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-06\",\"date_from\":\"2026-10-06\",\"number\":190,\"parity\":1,\"cash_buy\":116.6379,\"cash_sell\":118.2823,\"exchange_buy\":117.1077,\"exchange_middle\":117.4601,\"exchange_sell\":117.8125}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-07": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-07\",\"date_from\":\"2026-10-07\",\"number\":191,\"parity\":1,\"cash_buy\":116.6078,\"cash_sell\":118.2518,\"exchange_buy\":117.0775,\"exchange_middle\":117.4298,\"exchange_sell\":117.7821}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-12": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-12\",\"date_from\":\"2026-10-12\",\"number\":194,\"parity\":1,\"cash_buy\":116.5477,\"cash_sell\":118.1909,\"exchange_buy\":117.0172,\"exchange_middle\":117.3693,\"exchange_sell\":117.7214}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-13": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-13\",\"date_from\":\"2026-10-13\",\"number\":195,\"parity\":1,\"cash_buy\":116.5569,\"cash_sell\":118.2001,\"exchange_buy\":117.0264,\"exchange_middle\":117.3785,\"exchange_sell\":117.7306}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-15": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-15\",\"date_from\":\"2026-10-15\",\"number\":197,\"parity\":1,\"cash_buy\":116.5713,\"cash_sell\":118.2149,\"exchange_buy\":117.0409,\"exchange_middle\":117.3931,\"exchange_sell\":117.7453}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-19": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-19\",\"date_from\":\"2026-10-19\",\"number\":199,\"parity\":1,\"cash_buy\":116.589,\"cash_sell\":118.2328,\"exchange_buy\":117.0587,\"exchange_middle\":117.4109,\"exchange_sell\":117.7631}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-20": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-20\",\"date_from\":\"2026-10-20\",\"number\":200,\"parity\":1,\"cash_buy\":116.5925,\"cash_sell\":118.2363,\"exchange_buy\":117.0622,\"exchange_middle\":117.4144,\"exchange_sell\":117.7666}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-26\",\"date_from\":\"2026-10-26\",\"number\":204,\"parity\":1,\"cash_buy\":116.6755,\"cash_sell\":118.3205,\"exchange_buy\":117.1455,\"exchange_middle\":117.498,\"exchange_sell\":117.8505}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-10-29": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-10-29\",\"date_from\":\"2026-10-29\",\"number\":207,\"parity\":1,\"cash_buy\":116.7008,\"cash_sell\":118.3462,\"exchange_buy\":117.1709,\"exchange_middle\":117.5235,\"exchange_sell\":117.8761}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-03": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-03\",\"date_from\":\"2026-11-03\",\"number\":210,\"parity\":1,\"cash_buy\":116.7468,\"cash_sell\":118.3928,\"exchange_buy\":117.2171,\"exchange_middle\":117.5698,\"exchange_sell\":117.9225}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-05": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-05\",\"date_from\":\"2026-11-05\",\"number\":212,\"parity\":1,\"cash_buy\":116.7786,\"cash_sell\":118.425,\"exchange_buy\":117.249,\"exchange_middle\":117.6018,\"exchange_sell\":117.9546}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-06": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-06\",\"date_from\":\"2026-11-06\",\"number\":213,\"parity\":1,\"cash_buy\":116.7856,\"cash_sell\":118.4322,\"exchange_buy\":117.2561,\"exchange_middle\":117.6089,\"exchange_sell\":117.9617}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-09": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-09\",\"date_from\":\"2026-11-09\",\"number\":214,\"parity\":1,\"cash_buy\":116.7996,\"cash_sell\":118.4464,\"exchange_buy\":117.2701,\"exchange_middle\":117.623,\"exchange_sell\":117.9759}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-12": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-12\",\"date_from\":\"2026-11-12\",\"number\":216,\"parity\":1,\"cash_buy\":116.8088,\"cash_sell\":118.4556,\"exchange_buy\":117.2793,\"exchange_middle\":117.6322,\"exchange_sell\":117.9851}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-26": {
+    "status": 200,
+    "body": "{\"code\":\"EUR\",\"date\":\"2026-11-26\",\"date_from\":\"2026-11-26\",\"number\":226,\"parity\":1,\"cash_buy\":116.8197,\"cash_sell\":118.4667,\"exchange_buy\":117.2903,\"exchange_middle\":117.6432,\"exchange_sell\":117.9961}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-01-13": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-01-13\",\"date_from\":\"2026-01-13\",\"number\":5,\"parity\":1,\"cash_buy\":99.8808,\"cash_sell\":101.289,\"exchange_buy\":100.2831,\"exchange_middle\":100.5849,\"exchange_sell\":100.8867}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-01-16": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-01-16\",\"date_from\":\"2026-01-16\",\"number\":8,\"parity\":1,\"cash_buy\":100.3857,\"cash_sell\":101.8011,\"exchange_buy\":100.7901,\"exchange_middle\":101.0934,\"exchange_sell\":101.3967}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-01-19": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-01-19\",\"date_from\":\"2026-01-19\",\"number\":9,\"parity\":1,\"cash_buy\":100.1935,\"cash_sell\":101.6061,\"exchange_buy\":100.5971,\"exchange_middle\":100.8998,\"exchange_sell\":101.2025}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-01-26": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-01-26\",\"date_from\":\"2026-01-26\",\"number\":14,\"parity\":1,\"cash_buy\":98.2365,\"cash_sell\":99.6215,\"exchange_buy\":98.6322,\"exchange_middle\":98.929,\"exchange_sell\":99.2258}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-01-27": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-01-27\",\"date_from\":\"2026-01-27\",\"number\":15,\"parity\":1,\"cash_buy\":98.1441,\"cash_sell\":99.5279,\"exchange_buy\":98.5395,\"exchange_middle\":98.836,\"exchange_sell\":99.1325}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-02-05": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-02-05\",\"date_from\":\"2026-02-05\",\"number\":22,\"parity\":1,\"cash_buy\":98.8776,\"cash_sell\":100.2716,\"exchange_buy\":99.2759,\"exchange_middle\":99.5746,\"exchange_sell\":99.8733}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-02-09": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-02-09\",\"date_from\":\"2026-02-09\",\"number\":24,\"parity\":1,\"cash_buy\":98.4042,\"cash_sell\":99.7916,\"exchange_buy\":98.8006,\"exchange_middle\":99.0979,\"exchange_sell\":99.3952}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-02-19": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-02-19\",\"date_from\":\"2026-02-19\",\"number\":30,\"parity\":1,\"cash_buy\":98.8769,\"cash_sell\":100.2709,\"exchange_buy\":99.2752,\"exchange_middle\":99.5739,\"exchange_sell\":99.8726}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-02-23": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-02-23\",\"date_from\":\"2026-02-23\",\"number\":32,\"parity\":1,\"cash_buy\":98.5947,\"cash_sell\":99.9847,\"exchange_buy\":98.9918,\"exchange_middle\":99.2897,\"exchange_sell\":99.5876}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-02": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-02\",\"date_from\":\"2026-03-02\",\"number\":37,\"parity\":1,\"cash_buy\":99.1639,\"cash_sell\":100.5619,\"exchange_buy\":99.5633,\"exchange_middle\":99.8629,\"exchange_sell\":100.1625}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-09": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-09\",\"date_from\":\"2026-03-09\",\"number\":42,\"parity\":1,\"cash_buy\":100.748,\"cash_sell\":102.1684,\"exchange_buy\":101.1538,\"exchange_middle\":101.4582,\"exchange_sell\":101.7626}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-14": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-14\",\"date_from\":\"2026-03-13\",\"number\":46,\"parity\":1,\"cash_buy\":101.3665,\"cash_sell\":102.7957,\"exchange_buy\":101.7749,\"exchange_middle\":102.0811,\"exchange_sell\":102.3873}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-16": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-16\",\"date_from\":\"2026-03-16\",\"number\":47,\"parity\":1,\"cash_buy\":101.9538,\"cash_sell\":103.3912,\"exchange_buy\":102.3645,\"exchange_middle\":102.6725,\"exchange_sell\":102.9805}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-17": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-17\",\"date_from\":\"2026-03-17\",\"number\":48,\"parity\":1,\"cash_buy\":101.6604,\"cash_sell\":103.0936,\"exchange_buy\":102.0699,\"exchange_middle\":102.377,\"exchange_sell\":102.6841}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-20": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-20\",\"date_from\":\"2026-03-20\",\"number\":51,\"parity\":1,\"cash_buy\":100.8686,\"cash_sell\":102.2908,\"exchange_buy\":101.275,\"exchange_middle\":101.5797,\"exchange_sell\":101.8844}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-23": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-23\",\"date_from\":\"2026-03-23\",\"number\":52,\"parity\":1,\"cash_buy\":101.1403,\"cash_sell\":102.5663,\"exchange_buy\":101.5477,\"exchange_middle\":101.8533,\"exchange_sell\":102.1589}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-03-25": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-03-25\",\"date_from\":\"2026-03-25\",\"number\":54,\"parity\":1,\"cash_buy\":100.6206,\"cash_sell\":102.0392,\"exchange_buy\":101.0259,\"exchange_middle\":101.3299,\"exchange_sell\":101.6339}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-04-01": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-04-01\",\"date_from\":\"2026-04-01\",\"number\":59,\"parity\":1,\"cash_buy\":100.7643,\"cash_sell\":102.1849,\"exchange_buy\":101.1702,\"exchange_middle\":101.4746,\"exchange_sell\":101.779}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-04-06": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-04-06\",\"date_from\":\"2026-04-06\",\"number\":62,\"parity\":1,\"cash_buy\":101.112,\"cash_sell\":102.5376,\"exchange_buy\":101.5193,\"exchange_middle\":101.8248,\"exchange_sell\":102.1303}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-04-27": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-04-27\",\"date_from\":\"2026-04-27\",\"number\":75,\"parity\":1,\"cash_buy\":99.4159,\"cash_sell\":100.8175,\"exchange_buy\":99.8163,\"exchange_middle\":100.1167,\"exchange_sell\":100.4171}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-05-04": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-05-04\",\"date_from\":\"2026-05-04\",\"number\":79,\"parity\":1,\"cash_buy\":99.3656,\"cash_sell\":100.7666,\"exchange_buy\":99.7659,\"exchange_middle\":100.0661,\"exchange_sell\":100.3663}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-05-11": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-05-11\",\"date_from\":\"2026-05-11\",\"number\":84,\"parity\":1,\"cash_buy\":99.148,\"cash_sell\":100.5458,\"exchange_buy\":99.5474,\"exchange_middle\":99.8469,\"exchange_sell\":100.1464}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-05-18": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-05-18\",\"date_from\":\"2026-05-18\",\"number\":89,\"parity\":1,\"cash_buy\":100.2949,\"cash_sell\":101.7089,\"exchange_buy\":100.6989,\"exchange_middle\":101.0019,\"exchange_sell\":101.3049}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-05-20": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-05-20\",\"date_from\":\"2026-05-20\",\"number\":91,\"parity\":1,\"cash_buy\":100.4898,\"cash_sell\":101.9066,\"exchange_buy\":100.8946,\"exchange_middle\":101.1982,\"exchange_sell\":101.5018}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-06-26": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-06-26\",\"date_from\":\"2026-06-26\",\"number\":118,\"parity\":1,\"cash_buy\":102.4491,\"cash_sell\":103.8935,\"exchange_buy\":102.8618,\"exchange_middle\":103.1713,\"exchange_sell\":103.4808}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-07-17": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-07-17\",\"date_from\":\"2026-07-17\",\"number\":133,\"parity\":1,\"cash_buy\":101.8913,\"cash_sell\":103.3279,\"exchange_buy\":102.3018,\"exchange_middle\":102.6096,\"exchange_sell\":102.9174}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-07-23": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-07-23\",\"date_from\":\"2026-07-23\",\"number\":137,\"parity\":1,\"cash_buy\":101.9843,\"cash_sell\":103.4221,\"exchange_buy\":102.3951,\"exchange_middle\":102.7032,\"exchange_sell\":103.0113}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-08-10": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-08-10\",\"date_from\":\"2026-08-10\",\"number\":149,\"parity\":1,\"cash_buy\":100.8434,\"cash_sell\":102.2652,\"exchange_buy\":101.2496,\"exchange_middle\":101.5543,\"exchange_sell\":101.859}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-08-19": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-08-19\",\"date_from\":\"2026-08-19\",\"number\":156,\"parity\":1,\"cash_buy\":100.5678,\"cash_sell\":101.9856,\"exchange_buy\":100.9729,\"exchange_middle\":101.2767,\"exchange_sell\":101.5805}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-08-21": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-08-21\",\"date_from\":\"2026-08-21\",\"number\":158,\"parity\":1,\"cash_buy\":99.6526,\"cash_sell\":101.0576,\"exchange_buy\":100.054,\"exchange_middle\":100.3551,\"exchange_sell\":100.6562}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-09-07": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-09-07\",\"date_from\":\"2026-09-07\",\"number\":169,\"parity\":1,\"cash_buy\":100.3535,\"cash_sell\":101.7683,\"exchange_buy\":100.7577,\"exchange_middle\":101.0609,\"exchange_sell\":101.3641}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-09-09": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-09-09\",\"date_from\":\"2026-09-09\",\"number\":171,\"parity\":1,\"cash_buy\":100.1632,\"cash_sell\":101.5754,\"exchange_buy\":100.5667,\"exchange_middle\":100.8693,\"exchange_sell\":101.1719}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-09-14": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-09-14\",\"date_from\":\"2026-09-14\",\"number\":174,\"parity\":1,\"cash_buy\":100.7515,\"cash_sell\":102.1719,\"exchange_buy\":101.1573,\"exchange_middle\":101.4617,\"exchange_sell\":101.7661}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-10-15": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-10-15\",\"date_from\":\"2026-10-15\",\"number\":197,\"parity\":1,\"cash_buy\":103.9238,\"cash_sell\":105.389,\"exchange_buy\":104.3424,\"exchange_middle\":104.6564,\"exchange_sell\":104.9704}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-10-23": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-10-23\",\"date_from\":\"2026-10-23\",\"number\":203,\"parity\":1,\"cash_buy\":104.0676,\"cash_sell\":105.5348,\"exchange_buy\":104.4868,\"exchange_middle\":104.8012,\"exchange_sell\":105.1156}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-11-12": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-11-12\",\"date_from\":\"2026-11-12\",\"number\":216,\"parity\":1,\"cash_buy\":105.4136,\"cash_sell\":106.8998,\"exchange_buy\":105.8382,\"exchange_middle\":106.1567,\"exchange_sell\":106.4752}\n\n"
+  },
+  "https://kurs.resenje.org/api/v1/currencies/usd/rates/2026-11-26": {
+    "status": 200,
+    "body": "{\"code\":\"USD\",\"date\":\"2026-11-26\",\"date_from\":\"2026-11-26\",\"number\":226,\"parity\":1,\"cash_buy\":106.5581,\"cash_sell\":108.0605,\"exchange_buy\":106.9874,\"exchange_middle\":107.3093,\"exchange_sell\":107.6312}\n\n"
+  }
+}

@@ -1,0 +1,19 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-19,2026-01-19,Uplata po fakturi 2026-001,Linden Works B.V.,2026-001,158444.91,RSD,PRILIV,158444.91
+2026-02-02,2026-02-02,Uplata po fakturi 2026-002,Linden Works B.V.,2026-002,170255.96,RSD,PRILIV,328700.87
+2026-02-16,2026-02-16,Provizija banke,Banka,,400.00,RSD,ODLIV,328300.87
+2026-03-02,2026-03-02,Uplata po fakturi 2026-003,Linden Works B.V.,2026-003,293472.00,RSD,PRILIV,621772.87
+2026-03-30,2026-03-30,Uplata po fakturi 2026-004,Linden Works B.V.,2026-004,264235.50,RSD,PRILIV,886008.37
+2026-04-03,2026-04-03,Provizija banke,Banka,,1000.00,RSD,ODLIV,885008.37
+2026-04-06,2026-04-06,Provizija banke,Banka,,1300.00,RSD,ODLIV,883708.37
+2026-04-16,2026-04-16,Uplata po fakturi 2026-005,Linden Works B.V.,2026-005,134980.22,RSD,PRILIV,1018688.59
+2026-06-01,2026-06-01,Uplata po fakturi 2026-006,Javor Softver d.o.o.,2026-006,226000.00,RSD,PRILIV,1244688.59
+2026-06-24,2026-06-24,Uplata po fakturi 2026-007,Javor Softver d.o.o.,2026-007,271000.00,RSD,PRILIV,1515688.59
+2026-08-04,2026-08-04,Uplata po fakturi 2026-008,Javor Softver d.o.o.,2026-008,291000.00,RSD,PRILIV,1806688.59
+2026-08-27,2026-08-27,Uplata po fakturi 2026-009,Linden Works B.V.,2026-009,223034.35,RSD,PRILIV,2029722.94
+2026-08-31,2026-08-31,Uplata po fakturi 2026-010,Linden Works B.V.,2026-010,193632.62,RSD,PRILIV,2223355.56
+2026-09-21,2026-09-21,Prenos sopstvenih sredstava sa deviznog računa,Teodora Sintetić PR,,46000.00,RSD,PRILIV,2269355.56
+2026-09-30,2026-09-30,Uplata po fakturi 2026-011,Heron Systems GmbH,2026-011,240909.24,RSD,PRILIV,2510264.80
+2026-10-01,2026-10-01,Provizija banke,Banka,,1700.00,RSD,ODLIV,2508564.80
+2026-11-02,2026-11-02,Uplata po fakturi 2026-012,Javor Softver d.o.o.,2026-012,293000.00,RSD,PRILIV,2801564.80

@@ -1,0 +1,14 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-19,"Faktura 2026-001, Kestrel Analytics GmbH",0.00,346231.47,346231.47
+2,2026-01-26,"Faktura 2026-002, Osprey Labs Inc.",0.00,346251.50,346251.50
+3,2026-02-26,"Faktura 2026-003, Kestrel Analytics GmbH",0.00,369840.87,369840.87
+4,2026-03-02,"Faktura 2026-004, Osprey Labs Inc.",0.00,204718.95,204718.95
+5,2026-04-14,"Faktura 2026-006, Kestrel Analytics GmbH",0.00,369735.98,369735.98
+6,2026-05-04,"Faktura 2026-007, Osprey Labs Inc.",0.00,410271.01,410271.01
+7,2026-05-04,"Faktura 2026-007, Osprey Labs Inc.",0.00,410271.01,410271.01
+8,2026-06-15,"Faktura 2026-008, Kestrel Analytics GmbH",0.00,240637.20,240637.20
+9,2026-07-27,"Faktura 2026-009, Gavran Medija d.o.o.",427000.00,0.00,427000.00
+10,2026-08-24,"Faktura 2026-010, Kestrel Analytics GmbH",0.00,340373.00,340373.00
+11,2026-09-09,"Faktura 2026-011, Osprey Labs Inc.",0.00,373216.41,373216.41
+12,2026-10-19,"Faktura 2026-012, Gavran Medija d.o.o.",0.00,312000.00,312000.00

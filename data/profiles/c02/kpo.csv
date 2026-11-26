@@ -1,0 +1,11 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-26,"Faktura 2026-001, Linden Works B.V.",0.00,334587.44,334587.44
+2,2026-02-24,"Faktura 2026-002, Linden Works B.V.",0.00,440333.25,440333.25
+3,2026-03-23,"Faktura 2026-003, Linden Works B.V.",0.00,281848.32,281848.32
+4,2026-04-08,"Faktura 2026-004, Bor Studio d.o.o.",697000.00,0.00,697000.00
+5,2026-05-26,"Faktura 2026-005, Bor Studio d.o.o.",311000.00,0.00,311000.00
+6,2026-06-15,"Faktura 2026-006, Larkspur Data B.V.",0.00,475405.20,475405.20
+7,2026-08-19,"Faktura 2026-007, Linden Works B.V.",0.00,522249.33,522249.33
+8,2026-09-16,"Faktura 2026-008, Bor Studio d.o.o.",0.00,419000.00,419000.00
+9,2026-10-12,"Faktura 2026-009, Bor Studio d.o.o.",0.00,293000.00,293000.00

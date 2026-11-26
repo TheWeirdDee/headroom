@@ -1,0 +1,47 @@
+[
+  {
+    "id": "heron",
+    "name": "Heron Systems GmbH",
+    "country": "DE",
+    "isBusiness": true,
+    "vatId": "DE099238809",
+    "contract": {
+      "workingHoursSetByClient": "Yes: the client sets core working hours.",
+      "workplaceSetByClient": "Yes: work is done at the client office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "Yes: the client provides a laptop and manages daily work.",
+      "clientLineOfBusinessWithoutRiskClause": "Yes: no clause on business risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  },
+  {
+    "id": "osprey",
+    "name": "Osprey Labs Inc.",
+    "country": "US",
+    "isBusiness": true,
+    "vatId": "US012678880",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  },
+  {
+    "id": "bor",
+    "name": "Bor Studio d.o.o.",
+    "country": "RS",
+    "isBusiness": true,
+    "pib": "192989247",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": ""
+    }
+  }
+]

@@ -1,0 +1,17 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-09,2026-01-09,Uplata po fakturi 2025-046,Hrast Sistemi d.o.o.,2025-046,151000.00,RSD,PRILIV,151000.00
+2026-01-29,2026-01-29,Uplata po fakturi 2026-001,Kestrel Analytics GmbH,2026-001,311149.75,RSD,PRILIV,462149.75
+2026-03-05,2026-03-05,Uplata po fakturi 2026-002,Heron Systems GmbH,2026-002,381553.25,RSD,PRILIV,843703.00
+2026-03-16,2026-03-16,Provizija banke,Banka,,1000.00,RSD,ODLIV,842703.00
+2026-03-23,2026-03-23,Uplata po fakturi 2026-003,Kestrel Analytics GmbH,2026-003,381669.60,RSD,PRILIV,1224372.60
+2026-04-23,2026-04-23,Uplata po fakturi 2026-004,Kestrel Analytics GmbH,2026-004,176123.70,RSD,PRILIV,1400496.30
+2026-06-08,2026-06-08,Provizija banke,Banka,,500.00,RSD,ODLIV,1399996.30
+2026-06-15,2026-06-15,Uplata po fakturi 2026-005,Hrast Sistemi d.o.o.,2026-005,318000.00,RSD,PRILIV,1717996.30
+2026-06-17,2026-06-17,Uplata po fakturi 2026-006,Kestrel Analytics GmbH,2026-006,181949.39,RSD,PRILIV,1899945.69
+2026-07-16,2026-07-16,Provizija banke,Banka,,600.00,RSD,ODLIV,1899345.69
+2026-08-17,2026-08-17,Uplata po fakturi 2026-007,Kestrel Analytics GmbH,2026-007,410728.50,RSD,PRILIV,2310074.19
+2026-08-19,2026-08-19,Prenos sopstvenih sredstava sa deviznog računa,Jana Primerović PR,,40000.00,RSD,PRILIV,2350074.19
+2026-09-21,2026-09-21,Provizija banke,Banka,,300.00,RSD,ODLIV,2349774.19
+2026-10-06,2026-10-06,Uplata po fakturi 2026-008,Kestrel Analytics GmbH,2026-008,252539.22,RSD,PRILIV,2602313.41
+2026-11-05,2026-11-05,Uplata po fakturi 2026-009,Kestrel Analytics GmbH,2026-009,223443.42,RSD,PRILIV,2825756.83

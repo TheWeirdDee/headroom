@@ -1,0 +1,16 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-05,2026-01-05,Provizija banke,Banka,,1000.00,RSD,ODLIV,-1000.00
+2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Lipa Dizajn d.o.o.,2026-001,401000.00,RSD,PRILIV,400000.00
+2026-03-17,2026-03-17,Uplata po fakturi 2026-002,Osprey Labs Inc.,2026-002,537479.25,RSD,PRILIV,937479.25
+2026-03-30,2026-03-30,Uplata po fakturi 2026-003,Lipa Dizajn d.o.o.,2026-003,623000.00,RSD,PRILIV,1560479.25
+2026-04-08,2026-04-08,Prenos sopstvenih sredstava sa deviznog računa,Nevena Ogledić PR,,60000.00,RSD,PRILIV,1620479.25
+2026-04-29,2026-04-29,Uplata po fakturi 2026-004,Lipa Dizajn d.o.o.,2026-004,368000.00,RSD,PRILIV,1988479.25
+2026-05-26,2026-05-26,Uplata po fakturi 2026-005,Linden Works B.V.,2026-005,551877.76,RSD,PRILIV,2540357.01
+2026-07-06,2026-07-06,Uplata po fakturi 2026-006,Linden Works B.V.,2026-006,375560.96,RSD,PRILIV,2915917.97
+2026-08-17,2026-08-17,Provizija banke,Banka,,900.00,RSD,ODLIV,2915017.97
+2026-08-20,2026-08-20,Provizija banke,Banka,,400.00,RSD,ODLIV,2914617.97
+2026-09-14,2026-09-14,Uplata po fakturi 2026-007,Osprey Labs Inc.,2026-007,360189.04,RSD,PRILIV,3274807.01
+2026-09-17,2026-09-17,Uplata po fakturi 2026-008,Lipa Dizajn d.o.o.,2026-008,375000.00,RSD,PRILIV,3649807.01
+2026-10-16,2026-10-16,Provizija banke,Banka,,600.00,RSD,ODLIV,3649207.01
+2026-11-12,2026-11-12,Uplata po fakturi 2026-009,Osprey Labs Inc.,2026-009,435242.47,RSD,PRILIV,4084449.48

@@ -1,0 +1,20 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-15,2026-01-15,Uplata po fakturi 2025-066,Gavran Medija d.o.o.,2025-066,172000.00,RSD,PRILIV,172000.00
+2026-02-09,2026-02-09,Uplata po fakturi 2026-002,Kestrel Analytics GmbH,2026-002,352114.80,RSD,PRILIV,524114.80
+2026-02-10,2026-02-10,Provizija banke,Banka,,500.00,RSD,ODLIV,523614.80
+2026-02-16,2026-02-16,Provizija banke,Banka,,900.00,RSD,ODLIV,522714.80
+2026-03-09,2026-03-09,Uplata po fakturi 2026-003,Gavran Medija d.o.o.,2026-003,154000.00,RSD,PRILIV,676714.80
+2026-03-30,2026-03-30,Uplata po fakturi 2026-004,Gavran Medija d.o.o.,2026-004,310000.00,RSD,PRILIV,986714.80
+2026-04-06,2026-04-06,Uplata po fakturi 2026-001,Osprey Labs Inc.,2026-001,300383.16,RSD,PRILIV,1287097.96
+2026-04-20,2026-04-20,Provizija banke,Banka,,2000.00,RSD,ODLIV,1285097.96
+2026-05-19,2026-05-19,Uplata po fakturi 2026-005,Kestrel Analytics GmbH,2026-005,234796.00,RSD,PRILIV,1519893.96
+2026-05-22,2026-05-22,Uplata po fakturi 2026-006,Gavran Medija d.o.o.,2026-006,243000.00,RSD,PRILIV,1762893.96
+2026-07-13,2026-07-13,Uplata po fakturi 2026-008,Kestrel Analytics GmbH,2026-008,234727.60,RSD,PRILIV,1997621.56
+2026-07-17,2026-07-17,Uplata po fakturi 2026-007,Osprey Labs Inc.,2026-007,230871.60,RSD,PRILIV,2228493.16
+2026-08-13,2026-08-13,Prenos sopstvenih sredstava sa deviznog računa,Jovan Primerović PR,,88000.00,RSD,PRILIV,2316493.16
+2026-08-31,2026-08-31,Uplata po fakturi 2026-009,Gavran Medija d.o.o.,2026-009,165000.00,RSD,PRILIV,2481493.16
+2026-09-17,2026-09-17,Uplata po fakturi 2026-010,Gavran Medija d.o.o.,2026-010,195000.00,RSD,PRILIV,2676493.16
+2026-09-28,2026-09-28,Uplata po fakturi 2026-011,Kestrel Analytics GmbH,2026-011,364247.83,RSD,PRILIV,3040740.99
+2026-11-12,2026-11-12,Uplata po fakturi 2026-012,Kestrel Analytics GmbH,2026-012,152921.86,RSD,PRILIV,3193662.85
+2026-11-20,2026-11-20,Provizija banke,Banka,,500.00,RSD,ODLIV,3193162.85

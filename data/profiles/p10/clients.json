@@ -1,0 +1,47 @@
+[
+  {
+    "id": "linden",
+    "name": "Linden Works B.V.",
+    "country": "NL",
+    "isBusiness": true,
+    "vatId": "NL929726755",
+    "contract": {
+      "workingHoursSetByClient": "Yes: the client sets core working hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "Yes: the contract forbids work for other clients."
+    }
+  },
+  {
+    "id": "heron",
+    "name": "Heron Systems GmbH",
+    "country": "DE",
+    "isBusiness": true,
+    "vatId": "DE591535322",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "Yes: the client runs mandatory training.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": ""
+    }
+  },
+  {
+    "id": "javor",
+    "name": "Javor Softver d.o.o.",
+    "country": "RS",
+    "isBusiness": true,
+    "pib": "185086043",
+    "contract": {
+      "workingHoursSetByClient": "Yes: the client sets core working hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "Yes: no clause on business risk.",
+      "nonCompeteClause": ""
+    }
+  }
+]

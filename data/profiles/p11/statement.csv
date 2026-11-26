@@ -1,0 +1,19 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-26,2026-01-26,Uplata po fakturi 2026-001,Hrast Sistemi d.o.o.,2026-001,212000.00,RSD,PRILIV,212000.00
+2026-02-03,2026-02-03,Uplata po fakturi 2026-002,Hrast Sistemi d.o.o.,2026-002,232000.00,RSD,PRILIV,444000.00
+2026-02-09,2026-02-09,Prenos sopstvenih sredstava sa deviznog računa,Stefan Probić PR,,88000.00,RSD,PRILIV,532000.00
+2026-02-23,2026-02-23,Provizija banke,Banka,,2500.00,RSD,ODLIV,529500.00
+2026-03-02,2026-03-02,Uplata po fakturi 2026-003,Osprey Labs Inc.,2026-003,294595.56,RSD,PRILIV,824095.56
+2026-04-15,2026-04-15,Uplata po fakturi 2026-004,Linden Works B.V.,2026-004,234748.00,RSD,PRILIV,1058843.56
+2026-05-20,2026-05-20,Uplata po fakturi 2026-005,Osprey Labs Inc.,2026-005,273235.14,RSD,PRILIV,1332078.70
+2026-06-01,2026-06-01,Uplata po fakturi 2026-006,Linden Works B.V.,2026-006,199586.29,RSD,PRILIV,1531664.99
+2026-06-26,2026-06-26,Uplata po fakturi 2026-007,Linden Works B.V.,2026-007,352164.90,RSD,PRILIV,1883829.89
+2026-07-13,2026-07-13,Provizija banke,Banka,,1600.00,RSD,ODLIV,1882229.89
+2026-07-27,2026-07-27,Uplata po fakturi 2026-008,Linden Works B.V.,2026-008,281833.20,RSD,PRILIV,2164063.09
+2026-08-06,2026-08-06,Uplata za konsultacije,Lipa Studio,,230000.00,RSD,PRILIV,2394063.09
+2026-09-01,2026-09-01,Uplata po fakturi 2026-010,Hrast Sistemi d.o.o.,2026-010,190000.00,RSD,PRILIV,2584063.09
+2026-09-03,2026-09-03,Provizija banke,Banka,,800.00,RSD,ODLIV,2583263.09
+2026-09-15,2026-09-15,Uplata po fakturi 2026-011,Linden Works B.V.,2026-011,240608.50,RSD,PRILIV,2823871.59
+2026-09-25,2026-09-25,Provizija banke,Banka,,1900.00,RSD,ODLIV,2821971.59
+2026-10-26,2026-10-26,Uplata po fakturi 2026-012,Linden Works B.V.,2026-012,152747.40,RSD,PRILIV,2974718.99

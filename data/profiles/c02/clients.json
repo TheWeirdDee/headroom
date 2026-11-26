@@ -1,0 +1,47 @@
+[
+  {
+    "id": "linden",
+    "name": "Linden Works B.V.",
+    "country": "NL",
+    "isBusiness": true,
+    "vatId": "NL451019035",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  },
+  {
+    "id": "larkspur",
+    "name": "Larkspur Data B.V.",
+    "country": "NL",
+    "isBusiness": true,
+    "vatId": "NL682157161",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": ""
+    }
+  },
+  {
+    "id": "bor",
+    "name": "Bor Studio d.o.o.",
+    "country": "RS",
+    "isBusiness": true,
+    "pib": "119125799",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "Yes: work is done at the client office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": ""
+    }
+  }
+]

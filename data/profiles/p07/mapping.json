@@ -1,0 +1,36 @@
+{
+  "files": {
+    "statement.csv": {
+      "kind": "statement",
+      "delimiter": ",",
+      "decimal": ".",
+      "dateFormat": "YYYY-MM-DD",
+      "encoding": "utf-8",
+      "headerRow": 2,
+      "columns": {
+        "date": 0,
+        "description": 2,
+        "counterparty": 3,
+        "reference": 4,
+        "amount": 5,
+        "currency": 6,
+        "direction": 7
+      }
+    },
+    "kpo.csv": {
+      "kind": "kpo",
+      "delimiter": ",",
+      "decimal": ".",
+      "dateFormat": "YYYY-MM-DD",
+      "encoding": "utf-8",
+      "headerRow": 2,
+      "columns": {
+        "date": 1,
+        "description": 2,
+        "products": 3,
+        "services": 4,
+        "total": 5
+      }
+    }
+  }
+}

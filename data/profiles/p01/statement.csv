@@ -1,0 +1,19 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-08,2026-01-08,Provizija banke,Banka,,900.00,RSD,ODLIV,-900.00
+2026-01-13,2026-01-13,Uplata po fakturi 2026-001,Lipa Dizajn d.o.o.,2026-001,699000.00,RSD,PRILIV,698100.00
+2026-01-19,2026-01-19,Uplata po fakturi 2026-002,Heron Systems GmbH,2026-002,281679.84,RSD,PRILIV,979779.84
+2026-02-11,2026-02-11,Uplata po fakturi 2026-004,Heron Systems GmbH,2026-004,375560.32,RSD,PRILIV,1355340.16
+2026-04-02,2026-04-02,Uplata po fakturi 2026-005,Lipa Dizajn d.o.o.,2026-005,601000.00,RSD,PRILIV,1956340.16
+2026-04-27,2026-04-27,Uplata po fakturi 2026-006,Heron Systems GmbH,2026-006,528421.05,RSD,PRILIV,2484761.21
+2026-05-25,2026-05-25,Prenos sopstvenih sredstava sa deviznog računa,Petar Ogledić PR,,88000.00,RSD,PRILIV,2572761.21
+2026-06-02,2026-06-02,Uplata po fakturi 2026-007,Linden Works B.V.,2026-007,510754.38,RSD,PRILIV,3083515.59
+2026-06-15,2026-06-15,Provizija banke,Banka,,600.00,RSD,ODLIV,3082915.59
+2026-07-13,2026-07-13,Uplata po fakturi 2026-008,Linden Works B.V.,2026-008,498796.15,RSD,PRILIV,3581711.74
+2026-08-10,2026-08-10,Uplata po fakturi 2026-009,Lipa Dizajn d.o.o.,2026-009,382000.00,RSD,PRILIV,3963711.74
+2026-08-25,2026-08-25,Uplata po fakturi 2026-010,Linden Works B.V.,2026-010,316918.44,RSD,PRILIV,4280630.18
+2026-09-25,2026-09-25,Uplata po fakturi 2026-011,Heron Systems GmbH,2026-011,446435.78,RSD,PRILIV,4727065.96
+2026-10-13,2026-10-13,Uplata za konsultacije,Topola Agencija,,513000.00,RSD,PRILIV,5240065.96
+2026-10-29,2026-10-29,Uplata po fakturi 2026-012,Linden Works B.V.,2026-012,282056.40,RSD,PRILIV,5522122.36
+2026-11-10,2026-11-10,Provizija banke,Banka,,2400.00,RSD,ODLIV,5519722.36
+2026-11-24,2026-11-24,Provizija banke,Banka,,600.00,RSD,ODLIV,5519122.36

@@ -1,0 +1,19 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74
+2026-02-09,2026-02-09,Uplata po fakturi 2026-002,Heron Systems GmbH,2026-002,369720.54,RSD,PRILIV,680755.28
+2026-03-02,2026-03-02,Uplata po fakturi 2026-003,Heron Systems GmbH,2026-003,493032.96,RSD,PRILIV,1173788.24
+2026-03-24,2026-03-24,Uplata po fakturi 2026-004,Heron Systems GmbH,2026-004,281859.12,RSD,PRILIV,1455647.36
+2026-04-06,2026-04-06,Prenos sopstvenih sredstava sa deviznog računa,Teodora Skicić PR,,65000.00,RSD,PRILIV,1520647.36
+2026-05-07,2026-05-07,Provizija banke,Banka,,600.00,RSD,ODLIV,1520047.36
+2026-05-11,2026-05-11,Uplata po fakturi 2026-005,Heron Systems GmbH,2026-005,440175.00,RSD,PRILIV,1960222.36
+2026-05-27,2026-05-27,Uplata po fakturi 2026-006,Heron Systems GmbH,2026-006,410971.05,RSD,PRILIV,2371193.41
+2026-06-02,2026-06-02,Provizija banke,Banka,,900.00,RSD,ODLIV,2370293.41
+2026-07-10,2026-07-10,Uplata po fakturi 2026-007,Heron Systems GmbH,2026-007,416643.27,RSD,PRILIV,2786936.68
+2026-08-06,2026-08-06,Uplata po fakturi 2026-008,Heron Systems GmbH,2026-008,481227.66,RSD,PRILIV,3268164.34
+2026-08-25,2026-08-25,Uplata za konsultacije,Lipa Studio,,240000.00,RSD,PRILIV,3508164.34
+2026-09-07,2026-09-07,Uplata po fakturi 2026-009,Heron Systems GmbH,2026-009,522260.90,RSD,PRILIV,4030425.24
+2026-09-28,2026-09-28,Uplata po fakturi 2026-010,Heron Systems GmbH,2026-010,511121.96,RSD,PRILIV,4541547.20
+2026-09-28,2026-09-28,Provizija banke,Banka,,600.00,RSD,ODLIV,4540947.20
+2026-11-03,2026-11-03,Uplata po fakturi 2026-011,Heron Systems GmbH,2026-011,552578.06,RSD,PRILIV,5093525.26
+2026-11-04,2026-11-04,Provizija banke,Banka,,1400.00,RSD,ODLIV,5092125.26

@@ -1,0 +1,18 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-06,2026-01-06,Provizija banke,Banka,,1100.00,RSD,ODLIV,-1100.00
+2026-01-26,2026-01-26,Provizija banke,Banka,,1800.00,RSD,ODLIV,-2900.00
+2026-02-02,2026-02-02,Uplata po fakturi 2026-001,Kestrel Analytics GmbH,2026-001,346382.81,RSD,PRILIV,343482.81
+2026-02-05,2026-02-05,Uplata po fakturi 2026-002,Osprey Labs Inc.,2026-002,348511.10,RSD,PRILIV,691993.91
+2026-03-11,2026-03-11,Uplata po fakturi 2026-003,Kestrel Analytics GmbH,2026-003,369844.02,RSD,PRILIV,1061837.93
+2026-03-20,2026-03-20,Uplata po fakturi 2026-004,Osprey Labs Inc.,2026-004,208238.39,RSD,PRILIV,1270076.32
+2026-04-27,2026-04-27,Uplata po fakturi 2026-006,Kestrel Analytics GmbH,2026-006,369894.74,RSD,PRILIV,1639971.06
+2026-05-11,2026-05-11,Uplata po fakturi 2026-007,Osprey Labs Inc.,2026-007,409372.29,RSD,PRILIV,2049343.35
+2026-05-15,2026-05-15,Provizija banke,Banka,,900.00,RSD,ODLIV,2048443.35
+2026-06-29,2026-06-29,Uplata po fakturi 2026-008,Kestrel Analytics GmbH,2026-008,240621.42,RSD,PRILIV,2289064.77
+2026-07-20,2026-07-20,Provizija banke,Banka,,2400.00,RSD,ODLIV,2286664.77
+2026-08-21,2026-08-21,Uplata po fakturi 2026-009,Gavran Medija d.o.o.,2026-009,427000.00,RSD,PRILIV,2713664.77
+2026-08-25,2026-08-25,Prenos sopstvenih sredstava sa deviznog računa,Nikola Nacrtović PR,,38000.00,RSD,PRILIV,2751664.77
+2026-09-14,2026-09-14,Uplata po fakturi 2026-011,Osprey Labs Inc.,2026-011,375408.29,RSD,PRILIV,3127073.06
+2026-09-15,2026-09-15,Uplata po fakturi 2026-010,Kestrel Analytics GmbH,2026-010,340373.00,RSD,PRILIV,3467446.06
+2026-11-02,2026-11-02,Uplata po fakturi 2026-012,Gavran Medija d.o.o.,2026-012,332000.00,RSD,PRILIV,3799446.06

@@ -1,0 +1,27 @@
+{
+  "seed": "headroom-2026-11-26",
+  "year": 2026,
+  "asOf": "2026-11-26",
+  "profiles": [
+    { "id": "p01", "errors": ["E1", "E3", "E8"], "crossVia": "E1" },
+    { "id": "p02", "errors": ["E2", "E4", "E6"] },
+    { "id": "p03", "errors": ["E5", "E7", "E9"], "weekendForeignInvoice": true },
+    { "id": "p04", "errors": ["E1", "E2", "E5"] },
+    { "id": "p05", "errors": ["E3", "E4", "E8", "E9"], "crossVia": "E3" },
+    { "id": "p06", "errors": ["E6", "E7"] },
+    {
+      "id": "p07",
+      "errors": ["E1", "E2", "E3", "E5", "E9"],
+      "crossVia": "E1",
+      "criterion6": true,
+      "showcase": true
+    },
+    { "id": "p08", "errors": ["E4", "E6", "E8"] },
+    { "id": "p09", "errors": ["E1", "E3", "E7"], "crossVia": "E3", "weekendForeignInvoice": true },
+    { "id": "p10", "errors": ["E2", "E5", "E9"], "exempt": true },
+    { "id": "p11", "errors": ["E1", "E4", "E6", "E8"], "injection": true },
+    { "id": "p12", "errors": ["E3", "E5", "E7", "E9"], "criterion6": true },
+    { "id": "c01", "errors": [] },
+    { "id": "c02", "errors": [] }
+  ]
+}

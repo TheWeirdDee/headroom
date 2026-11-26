@@ -1,0 +1,19 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-02-03,2026-02-03,Uplata po fakturi 2026-001,Linden Works B.V.,2026-001,199609.92,RSD,PRILIV,199609.92
+2026-02-16,2026-02-16,Prenos sopstvenih sredstava sa deviznog računa,Nevena Skicić PR,,49000.00,RSD,PRILIV,248609.92
+2026-02-19,2026-02-19,Uplata po fakturi 2026-002,Kestrel Analytics GmbH,2026-002,293544.00,RSD,PRILIV,542153.92
+2026-03-10,2026-03-10,Uplata po fakturi 2026-003,Hrast Sistemi d.o.o.,2026-003,290000.00,RSD,PRILIV,832153.92
+2026-03-26,2026-03-26,Uplata po fakturi 2026-004,Linden Works B.V.,2026-004,176155.05,RSD,PRILIV,1008308.97
+2026-03-26,2026-03-26,Provizija banke,Banka,,1700.00,RSD,ODLIV,1006608.97
+2026-04-06,2026-04-06,Provizija banke,Banka,,500.00,RSD,ODLIV,1006108.97
+2026-04-24,2026-04-24,Uplata po fakturi 2026-005,Kestrel Analytics GmbH,2026-005,381636.13,RSD,PRILIV,1387745.10
+2026-05-20,2026-05-20,Uplata po fakturi 2026-006,Kestrel Analytics GmbH,2026-006,369810.00,RSD,PRILIV,1757555.10
+2026-06-22,2026-06-22,Uplata po fakturi 2026-007,Kestrel Analytics GmbH,2026-007,264137.85,RSD,PRILIV,2021692.95
+2026-07-06,2026-07-06,Provizija banke,Banka,,2500.00,RSD,ODLIV,2019192.95
+2026-07-27,2026-07-27,Uplata po fakturi 2026-008,Hrast Sistemi d.o.o.,2026-008,395000.00,RSD,PRILIV,2414192.95
+2026-08-18,2026-08-18,Uplata po fakturi 2026-010,Linden Works B.V.,2026-010,193645.82,RSD,PRILIV,2607838.77
+2026-08-24,2026-08-24,Uplata po fakturi 2026-009,Linden Works B.V.,2026-009,269951.00,RSD,PRILIV,2877789.77
+2026-10-07,2026-10-07,Provizija banke,Banka,,1900.00,RSD,ODLIV,2875889.77
+2026-10-13,2026-10-13,Uplata po fakturi 2026-011,Linden Works B.V.,2026-011,334528.73,RSD,PRILIV,3210418.50
+2026-10-26,2026-10-26,Uplata po fakturi 2026-012,Linden Works B.V.,2026-012,328994.40,RSD,PRILIV,3539412.90

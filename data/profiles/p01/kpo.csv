@@ -1,0 +1,12 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-05,"Faktura 2026-001, Lipa Dizajn d.o.o.",0.00,699000.00,699000.00
+2,2026-01-12,"Faktura 2026-002, Heron Systems GmbH",0.00,281555.76,281555.76
+3,2026-02-03,"Faktura 2026-004, Heron Systems GmbH",0.00,375736.32,375736.32
+4,2026-04-15,"Faktura 2026-006, Heron Systems GmbH",0.00,528183.00,528183.00
+5,2026-05-18,"Faktura 2026-007, Linden Works B.V.",0.00,510666.08,510666.08
+6,2026-06-25,"Faktura 2026-008, Linden Works B.V.",0.00,498949.15,498949.15
+7,2026-07-14,"Faktura 2026-009, Lipa Dizajn d.o.o.",0.00,382000.00,382000.00
+8,2026-08-17,"Faktura 2026-010, Linden Works B.V.",0.00,316847.70,316847.70
+9,2026-09-18,"Faktura 2026-011, Heron Systems GmbH",0.00,446122.66,446122.66
+10,2026-10-15,"Faktura 2026-012, Linden Works B.V.",0.00,281743.44,281743.44

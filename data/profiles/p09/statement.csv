@@ -1,0 +1,20 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-19,2026-01-19,Uplata po fakturi 2025-057,Lipa Dizajn d.o.o.,2025-057,240000.00,RSD,PRILIV,240000.00
+2026-02-09,2026-02-09,Uplata po fakturi 2026-002,Osprey Labs Inc.,2026-002,559903.14,RSD,PRILIV,799903.14
+2026-03-06,2026-03-06,Uplata po fakturi 2026-003,Lipa Dizajn d.o.o.,2026-003,261000.00,RSD,PRILIV,1060903.14
+2026-03-16,2026-03-16,Provizija banke,Banka,,1200.00,RSD,ODLIV,1059703.14
+2026-03-23,2026-03-23,Uplata po fakturi 2026-001,Osprey Labs Inc.,2026-001,295374.57,RSD,PRILIV,1355077.71
+2026-03-31,2026-03-31,Uplata po fakturi 2026-004,Lipa Dizajn d.o.o.,2026-004,1059000.00,RSD,PRILIV,2414077.71
+2026-04-24,2026-04-24,Uplata po fakturi 2026-005,Lipa Dizajn d.o.o.,2026-005,526000.00,RSD,PRILIV,2940077.71
+2026-05-08,2026-05-08,Prenos sopstvenih sredstava sa deviznog računa,Luka Nacrtović PR,,23000.00,RSD,PRILIV,2963077.71
+2026-05-18,2026-05-18,Uplata po fakturi 2026-006,Osprey Labs Inc.,2026-006,363606.84,RSD,PRILIV,3326684.55
+2026-05-21,2026-05-21,Provizija banke,Banka,,1000.00,RSD,ODLIV,3325684.55
+2026-06-09,2026-06-09,Uplata po fakturi 2026-007,Heron Systems GmbH,2026-007,264129.75,RSD,PRILIV,3589814.30
+2026-07-06,2026-07-06,Uplata za konsultacije,Breza Kreativa,,192000.00,RSD,PRILIV,3781814.30
+2026-07-13,2026-07-13,Uplata po fakturi 2026-008,Heron Systems GmbH,2026-008,357959.59,RSD,PRILIV,4139773.89
+2026-08-27,2026-08-27,Uplata po fakturi 2026-009,Heron Systems GmbH,2026-009,322812.88,RSD,PRILIV,4462586.77
+2026-09-03,2026-09-03,Provizija banke,Banka,,1700.00,RSD,ODLIV,4460886.77
+2026-10-07,2026-10-07,Uplata po fakturi 2026-010,Heron Systems GmbH,2026-010,346417.91,RSD,PRILIV,4807304.68
+2026-10-09,2026-10-09,Provizija banke,Banka,,1200.00,RSD,ODLIV,4806104.68
+2026-10-23,2026-10-23,Uplata po fakturi 2026-011,Osprey Labs Inc.,2026-011,487325.58,RSD,PRILIV,5293430.26

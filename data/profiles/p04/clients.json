@@ -1,0 +1,47 @@
+[
+  {
+    "id": "osprey",
+    "name": "Osprey Labs Inc.",
+    "country": "US",
+    "isBusiness": true,
+    "vatId": "US575467882",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "Yes: the client provides a laptop and manages daily work.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  },
+  {
+    "id": "larkspur",
+    "name": "Larkspur Data B.V.",
+    "country": "NL",
+    "isBusiness": true,
+    "vatId": "NL468897245",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "Yes: work is done at the client office.",
+      "trainingByClient": "Yes: the client runs mandatory training.",
+      "equipmentOrManagementByClient": "Yes: the client provides a laptop and manages daily work.",
+      "clientLineOfBusinessWithoutRiskClause": "Yes: no clause on business risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  },
+  {
+    "id": "lipa",
+    "name": "Lipa Dizajn d.o.o.",
+    "country": "RS",
+    "isBusiness": true,
+    "pib": "151683878",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely from the contractor office.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  }
+]

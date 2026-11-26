@@ -1,0 +1,324 @@
+{
+  "profileId": "p10",
+  "seed": "headroom-2026-11-26",
+  "synthetic": true,
+  "plantedErrors": [
+    {
+      "type": "E2",
+      "subjectKey": "invoice:2026-006",
+      "note": "book date 2026-06-01 instead of 2026-05-18"
+    },
+    {
+      "type": "E5",
+      "subjectKey": "invoice:2026-001",
+      "note": "book used the payment-date rate: 158444.91 instead of 158357.16"
+    },
+    {
+      "type": "E9",
+      "subjectKey": "invoice:2026-009",
+      "note": "invoice address in Serbia, client details say NL"
+    }
+  ],
+  "invoices": [
+    {
+      "number": "2026-001",
+      "issueDate": "2026-01-05",
+      "currency": "EUR",
+      "amount": "1350.00",
+      "amountRSD": "158357.16",
+      "rate": "117.3016",
+      "rateDate": "2026-01-05",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-002",
+      "issueDate": "2026-01-19",
+      "currency": "EUR",
+      "amount": "1450.00",
+      "amountRSD": "170181.57",
+      "rate": "117.3666",
+      "rateDate": "2026-01-19",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-003",
+      "issueDate": "2026-02-23",
+      "currency": "EUR",
+      "amount": "2500.00",
+      "amountRSD": "293550.00",
+      "rate": "117.42",
+      "rateDate": "2026-02-23",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-004",
+      "issueDate": "2026-03-05",
+      "currency": "EUR",
+      "amount": "2250.00",
+      "amountRSD": "264152.25",
+      "rate": "117.401",
+      "rateDate": "2026-03-05",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-005",
+      "issueDate": "2026-04-03",
+      "currency": "EUR",
+      "amount": "1150.00",
+      "amountRSD": "134992.64",
+      "rate": "117.3849",
+      "rateDate": "2026-04-03",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-006",
+      "issueDate": "2026-05-18",
+      "currency": "RSD",
+      "amount": "226000.00",
+      "amountRSD": "226000.00",
+      "kind": "service",
+      "clientId": "javor",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-007",
+      "issueDate": "2026-06-03",
+      "currency": "RSD",
+      "amount": "271000.00",
+      "amountRSD": "271000.00",
+      "kind": "service",
+      "clientId": "javor",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-008",
+      "issueDate": "2026-07-23",
+      "currency": "RSD",
+      "amount": "291000.00",
+      "amountRSD": "291000.00",
+      "kind": "product",
+      "clientId": "javor",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-009",
+      "issueDate": "2026-08-12",
+      "currency": "EUR",
+      "amount": "1900.00",
+      "amountRSD": "222958.16",
+      "rate": "117.3464",
+      "rateDate": "2026-08-12",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-010",
+      "issueDate": "2026-08-24",
+      "currency": "EUR",
+      "amount": "1650.00",
+      "amountRSD": "193660.50",
+      "rate": "117.37",
+      "rateDate": "2026-08-24",
+      "kind": "service",
+      "clientId": "linden",
+      "clientCountry": "NL"
+    },
+    {
+      "number": "2026-011",
+      "issueDate": "2026-09-08",
+      "currency": "EUR",
+      "amount": "2050.00",
+      "amountRSD": "240610.55",
+      "rate": "117.371",
+      "rateDate": "2026-09-08",
+      "kind": "service",
+      "clientId": "heron",
+      "clientCountry": "DE"
+    },
+    {
+      "number": "2026-012",
+      "issueDate": "2026-10-26",
+      "currency": "RSD",
+      "amount": "293000.00",
+      "amountRSD": "293000.00",
+      "kind": "service",
+      "clientId": "javor",
+      "clientCountry": "RS"
+    }
+  ],
+  "payments": [
+    {
+      "rowRef": "S1-1",
+      "date": "2026-01-19",
+      "amount": "158444.91",
+      "direction": "PRILIV",
+      "invoice": "2026-001"
+    },
+    {
+      "rowRef": "S1-2",
+      "date": "2026-02-02",
+      "amount": "170255.96",
+      "direction": "PRILIV",
+      "invoice": "2026-002"
+    },
+    {
+      "rowRef": "S1-3",
+      "date": "2026-02-16",
+      "amount": "400.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-4",
+      "date": "2026-03-02",
+      "amount": "293472.00",
+      "direction": "PRILIV",
+      "invoice": "2026-003"
+    },
+    {
+      "rowRef": "S1-5",
+      "date": "2026-03-30",
+      "amount": "264235.50",
+      "direction": "PRILIV",
+      "invoice": "2026-004"
+    },
+    {
+      "rowRef": "S1-6",
+      "date": "2026-04-03",
+      "amount": "1000.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-7",
+      "date": "2026-04-06",
+      "amount": "1300.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-8",
+      "date": "2026-04-16",
+      "amount": "134980.22",
+      "direction": "PRILIV",
+      "invoice": "2026-005"
+    },
+    {
+      "rowRef": "S1-9",
+      "date": "2026-06-01",
+      "amount": "226000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-006"
+    },
+    {
+      "rowRef": "S1-10",
+      "date": "2026-06-24",
+      "amount": "271000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-007"
+    },
+    {
+      "rowRef": "S1-11",
+      "date": "2026-08-04",
+      "amount": "291000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-008"
+    },
+    {
+      "rowRef": "S1-12",
+      "date": "2026-08-27",
+      "amount": "223034.35",
+      "direction": "PRILIV",
+      "invoice": "2026-009"
+    },
+    {
+      "rowRef": "S1-13",
+      "date": "2026-08-31",
+      "amount": "193632.62",
+      "direction": "PRILIV",
+      "invoice": "2026-010"
+    },
+    {
+      "rowRef": "S1-14",
+      "date": "2026-09-21",
+      "amount": "46000.00",
+      "direction": "PRILIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-15",
+      "date": "2026-09-30",
+      "amount": "240909.24",
+      "direction": "PRILIV",
+      "invoice": "2026-011"
+    },
+    {
+      "rowRef": "S1-16",
+      "date": "2026-10-01",
+      "amount": "1700.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-17",
+      "date": "2026-11-02",
+      "amount": "293000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-012"
+    }
+  ],
+  "draft": {
+    "amountRSD": "541158.72",
+    "rate": "117.6432"
+  },
+  "totals": {
+    "limit6m": {
+      "committed": "2759462.83",
+      "withDraft": "3300621.55",
+      "band": "green"
+    },
+    "vat8m": {
+      "committed": "1303958.16",
+      "withDraft": "1303958.16"
+    },
+    "bookYearTotal": "2759550.58"
+  },
+  "criterion6": {
+    "linden": {
+      "share": "0.599587",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    },
+    "heron": {
+      "share": "0.072899",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    },
+    "javor": {
+      "share": "0.327514",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    }
+  },
+  "crossing": null
+}

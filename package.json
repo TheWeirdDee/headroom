@@ -1,7 +1,7 @@
 {
   "name": "headroom",
   "version": "0.1.0",
-  "description": "Before a Serbian paušalac sends an invoice, Headroom shows how much room is left under the 6M limit, and proves every number.",
+  "description": "Before a Serbian pau\u0161alac sends an invoice, Headroom shows how much room is left under the 6M limit, and proves every number.",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -17,7 +17,8 @@
     "test": "vitest run",
     "check:licenses": "node scripts/check-licenses.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "generate:data": "tsx scripts/generate-profiles.ts"
   },
   "dependencies": {
     "@fastify/multipart": "10.1.9",

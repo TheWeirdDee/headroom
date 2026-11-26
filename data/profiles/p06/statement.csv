@@ -1,0 +1,20 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-19,2026-01-19,Uplata po fakturi 2025-062,Hrast Sistemi d.o.o.,2025-062,187000.00,RSD,PRILIV,187000.00
+2026-02-05,2026-02-05,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,234797.00,RSD,PRILIV,421797.00
+2026-02-06,2026-02-06,Uplata po fakturi 2026-002,Hrast Sistemi d.o.o.,2026-002,381000.00,RSD,PRILIV,802797.00
+2026-03-12,2026-03-12,Provizija banke,Banka,,2500.00,RSD,ODLIV,800297.00
+2026-03-13,2026-03-13,Uplata po fakturi 2026-003,Heron Systems GmbH,2026-003,158508.50,RSD,PRILIV,958805.50
+2026-04-06,2026-04-06,Uplata po fakturi 2026-004,Heron Systems GmbH,2026-004,316908.45,RSD,PRILIV,1275713.95
+2026-04-22,2026-04-22,Prenos sopstvenih sredstava sa deviznog računa,Vuk Skicić PR,,44000.00,RSD,PRILIV,1319713.95
+2026-05-04,2026-05-04,Uplata po fakturi 2026-005,Heron Systems GmbH,2026-005,158473.26,RSD,PRILIV,1478187.21
+2026-05-11,2026-05-11,Uplata po fakturi 2026-006,Linden Works B.V.,2026-006,358009.00,RSD,PRILIV,1836196.21
+2026-06-16,2026-06-16,Uplata po fakturi 2026-007,Heron Systems GmbH,2026-007,322792.25,RSD,PRILIV,2158988.46
+2026-06-25,2026-06-25,Provizija banke,Banka,,1700.00,RSD,ODLIV,2157288.46
+2026-07-27,2026-07-27,Uplata po fakturi 2026-008,Hrast Sistemi d.o.o.,2026-008,278000.00,RSD,PRILIV,2435288.46
+2026-08-05,2026-08-05,Provizija banke,Banka,,700.00,RSD,ODLIV,2434588.46
+2026-08-20,2026-08-20,Uplata po fakturi 2026-010,Hrast Sistemi d.o.o.,2026-010,344000.00,RSD,PRILIV,2778588.46
+2026-08-24,2026-08-24,Uplata po fakturi 2026-009,Hrast Sistemi d.o.o.,2026-009,310000.00,RSD,PRILIV,3088588.46
+2026-09-14,2026-09-14,Provizija banke,Banka,,2200.00,RSD,ODLIV,3086388.46
+2026-09-25,2026-09-25,Uplata po fakturi 2026-011,Linden Works B.V.,2026-011,364197.61,RSD,PRILIV,3450586.07
+2026-11-06,2026-11-06,Uplata po fakturi 2026-012,Linden Works B.V.,2026-012,370468.04,RSD,PRILIV,3821054.11

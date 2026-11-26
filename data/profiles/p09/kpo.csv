@@ -1,0 +1,13 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-19,"Faktura 2025-057, Lipa Dizajn d.o.o.",0.00,240000.00,240000.00
+2,2026-01-26,"Faktura 2026-002, Osprey Labs Inc.",0.00,558948.85,558948.85
+3,2026-02-24,"Faktura 2026-003, Lipa Dizajn d.o.o.",261000.00,0.00,261000.00
+4,2026-03-14,"Faktura 2026-001, Osprey Labs Inc.",0.00,296035.19,296035.19
+5,2026-04-07,"Faktura 2026-005, Lipa Dizajn d.o.o.",526000.00,0.00,526000.00
+6,2026-05-11,"Faktura 2026-006, Osprey Labs Inc.",0.00,359448.84,359448.84
+7,2026-06-03,"Faktura 2026-007, Heron Systems GmbH",0.00,264162.15,264162.15
+8,2026-07-02,"Faktura 2026-008, Heron Systems GmbH",0.00,357924.21,357924.21
+9,2026-08-05,"Faktura 2026-009, Heron Systems GmbH",0.00,322804.90,322804.90
+10,2026-09-21,"Faktura 2026-010, Heron Systems GmbH",0.00,346341.21,346341.21
+11,2026-10-15,"Faktura 2026-011, Osprey Labs Inc.",0.00,486652.26,486652.26

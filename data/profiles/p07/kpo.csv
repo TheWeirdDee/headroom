@@ -1,0 +1,12 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-19,"Faktura 2026-002, Heron Systems GmbH",0.00,369704.79,369704.79
+2,2026-02-09,"Faktura 2026-001, Heron Systems GmbH",0.00,310975.38,310975.38
+3,2026-02-16,"Faktura 2026-003, Heron Systems GmbH",0.00,493032.96,493032.96
+4,2026-03-09,"Faktura 2026-004, Heron Systems GmbH",0.00,281729.04,281729.04
+5,2026-04-27,"Faktura 2026-005, Heron Systems GmbH",0.00,440350.88,440350.88
+6,2026-05-12,"Faktura 2026-006, Heron Systems GmbH",0.00,410836.30,410836.30
+7,2026-06-22,"Faktura 2026-007, Heron Systems GmbH",0.00,416750.83,416750.83
+8,2026-07-27,"Faktura 2026-008, Heron Systems GmbH",0.00,481465.05,481465.05
+9,2026-08-17,"Faktura 2026-009, Heron Systems GmbH",0.00,522211.95,522211.95
+10,2026-10-26,"Faktura 2026-011, Heron Systems GmbH",0.00,552240.60,552240.60

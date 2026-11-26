@@ -1,0 +1,8 @@
+{
+  "clientId": "kestrel",
+  "currency": "EUR",
+  "amount": "4500.00",
+  "issueDate": "2026-11-26",
+  "description": "Software development, November 2026",
+  "kind": "service"
+}

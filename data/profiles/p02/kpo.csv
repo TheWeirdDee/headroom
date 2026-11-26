@@ -1,0 +1,15 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-15,"Faktura 2026-001, Linden Works B.V.",0.00,199464.91,199464.91
+2,2026-01-26,"Faktura 2026-002, Kestrel Analytics GmbH",0.00,293497.75,293497.75
+3,2026-03-10,"Faktura 2026-003, Hrast Sistemi d.o.o.",290000.00,0.00,290000.00
+4,2026-03-16,"Faktura 2026-004, Linden Works B.V.",0.00,176124.45,176124.45
+5,2026-04-20,"Faktura 2026-005, Kestrel Analytics GmbH",0.00,381488.58,381488.58
+6,2026-05-11,"Faktura 2026-006, Kestrel Analytics GmbH",0.00,369747.00,369747.00
+7,2026-06-09,"Faktura 2026-007, Kestrel Analytics GmbH",0.00,264129.75,264129.75
+8,2026-06-09,"Faktura 2026-007, Kestrel Analytics GmbH",0.00,264129.75,264129.75
+9,2026-07-20,"Faktura 2026-008, Hrast Sistemi d.o.o.",385000.00,0.00,385000.00
+10,2026-08-03,"Faktura 2026-009, Linden Works B.V.",0.00,269988.49,269988.49
+11,2026-08-06,"Faktura 2026-010, Linden Works B.V.",0.00,193664.79,193664.79
+12,2026-09-22,"Faktura 2026-011, Linden Works B.V.",0.00,334640.45,334640.45
+13,2026-10-20,"Faktura 2026-012, Linden Works B.V.",0.00,328760.32,328760.32

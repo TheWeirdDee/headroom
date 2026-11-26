@@ -1,0 +1,18 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-15,2026-01-15,Provizija banke,Banka,,2500.00,RSD,ODLIV,-2500.00
+2026-01-27,2026-01-27,Uplata po fakturi 2026-001,Osprey Labs Inc.,2026-001,558423.40,RSD,PRILIV,555923.40
+2026-02-23,2026-02-23,Provizija banke,Banka,,2100.00,RSD,ODLIV,553823.40
+2026-03-02,2026-03-02,Uplata po fakturi 2026-002,Lipa Dizajn d.o.o.,2026-002,345000.00,RSD,PRILIV,898823.40
+2026-03-06,2026-03-06,Provizija banke,Banka,,500.00,RSD,ODLIV,898323.40
+2026-03-09,2026-03-09,Provizija banke,Banka,,300.00,RSD,ODLIV,898023.40
+2026-03-25,2026-03-25,Uplata po fakturi 2026-003,Osprey Labs Inc.,2026-003,344521.66,RSD,PRILIV,1242545.06
+2026-05-04,2026-05-04,Uplata po fakturi 2026-004,Lipa Dizajn d.o.o.,2026-004,505000.00,RSD,PRILIV,1747545.06
+2026-05-25,2026-05-25,Uplata po fakturi 2026-005,Lipa Dizajn d.o.o.,2026-005,476000.00,RSD,PRILIV,2223545.06
+2026-06-29,2026-06-29,Uplata po fakturi 2026-006,Larkspur Data B.V.,2026-006,363866.53,RSD,PRILIV,2587411.59
+2026-08-06,2026-08-06,Prenos sopstvenih sredstava sa deviznog računa,Sara Nacrtović PR,,53000.00,RSD,PRILIV,2640411.59
+2026-08-10,2026-08-10,Uplata po fakturi 2026-007,Osprey Labs Inc.,2026-007,370673.20,RSD,PRILIV,3011084.79
+2026-09-07,2026-09-07,Uplata po fakturi 2026-008,Osprey Labs Inc.,2026-008,353713.15,RSD,PRILIV,3364797.94
+2026-10-05,2026-10-05,Uplata po fakturi 2026-009,Lipa Dizajn d.o.o.,2026-009,435000.00,RSD,PRILIV,3799797.94
+2026-10-06,2026-10-06,Uplata za konsultacije,Breza Kreativa,,233000.00,RSD,PRILIV,4032797.94
+2026-11-09,2026-11-09,Uplata po fakturi 2026-010,Lipa Dizajn d.o.o.,2026-010,451000.00,RSD,PRILIV,4483797.94

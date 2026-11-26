@@ -1,0 +1,16 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Linden Works B.V.,2026-001,334509.06,RSD,PRILIV,334509.06
+2026-03-16,2026-03-16,Uplata po fakturi 2026-002,Linden Works B.V.,2026-002,440311.13,RSD,PRILIV,774820.19
+2026-03-18,2026-03-18,Prenos sopstvenih sredstava sa deviznog računa,Vuk Testović PR,,29000.00,RSD,PRILIV,803820.19
+2026-04-03,2026-04-03,Uplata po fakturi 2026-003,Linden Works B.V.,2026-003,281723.76,RSD,PRILIV,1085543.95
+2026-04-10,2026-04-10,Provizija banke,Banka,,2100.00,RSD,ODLIV,1083443.95
+2026-04-20,2026-04-20,Uplata po fakturi 2026-004,Bor Studio d.o.o.,2026-004,697000.00,RSD,PRILIV,1780443.95
+2026-05-25,2026-05-25,Provizija banke,Banka,,1600.00,RSD,ODLIV,1778843.95
+2026-06-04,2026-06-04,Uplata po fakturi 2026-005,Bor Studio d.o.o.,2026-005,311000.00,RSD,PRILIV,2089843.95
+2026-07-09,2026-07-09,Uplata po fakturi 2026-006,Larkspur Data B.V.,2026-006,475310.03,RSD,PRILIV,2565153.98
+2026-08-04,2026-08-04,Provizija banke,Banka,,800.00,RSD,ODLIV,2564353.98
+2026-09-10,2026-09-10,Uplata po fakturi 2026-007,Linden Works B.V.,2026-007,522263.13,RSD,PRILIV,3086617.11
+2026-09-30,2026-09-30,Uplata po fakturi 2026-008,Bor Studio d.o.o.,2026-008,419000.00,RSD,PRILIV,3505617.11
+2026-10-26,2026-10-26,Provizija banke,Banka,,2200.00,RSD,ODLIV,3503417.11
+2026-11-03,2026-11-03,Uplata po fakturi 2026-009,Bor Studio d.o.o.,2026-009,293000.00,RSD,PRILIV,3796417.11

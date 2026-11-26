@@ -1,0 +1,339 @@
+{
+  "profileId": "p03",
+  "seed": "headroom-2026-11-26",
+  "synthetic": true,
+  "plantedErrors": [
+    {
+      "type": "E5",
+      "subjectKey": "invoice:2026-001",
+      "note": "book used the payment-date rate: 300383.16 instead of 301139.25"
+    },
+    {
+      "type": "E7",
+      "subjectKey": "invoice:2025-066",
+      "note": "issued 2025-12-22, entered 2026-01-15"
+    },
+    {
+      "type": "E9",
+      "subjectKey": "invoice:2026-002",
+      "note": "invoice address in Serbia, client details say DE"
+    }
+  ],
+  "invoices": [
+    {
+      "number": "2026-001",
+      "issueDate": "2026-03-14",
+      "currency": "USD",
+      "amount": "2950.00",
+      "amountRSD": "301139.25",
+      "rate": "102.0811",
+      "rateDate": "2026-03-13",
+      "kind": "service",
+      "clientId": "osprey",
+      "clientCountry": "US"
+    },
+    {
+      "number": "2026-002",
+      "issueDate": "2026-01-23",
+      "currency": "EUR",
+      "amount": "3000.00",
+      "amountRSD": "352232.70",
+      "rate": "117.4109",
+      "rateDate": "2026-01-23",
+      "kind": "service",
+      "clientId": "kestrel",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-003",
+      "issueDate": "2026-02-20",
+      "currency": "RSD",
+      "amount": "154000.00",
+      "amountRSD": "154000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-004",
+      "issueDate": "2026-03-23",
+      "currency": "RSD",
+      "amount": "310000.00",
+      "amountRSD": "310000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-005",
+      "issueDate": "2026-04-27",
+      "currency": "EUR",
+      "amount": "2000.00",
+      "amountRSD": "234853.80",
+      "rate": "117.4269",
+      "rateDate": "2026-04-27",
+      "kind": "service",
+      "clientId": "kestrel",
+      "clientCountry": "DE"
+    },
+    {
+      "number": "2026-006",
+      "issueDate": "2026-05-13",
+      "currency": "RSD",
+      "amount": "243000.00",
+      "amountRSD": "243000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-007",
+      "issueDate": "2026-06-26",
+      "currency": "USD",
+      "amount": "2250.00",
+      "amountRSD": "232135.43",
+      "rate": "103.1713",
+      "rateDate": "2026-06-26",
+      "kind": "service",
+      "clientId": "osprey",
+      "clientCountry": "US"
+    },
+    {
+      "number": "2026-008",
+      "issueDate": "2026-07-06",
+      "currency": "EUR",
+      "amount": "2000.00",
+      "amountRSD": "234725.60",
+      "rate": "117.3628",
+      "rateDate": "2026-07-06",
+      "kind": "service",
+      "clientId": "kestrel",
+      "clientCountry": "DE"
+    },
+    {
+      "number": "2026-009",
+      "issueDate": "2026-08-20",
+      "currency": "RSD",
+      "amount": "165000.00",
+      "amountRSD": "165000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-010",
+      "issueDate": "2026-08-26",
+      "currency": "RSD",
+      "amount": "195000.00",
+      "amountRSD": "195000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    },
+    {
+      "number": "2026-011",
+      "issueDate": "2026-09-23",
+      "currency": "EUR",
+      "amount": "3100.00",
+      "amountRSD": "364019.05",
+      "rate": "117.4255",
+      "rateDate": "2026-09-23",
+      "kind": "service",
+      "clientId": "kestrel",
+      "clientCountry": "DE"
+    },
+    {
+      "number": "2026-012",
+      "issueDate": "2026-10-26",
+      "currency": "EUR",
+      "amount": "1300.00",
+      "amountRSD": "152747.40",
+      "rate": "117.498",
+      "rateDate": "2026-10-26",
+      "kind": "service",
+      "clientId": "kestrel",
+      "clientCountry": "DE"
+    },
+    {
+      "number": "2025-066",
+      "issueDate": "2025-12-22",
+      "currency": "RSD",
+      "amount": "172000.00",
+      "amountRSD": "172000.00",
+      "kind": "service",
+      "clientId": "gavran",
+      "clientCountry": "RS"
+    }
+  ],
+  "payments": [
+    {
+      "rowRef": "S1-1",
+      "date": "2026-01-15",
+      "amount": "172000.00",
+      "direction": "PRILIV",
+      "invoice": "2025-066"
+    },
+    {
+      "rowRef": "S1-2",
+      "date": "2026-02-09",
+      "amount": "352114.80",
+      "direction": "PRILIV",
+      "invoice": "2026-002"
+    },
+    {
+      "rowRef": "S1-3",
+      "date": "2026-02-10",
+      "amount": "500.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-4",
+      "date": "2026-02-16",
+      "amount": "900.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-5",
+      "date": "2026-03-09",
+      "amount": "154000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-003"
+    },
+    {
+      "rowRef": "S1-6",
+      "date": "2026-03-30",
+      "amount": "310000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-004"
+    },
+    {
+      "rowRef": "S1-7",
+      "date": "2026-04-06",
+      "amount": "300383.16",
+      "direction": "PRILIV",
+      "invoice": "2026-001"
+    },
+    {
+      "rowRef": "S1-8",
+      "date": "2026-04-20",
+      "amount": "2000.00",
+      "direction": "ODLIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-9",
+      "date": "2026-05-19",
+      "amount": "234796.00",
+      "direction": "PRILIV",
+      "invoice": "2026-005"
+    },
+    {
+      "rowRef": "S1-10",
+      "date": "2026-05-22",
+      "amount": "243000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-006"
+    },
+    {
+      "rowRef": "S1-11",
+      "date": "2026-07-13",
+      "amount": "234727.60",
+      "direction": "PRILIV",
+      "invoice": "2026-008"
+    },
+    {
+      "rowRef": "S1-12",
+      "date": "2026-07-17",
+      "amount": "230871.60",
+      "direction": "PRILIV",
+      "invoice": "2026-007"
+    },
+    {
+      "rowRef": "S1-13",
+      "date": "2026-08-13",
+      "amount": "88000.00",
+      "direction": "PRILIV",
+      "invoice": null
+    },
+    {
+      "rowRef": "S1-14",
+      "date": "2026-08-31",
+      "amount": "165000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-009"
+    },
+    {
+      "rowRef": "S1-15",
+      "date": "2026-09-17",
+      "amount": "195000.00",
+      "direction": "PRILIV",
+      "invoice": "2026-010"
+    },
+    {
+      "rowRef": "S1-16",
+      "date": "2026-09-28",
+      "amount": "364247.83",
+      "direction": "PRILIV",
+      "invoice": "2026-011"
+    },
+    {
+      "rowRef": "S1-17",
+      "date": "2026-11-12",
+      "amount": "152921.86",
+      "direction": "PRILIV",
+      "invoice": "2026-012"
+    },
+    {
+      "rowRef": "S1-18",
+      "date": "2026-11-20",
+      "amount": "500.00",
+      "direction": "ODLIV",
+      "invoice": null
+    }
+  ],
+  "draft": {
+    "amountRSD": "358811.76",
+    "rate": "117.6432"
+  },
+  "totals": {
+    "limit6m": {
+      "committed": "2938853.23",
+      "withDraft": "3297664.99",
+      "band": "green"
+    },
+    "vat8m": {
+      "committed": "1591232.7",
+      "withDraft": "1591232.7"
+    },
+    "bookYearTotal": "3110097.14"
+  },
+  "criterion6": {
+    "kestrel": {
+      "share": "0.489209",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    },
+    "osprey": {
+      "share": "0.153696",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    },
+    "gavran": {
+      "share": "0.357095",
+      "met": false,
+      "window": {
+        "from": "2025-12-01",
+        "to": "2026-11-30"
+      }
+    }
+  },
+  "crossing": null
+}

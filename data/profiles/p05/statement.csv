@@ -1,0 +1,16 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje
+2026-01-19,2026-01-19,Uplata po fakturi 2026-001,Osprey Labs Inc.,2026-001,459094.09,RSD,PRILIV,459094.09
+2026-01-19,2026-01-19,Provizija banke,Banka,,1700.00,RSD,ODLIV,457394.09
+2026-02-23,2026-02-23,Uplata po fakturi 2026-002,Heron Systems GmbH,2026-002,270066.00,RSD,PRILIV,727460.09
+2026-03-04,2026-03-04,Provizija banke,Banka,,1400.00,RSD,ODLIV,726060.09
+2026-04-01,2026-04-01,Uplata po fakturi 2026-004,Osprey Labs Inc.,2026-004,436340.78,RSD,PRILIV,1162400.87
+2026-04-13,2026-04-13,Uplata po fakturi 2026-005,Bor Studio d.o.o.,2026-005,975000.00,RSD,PRILIV,2137400.87
+2026-06-05,2026-06-05,Uplata po fakturi 2026-006,Heron Systems GmbH,2026-006,316914.93,RSD,PRILIV,2454315.80
+2026-07-06,2026-07-06,Uplata po fakturi 2026-007,Bor Studio d.o.o.,2026-007,598000.00,RSD,PRILIV,3052315.80
+2026-08-13,2026-08-13,Prenos sopstvenih sredstava sa deviznog računa,Vuk Testović PR,,30000.00,RSD,PRILIV,3082315.80
+2026-08-27,2026-08-27,Uplata po fakturi 2026-008,Heron Systems GmbH,2026-008,469546.00,RSD,PRILIV,3551861.80
+2026-09-21,2026-09-21,Provizija banke,Banka,,500.00,RSD,ODLIV,3551361.80
+2026-09-23,2026-09-23,Uplata po fakturi 2026-009,Heron Systems GmbH,2026-009,311177.58,RSD,PRILIV,3862539.38
+2026-11-09,2026-11-09,Uplata po fakturi 2026-010,Heron Systems GmbH,2026-010,588115.00,RSD,PRILIV,4450654.38
+2026-11-23,2026-11-23,Provizija banke,Banka,,1100.00,RSD,ODLIV,4449554.38

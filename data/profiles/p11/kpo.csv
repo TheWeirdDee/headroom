@@ -1,0 +1,14 @@
+# SYNTHETIC SAMPLE DATA. Not a real bank or taxpayer. Format is synthetic, not a real bank export.
+Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti
+1,2026-01-05,"Faktura 2026-001, Hrast Sistemi d.o.o.",212000.00,0.00,212000.00
+2,2026-01-13,"Faktura 2026-002, Hrast Sistemi d.o.o.",232000.00,0.00,232000.00
+3,2026-02-19,"Faktura 2026-003, Osprey Labs Inc.",0.00,293743.01,293743.01
+4,2026-03-25,"Faktura 2026-004, Linden Works B.V.",0.00,234882.80,234882.80
+5,2026-04-27,"Faktura 2026-005, Osprey Labs Inc.",0.00,270315.09,270315.09
+6,2026-05-22,"Faktura 2026-006, Linden Works B.V.",0.00,199603.63,199603.63
+7,2026-05-22,"Faktura 2026-006, Linden Works B.V.",0.00,199603.63,199603.63
+8,2026-06-15,"Faktura 2026-007, Linden Works B.V.",0.00,352152.00,352152.00
+9,2026-07-03,"Faktura 2026-008, Linden Works B.V.",0.00,281676.48,281676.48
+10,2026-08-10,"Faktura 2026-010, Hrast Sistemi d.o.o.",0.00,180000.00,180000.00
+11,2026-09-03,"Faktura 2026-011, Linden Works B.V.",0.00,240568.53,240568.53
+12,2026-10-13,"Faktura 2026-012, Linden Works B.V.",0.00,152592.05,152592.05
