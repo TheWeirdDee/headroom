@@ -225,6 +225,8 @@ export function checkFidelity(f: Figure, ctx: SourceContext): FidelityCheck {
         excerpt: `${cf.field}: ${cf.value}`,
         excerptSha256: '',
         allowed: ['met', 'not_met', 'unknown'],
+        meanings:
+          'met: the field shows that what the criterion describes is true for this client; not_met: the field shows it is not true (for example "No" to the thing the criterion describes); unknown: the field does not say.',
       },
     };
   }

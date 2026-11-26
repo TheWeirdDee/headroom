@@ -84,6 +84,30 @@ describe('review regressions (full runs)', () => {
     expect(run.rt.state.verified(`payment:${ref}:class`)).toBeDefined();
   }, 60_000);
 
+  it('a contested contract criterion is read again with the checker note, then verified', async () => {
+    const fake = fakeModel();
+    const seen: string[] = [];
+    let disputed = '';
+    const backend: ModelBackend = {
+      async infer(req) {
+        seen.push(`${req.agentId}|${req.user}`);
+        if (!disputed && req.agentId === 'verifier' && req.loopInputKey.startsWith('fidelity:criterion:')) {
+          disputed = req.loopInputKey;
+          const text = JSON.stringify({ normalizedValue: 'unknown', supports: false, reason: 'misread' });
+          return { items: [{ type: 'message', text }], tokensIn: 1, tokensOut: 1 };
+        }
+        return fake.infer(req);
+      },
+    };
+    const { run } = await runT01(backend);
+    expect(disputed).not.toBe('');
+    const key = /fidelity:(criterion:[^:]+:\d)/.exec(disputed)?.[1] ?? '';
+    expect(seen.some((s) => s.startsWith('independence-checker|') && s.includes('<checker_feedback>'))).toBe(
+      true,
+    );
+    expect(run.rt.state.verified(key)).toBeDefined();
+  }, 60_000);
+
   it('changing only the draft date converts it again at that date’s NBS rate', async () => {
     const { run } = await runT01();
     expect(run.rt.state.verified('draft:amountRSD')?.value).toMatchObject({ amount: '588216.00' });
