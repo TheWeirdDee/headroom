@@ -117,6 +117,13 @@ export interface MozaikAdapterOptions {
   sleep?: (ms: number) => Promise<void>;
 }
 
+/** The provider's own words for a failed request, on one line and short (HTTP status and message). */
+function retryReason(error: unknown): string {
+  const text = error instanceof Error ? error.message : String(error);
+  const message = /"message"\s*:\s*"([^"]{0,160})/.exec(text)?.[1] ?? text;
+  return message.replace(/\s+/g, ' ').slice(0, 160);
+}
+
 export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
   disableMozaikCloud();
   filterCloudWarnings();
@@ -234,6 +241,15 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
             retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
             timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
             ...(opts.sleep ? { sleep: opts.sleep } : {}),
+            // Live waits are reported on stderr (agent, attempt, the provider's reason), never with keys.
+            ...(!opts.backend
+              ? {
+                  onRetry: (attempt: number, error: unknown) =>
+                    process.stderr.write(
+                      `Model request retry ${attempt} for ${rec.input.agentId}: ${retryReason(error)}\n`,
+                    ),
+                }
+              : {}),
             // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
             // waiting in the quota queue is never mistaken for a hung loop.
             ...(!opts.backend && pacerRpm() > 0
