@@ -25,7 +25,8 @@
     "dev": "node scripts/dev.mjs",
     "build:web": "npm --prefix web run build",
     "build": "npm run typecheck && npm run build:web",
-    "test:e2e": "npm run build:web && playwright test --trace off"
+    "test:e2e": "npm run build:web && playwright test --trace off",
+    "record-demo": "tsx scripts/record-demo.ts"
   },
   "dependencies": {
     "@fastify/multipart": "10.1.9",

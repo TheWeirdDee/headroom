@@ -218,6 +218,7 @@ export interface Snapshot {
   source: { kind: 'sample'; profileId: string } | { kind: 'upload'; uploadId: string };
   synthetic: boolean;
   startedAt: string;
+  recording: { recordedAt: string; models: { reader: string; verifier: string } } | null;
   status: 'running' | 'completed' | 'awaiting_user' | 'failed';
   lastEventId: number;
   config: { year: number; asOf: string };

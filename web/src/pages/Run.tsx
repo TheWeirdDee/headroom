@@ -71,7 +71,12 @@ export function Run() {
 
   return (
     <div>
-      <TopBand data={snap.synthetic ? 'sample' : 'user'} mode={snap.mode} rejected={totalRejections(view)} />
+      <TopBand
+        data={snap.synthetic ? 'sample' : 'user'}
+        mode={snap.mode}
+        recording={snap.recording}
+        rejected={totalRejections(view)}
+      />
       <div className="mx-auto max-w-[1440px] space-y-4 px-4 py-4">
         {view.replayMiss && (
           <div role="alert" className="rounded border border-danger/60 bg-danger/10 p-4">

@@ -1,20 +1,32 @@
-// The band on every app screen (PRD 15.1): disclaimer, data label, mode, and the Verifier's rejections.
+// The band on every app screen (PRD 15.1): disclaimer, data label, mode (with the recording's date and
+// models for a replay), and the Verifier's rejections.
 import { ShieldCheck } from 'lucide-react';
 import { useApp } from '../state/app.ts';
+import { formatDateSr } from '../format/money.ts';
+
+interface Recording {
+  recordedAt: string;
+  models: { reader: string; verifier: string };
+}
 
 export function TopBand({
   data,
   mode,
-  recordedAt,
+  recording,
   rejected,
 }: {
   data?: 'sample' | 'user';
   mode?: 'live' | 'replay';
-  recordedAt?: string;
+  recording?: Recording | null;
   rejected?: number;
 }) {
   const health = useApp((s) => s.health);
-  const offline = mode === 'replay' || health?.mode === 'offline';
+  const offline = mode === 'replay' || (mode === undefined && health?.mode === 'offline');
+  const modeText = offline
+    ? recording
+      ? `OFFLINE (recorded run, ${formatDateSr(recording.recordedAt.slice(0, 10))}, ${recording.models.reader})`
+      : 'OFFLINE'
+    : `LIVE${health?.models ? ` (${health.models.reader})` : ''}`;
   return (
     <div
       className="border-b border-line bg-panel text-xs text-muted"
@@ -26,11 +38,7 @@ export function TopBand({
         {data && (
           <span>Data: {data === 'sample' ? 'SAMPLE (SYNTHETIC)' : 'YOUR FILES (processed locally)'}</span>
         )}
-        <span>
-          Mode:{' '}
-          {offline ? `OFFLINE${recordedAt ? ` (recorded run, ${recordedAt.slice(0, 10)})` : ''}` : 'LIVE'}
-          {health?.models && !offline ? ` (${health.models.reader})` : ''}
-        </span>
+        <span>Mode: {modeText}</span>
         {rejected !== undefined && (
           <span className="inline-flex items-center gap-1">
             <ShieldCheck size={12} aria-hidden /> Rejected by Verifier:{' '}

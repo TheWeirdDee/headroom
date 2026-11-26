@@ -50,13 +50,22 @@ export interface RunRecord {
   startedAt: string;
   summary?: RunSummary;
   card?: CardVM;
+  /** For replays: when the recording was made and with which models (shown in the top band). */
+  recording?: { recordedAt: string; models: { reader: string; verifier: string } };
   agents: Map<string, unknown>;
   headers: Map<string, string[]>;
 }
 
 export interface ReplaySource {
   /** Recorded model responses and Kurs bodies for a sample profile, if a recording exists. */
-  backend(profileId: string): { backend: ModelBackend; kurs: Fetcher; recordedAt: string } | undefined;
+  backend(profileId: string):
+    | {
+        backend: ModelBackend;
+        kurs: Fetcher;
+        recordedAt: string;
+        models: { reader: string; verifier: string };
+      }
+    | undefined;
 }
 
 export interface RunManagerOptions {
@@ -202,6 +211,7 @@ export class RunManager {
         : { kind: 'upload', uploadId: req.uploadId ?? '' },
       mode: req.mode,
       startedAt: new Date(now()).toISOString(),
+      ...(replay ? { recording: { recordedAt: replay.recordedAt, models: replay.models } } : {}),
       agents: new Map(),
       headers,
       run: undefined as unknown as Run,
@@ -258,6 +268,7 @@ export class RunManager {
       source: r.source,
       synthetic: r.inputs.synthetic,
       startedAt: r.startedAt,
+      recording: r.recording ?? null,
       status: r.summary ? r.summary.status : 'running',
       lastEventId: r.hub.lastId,
       config: s.config,
