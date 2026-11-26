@@ -22,6 +22,8 @@ const env: AppEnv = {
   hasModelKey: true,
   models: { reader: 'fake-model (test)', verifier: 'fake-model (test)' },
   root: '.',
+  keyEnv: 'GEMINI_API_KEY',
+  maxRpm: 0,
 };
 const rules = loadRules();
 const runs = new RunManager({

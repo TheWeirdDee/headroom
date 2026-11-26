@@ -21,11 +21,11 @@ Headroom answers those three questions from their own bank statement, invoices a
 ```
 git clone <repo> && cd headroom
 npm run setup
-cp .env.example .env         # add your model key (ANTHROPIC_API_KEY)
+cp .env.example .env         # add your Gemini key (GEMINI_API_KEY, free at aistudio.google.com)
 npm start                    # open http://localhost:4317
 ```
 
-Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns if asked, fill in the invoice you are about to send, and click **Check this invoice**. Requirements: Node 22 and a model key. Tested on Linux (Ubuntu); macOS and Windows are not yet tested.
+Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns if asked, fill in the invoice you are about to send, and click **Check this invoice**. Requirements: Node 22 and a model key. Gemini is the default because it has a free tier; requests are paced (10 a minute by default, `HEADROOM_MAX_RPM`) so the free quota slows a run down instead of failing it. Claude, GPT and DeepSeek models work too (set `HEADROOM_MODEL_READER` / `HEADROOM_MODEL_VERIFIER` and that provider's key). Tested on Linux (Ubuntu); macOS and Windows are not yet tested.
 
 ## Try it without your files or a key
 
@@ -50,7 +50,7 @@ Or click **Try with sample data** on the landing page. Offline mode is real Moza
 ## Your data
 
 - Uploaded files stay on your machine, in `uploads/<id>/`. **Delete my files** on the intake page removes them.
-- In live mode, the extracted text of your invoices, statement rows and KPO rows is sent to the model provider (Anthropic) to be read. Nothing else leaves the machine: arithmetic, rules and totals run locally.
+- In live mode, the extracted text of your invoices, statement rows and KPO rows is sent to the model provider (Google Gemini by default) to be read. Nothing else leaves the machine: arithmetic, rules and totals run locally.
 - NBS middle rates come from the public Kurs API (`kurs.resenje.org`); only currency and date are sent.
 - Runs on your files are never recorded. Only bundled synthetic samples can be recorded for offline replay.
 

@@ -6,6 +6,7 @@ import { loadRules } from '../domain/rules/loader.ts';
 import { RunManager } from './run-manager.ts';
 import { UploadStore } from './uploads.ts';
 import { buildApp } from './app.ts';
+import { configurePacer } from '../runtime/pacer.ts';
 import { liveFetcher, type Fetcher } from '../integrations/kurs/client.ts';
 import { replaySource, sampleRecorder } from '../engine/recordings.ts';
 
@@ -14,6 +15,7 @@ const ROOT = join(import.meta.dirname, '..', '..');
 async function main(): Promise<void> {
   const env = loadEnv(ROOT);
   const rules = loadRules();
+  configurePacer(env.maxRpm);
   mkdirSync(join(ROOT, 'uploads'), { recursive: true });
   const offlineFetcher: Fetcher = async (url) => {
     throw new Error(`Offline mode makes no network requests (${url})`);
@@ -44,7 +46,7 @@ async function main(): Promise<void> {
   });
   await app.listen({ port: env.port, host: '127.0.0.1' });
   process.stdout.write(
-    `Headroom ${env.offline ? 'OFFLINE (recorded sample runs only)' : env.hasModelKey ? 'LIVE' : 'LIVE (no model key: sample runs offer the recorded version)'} on http://localhost:${env.port}\n`,
+    `Headroom ${env.offline ? 'OFFLINE (recorded sample runs only)' : env.hasModelKey ? `LIVE (${env.models.reader}${env.maxRpm ? `, at most ${env.maxRpm} requests a minute` : ''})` : `LIVE (no ${env.keyEnv}: sample runs offer the recorded version)`} on http://localhost:${env.port}\n`,
   );
 }
 

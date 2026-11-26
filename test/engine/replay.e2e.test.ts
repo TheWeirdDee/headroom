@@ -24,6 +24,8 @@ const env: AppEnv = {
   hasModelKey: true,
   models: { reader: 'fake-model (test)', verifier: 'fake-model (test)' },
   root: '.',
+  keyEnv: 'GEMINI_API_KEY',
+  maxRpm: 0,
 };
 const NOW = Date.parse('2026-11-26T09:00:00Z');
 

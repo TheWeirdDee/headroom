@@ -32,6 +32,7 @@ import { Mailbox } from '../mailbox.ts';
 import { unsourcedVeto } from '../veto.ts';
 import { installBoardMirror } from '../board-mirror.ts';
 import { DEFAULT_RETRY, withRetry } from '../loop.ts';
+import { acquire as paceRequest, pacerRpm } from '../pacer.ts';
 import type { HeadroomState } from '../state.ts';
 import {
   type EventFilter,
@@ -231,6 +232,17 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
             retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
             timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
             ...(opts.sleep ? { sleep: opts.sleep } : {}),
+            // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
+            // waiting in the quota queue is never mistaken for a hung loop.
+            ...(!opts.backend && pacerRpm() > 0
+              ? {
+                  before: async () => {
+                    await paceRequest(now);
+                    rec.timer?.refresh();
+                  },
+                  rateLimitRetries: 6,
+                }
+              : {}),
           },
         );
         const neutral = fromMozaikOutput(out);

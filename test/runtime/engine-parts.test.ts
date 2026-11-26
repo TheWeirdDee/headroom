@@ -65,6 +65,8 @@ describe('allowlist serializer', () => {
     );
     expect(() => serializeValue({ headers: { 'x-api-key': 'abc' } })).toThrow(SecretLeakError);
     expect(() => serializeValue({ text: 'ANTHROPIC_API_KEY=abc' })).toThrow(SecretLeakError);
+    expect(() => serializeValue({ text: `key ${'AIza'}${'x'.repeat(35)}` })).toThrow(SecretLeakError);
+    expect(() => serializeValue({ h: 'x-goog-api-key: abc' })).toThrow(SecretLeakError);
     expect(serializeValue({ text: 'Faktura 2026-041' })).toBe('{"text":"Faktura 2026-041"}');
   });
 });

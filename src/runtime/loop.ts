@@ -8,6 +8,10 @@ export interface RetryPolicy {
   backoffMs: number[];
   sleep?: (ms: number) => Promise<void>;
   onRetry?: (attempt: number, error: unknown) => void;
+  /** Runs before each attempt, outside its timeout (the request pacer's queue). */
+  before?: () => Promise<void>;
+  /** Extra attempts allowed for HTTP 429 only (rate limits), each waiting the provider's retry delay. */
+  rateLimitRetries?: number;
 }
 
 export const DEFAULT_RETRY: Omit<RetryPolicy, 'timeoutMs'> = { retries: 2, backoffMs: [1000, 4000] };
@@ -50,12 +54,43 @@ export function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 
 const realSleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
+export function isRateLimit(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false;
+  const status = (error as { status?: unknown; code?: unknown }).status ?? (error as { code?: unknown }).code;
+  return (
+    status === 429 || /RESOURCE_EXHAUSTED|\b429\b/.test(String((error as { message?: unknown }).message))
+  );
+}
+
+/** The provider's suggested wait ("retryDelay": "40s", "retry in 12.5s"), capped at 90 s. */
+export function retryAfterMs(error: unknown): number | undefined {
+  const text =
+    error instanceof Error ? error.message : typeof error === 'string' ? error : JSON.stringify(error);
+  const m =
+    /retryDelay"?\s*:\s*"?(\d+(?:\.\d+)?)s/i.exec(text ?? '') ??
+    /retry in (\d+(?:\.\d+)?)\s*s/i.exec(text ?? '');
+  if (!m?.[1]) return undefined;
+  const [whole = '0', frac = ''] = m[1].split('.');
+  const ms = Number.parseInt(whole, 10) * 1000 + Number.parseInt((frac + '000').slice(0, 3), 10);
+  return Math.min(90_000, ms + 250);
+}
+
 export async function withRetry<T>(fn: () => Promise<T>, policy: RetryPolicy): Promise<T> {
   const sleep = policy.sleep ?? realSleep;
+  let limited = 0;
   for (let attempt = 0; ; attempt++) {
     try {
+      await policy.before?.();
       return await withTimeout(fn(), policy.timeoutMs);
     } catch (error) {
+      if (isRateLimit(error) && limited < (policy.rateLimitRetries ?? 0)) {
+        // A rate limit is not a failed attempt: wait as long as the provider asks, then try again.
+        limited += 1;
+        attempt -= 1;
+        policy.onRetry?.(attempt + 1, error);
+        await sleep(retryAfterMs(error) ?? 30_000);
+        continue;
+      }
       if (attempt >= policy.retries || !isTransient(error)) throw error;
       policy.onRetry?.(attempt + 1, error);
       await sleep(policy.backoffMs[attempt] ?? policy.backoffMs[policy.backoffMs.length - 1] ?? 1000);

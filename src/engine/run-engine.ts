@@ -21,6 +21,7 @@ import type { RunConfig } from '../domain/types.ts';
 import type { RunInputs } from './inputs.ts';
 import type { HrEvent, HrRuntime, InferenceObserver, LoopMetric, ModelBackend } from '../runtime/types.ts';
 import type { KursClient } from '../integrations/kurs/client.ts';
+import { pacerRpm } from '../runtime/pacer.ts';
 
 export interface RunSummary {
   runId: string;
@@ -155,7 +156,8 @@ export function startRun(o: RunOptions): Run {
         quietMs: o.quietMs ?? 1500,
         now,
       },
-      o.runTimeoutMs ?? 300_000,
+      // A paced provider (free tier) is slow by design: allow an hour instead of five minutes.
+      o.runTimeoutMs ?? (o.backend || pacerRpm() === 0 ? 300_000 : 3_600_000),
     );
     const summary = summarize(result);
     latest = summary;

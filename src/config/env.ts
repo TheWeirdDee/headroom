@@ -3,12 +3,17 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { DEFAULT_MODELS } from './defaults.ts';
+import { DEFAULT_RPM, KEY_ENV, providerOf } from './providers.ts';
 
 export interface AppEnv {
   port: number;
   uploadMaxMb: number;
   offline: boolean;
   hasModelKey: boolean;
+  /** The variable the user should set, for messages (for example GEMINI_API_KEY). */
+  keyEnv: string;
+  /** Model requests per minute across all agents (0: no pacing). */
+  maxRpm: number;
   models: { reader: string; verifier: string };
   root: string;
 }
@@ -43,15 +48,28 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
     return Number.parseInt(raw, 10);
   };
   const offline = argv.includes('--offline');
+  const models = {
+    reader: process.env['HEADROOM_MODEL_READER']?.trim() || DEFAULT_MODELS.reader,
+    verifier: process.env['HEADROOM_MODEL_VERIFIER']?.trim() || DEFAULT_MODELS.verifier,
+  };
+  const providers = [...new Set([providerOf(models.reader), providerOf(models.verifier)])];
+  for (const [name, model] of Object.entries(models))
+    if (!providerOf(model))
+      throw new EnvError(`HEADROOM_MODEL_${name.toUpperCase()}: unknown model "${model}"`);
+  const value = (n: string): string => (process.env[n] ?? '').trim();
+  // Mozaik's Gemini endpoint reads GEMINI_API_KEY; accept Google's other name too.
+  if (!value('GEMINI_API_KEY') && value('GOOGLE_API_KEY'))
+    process.env['GEMINI_API_KEY'] = value('GOOGLE_API_KEY');
+  const has = providers.every((p) => p !== undefined && KEY_ENV[p].some((n) => value(n) !== ''));
+  const main = providerOf(models.reader) ?? 'google';
   return {
     port: int('PORT', 4317),
     uploadMaxMb: int('UPLOAD_MAX_MB', 10),
     offline,
-    hasModelKey: !offline && (process.env['ANTHROPIC_API_KEY'] ?? '').trim() !== '',
-    models: {
-      reader: process.env['HEADROOM_MODEL_READER']?.trim() || DEFAULT_MODELS.reader,
-      verifier: process.env['HEADROOM_MODEL_VERIFIER']?.trim() || DEFAULT_MODELS.verifier,
-    },
+    hasModelKey: !offline && has,
+    keyEnv: KEY_ENV[main][0] ?? 'GEMINI_API_KEY',
+    maxRpm: int('HEADROOM_MAX_RPM', Math.max(...providers.map((p) => (p ? DEFAULT_RPM[p] : 0)))),
+    models,
     root,
   };
 }

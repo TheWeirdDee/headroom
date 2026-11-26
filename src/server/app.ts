@@ -90,6 +90,8 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     mozaikVersion: MOZAIK_PACKAGE.version,
     mode: d.env.offline ? 'offline' : 'live',
     hasModelKey: d.env.hasModelKey,
+    keyEnv: d.env.keyEnv,
+    maxRpm: d.env.maxRpm,
     models: d.env.models,
     disclaimer: DISCLAIMER,
     authorityBoundary: AUTHORITY_BOUNDARY,

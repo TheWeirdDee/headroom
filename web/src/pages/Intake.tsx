@@ -223,7 +223,7 @@ export function Intake() {
         <div role="note" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
           {health?.mode === 'offline'
             ? 'This server runs offline: it can only replay the bundled samples. Start it with npm start and a model key to check your own files.'
-            : 'A model key is required to read your files. Add one to .env and restart.'}
+            : `A model key is required to read your files. Add ${health?.keyEnv ?? 'GEMINI_API_KEY'} to .env and restart.`}
         </div>
       )}
 

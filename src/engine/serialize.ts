@@ -5,7 +5,9 @@ import type { HrEvent } from '../runtime/types.ts';
 
 const EVENT_FIELDS = ['eventId', 'runId', 'type', 'producerId', 'occurredAt', 'payload'] as const;
 
-export const SECRET_PATTERN = /sk-[A-Za-z0-9_-]{8,}|api[_-]?key\s*[:=]|authorization\s*:|x-api-key/i;
+// Anthropic/OpenAI style (sk-...), Google API keys (AIza...), and key-looking assignments or headers.
+export const SECRET_PATTERN =
+  /sk-[A-Za-z0-9_-]{8,}|AIza[0-9A-Za-z_-]{30,}|api[_-]?key\s*[:=]|authorization\s*:|x-(goog-)?api-key/i;
 
 export class SecretLeakError extends Error {
   constructor(where: string) {

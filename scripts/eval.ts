@@ -21,6 +21,7 @@ import { detectCsv } from '../src/inputs/detect.ts';
 import { parseStatement, parseKpoBook } from '../src/inputs/tables.ts';
 import { fakeModel } from '../test/helpers/fake-model.ts';
 import type { HrEvent } from '../src/runtime/types.ts';
+import { configurePacer } from '../src/runtime/pacer.ts';
 
 const ROOT = join(import.meta.dirname, '..');
 const arg = (name: string): string | undefined => {
@@ -30,6 +31,7 @@ const arg = (name: string): string | undefined => {
 const mode = (arg('mode') ?? 'live') as 'live' | 'fake';
 const runsPer = Number.parseInt(arg('runs') ?? (mode === 'fake' ? '1' : '3'), 10);
 const env = loadEnv(ROOT, ['node', 'eval']);
+configurePacer(mode === 'live' ? env.maxRpm : 0);
 const profilesDir = join(ROOT, 'data', 'profiles');
 const profiles = (arg('profiles')?.split(',') ?? readdirSync(profilesDir))
   .filter((p) => /^[cp]\d\d$/.test(p))
@@ -37,7 +39,7 @@ const profiles = (arg('profiles')?.split(',') ?? readdirSync(profilesDir))
 
 if (mode === 'live') {
   if (!env.hasModelKey) {
-    process.stderr.write('Live evaluation needs ANTHROPIC_API_KEY in .env.\n');
+    process.stderr.write(`Live evaluation needs ${env.keyEnv} in .env.\n`);
     process.exit(1);
   }
   if (!process.argv.includes('--confirm-spend')) {
@@ -106,7 +108,7 @@ async function runOnce(profileId: string, n: number): Promise<RunResult> {
     ...(mode === 'fake' ? { backend: fakeModel() } : {}),
     sinks: [(e) => events.push(e)],
     now,
-    runTimeoutMs: 600_000,
+    runTimeoutMs: 3_600_000,
   });
   const summary = await run.done;
   const state = run.rt.state;

@@ -297,6 +297,8 @@ export interface Health {
   mozaikVersion: string;
   mode: 'live' | 'offline';
   hasModelKey: boolean;
+  keyEnv: string;
+  maxRpm: number;
   models: { reader: string; verifier: string };
   disclaimer: string;
   authorityBoundary: string;

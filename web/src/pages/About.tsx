@@ -65,8 +65,8 @@ export function About() {
       <section className="space-y-2">
         <h2 className="text-xl font-semibold">What is sent to the model provider</h2>
         <p className="text-sm">
-          In live mode, the text of your invoices, statement rows and KPO rows is sent to Anthropic's API to
-          be read
+          In live mode, the text of your invoices, statement rows and KPO rows is sent to the model provider's
+          API (Google Gemini by default) to be read
           {health ? ` (${health.models.reader} for reading, ${health.models.verifier} for checks)` : ''}.
           Arithmetic, rules and totals never leave this machine. Files you upload stay in a local folder until
           you delete them. In offline mode nothing is sent: recorded model answers are played back.

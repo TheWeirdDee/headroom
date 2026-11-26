@@ -28,6 +28,8 @@ function env(over: Partial<AppEnv> = {}): AppEnv {
     hasModelKey: true,
     models: { reader: 'claude-sonnet-5-5', verifier: 'claude-sonnet-5-5' },
     root: '.',
+    keyEnv: 'GEMINI_API_KEY',
+    maxRpm: 0,
     ...over,
   };
 }
