@@ -279,6 +279,13 @@ describe('a sample run through the API (c01)', () => {
     expect(text).toContain('Correction log');
     const corr = await a.inject({ url: `/api/runs/${runId}/export/kpo_corrections.csv` });
     expect(corr.statusCode).toBe(200);
+    const kpo = (await a.inject({ url: `/api/runs/${runId}/kpo` })).json() as {
+      book: { rows: unknown[] };
+      corrections: Array<{ type: string }>;
+    };
+    expect(kpo.book.rows.length).toBeGreaterThan(0);
+    // Only discrepancies that change a book row belong in the correction log (E1, E8, E9 stay in the report).
+    for (const c of kpo.corrections) expect(['E2', 'E3', 'E4', 'E5', 'E6', 'E7']).toContain(c.type);
     const report = (await a.inject({ url: `/api/runs/${runId}/export/report.json` })).json() as {
       summary: unknown;
       discrepancies: unknown[];
@@ -448,6 +455,44 @@ describe('uploads: detect, map, details, run, delete', () => {
     expect((await a.inject({ url: '/api/uploads/u-000000000000' })).json()).toMatchObject({
       error: { code: 'UPLOAD_NOT_FOUND' },
     });
+    await a.close();
+  });
+
+  it('re-reads a CSV with the header line, separator and encoding the user chooses', async () => {
+    const { app: a } = await app();
+    const body = Buffer.from('Banka Probna\nDatum;Opis;Iznos\n05.01.2026;Uplata;120.000,00\n');
+    const f = multipart([{ name: 'izvod.csv', body }]);
+    const up = (
+      await a.inject({ method: 'POST', url: '/api/uploads', payload: f.payload, headers: f.headers })
+    ).json() as { uploadId: string };
+    const url = `/api/uploads/${up.uploadId}/preview`;
+    const res = await a.inject({
+      method: 'POST',
+      url,
+      payload: { file: 'izvod.csv', encoding: 'utf-8', delimiter: ';', headerRow: 2 },
+    });
+    expect(res.json()).toEqual({
+      header: ['Datum', 'Opis', 'Iznos'],
+      preview: [['05.01.2026', 'Uplata', '120.000,00']],
+    });
+    expect(
+      (
+        await a.inject({
+          method: 'POST',
+          url,
+          payload: { file: 'izvod.csv', encoding: 'utf-8', delimiter: ';', headerRow: 40 },
+        })
+      ).json(),
+    ).toMatchObject({ error: { code: 'BAD_MAPPING' } });
+    expect(
+      (
+        await a.inject({
+          method: 'POST',
+          url,
+          payload: { file: 'other.csv', encoding: 'utf-8', delimiter: ';', headerRow: 1 },
+        })
+      ).json(),
+    ).toMatchObject({ error: { code: 'BAD_MAPPING' } });
     await a.close();
   });
 });

@@ -9,6 +9,8 @@ import { detectCsv, detectKind, type CsvDetection, type FileKind } from '../inpu
 import {
   KpoMappingSchema,
   StatementMappingSchema,
+  decode,
+  parseTable,
   type KpoMapping,
   type StatementMapping,
 } from '../inputs/tables.ts';
@@ -56,6 +58,13 @@ export const DetailsSchema = z.object({
   draft: DraftSchema,
 });
 export type UploadDetails = z.infer<typeof DetailsSchema>;
+
+const PreviewSchema = z.object({
+  file: z.string(),
+  encoding: z.enum(['utf-8', 'windows-1250']),
+  delimiter: z.enum([',', ';', '\t']),
+  headerRow: z.number().int().min(1).max(50),
+});
 
 const ID_RE = /^u-[0-9a-f]{12}$/;
 
@@ -147,6 +156,26 @@ export class UploadStore {
     entry.mapping = parsed.data;
     entry.kind = parsed.data.kind;
     this.saveManifest(uploadId, current.files);
+  }
+
+  /** Re-read a CSV with the user's format choices (header line, separator, encoding) for the mapper. */
+  preview(uploadId: string, raw: unknown): { header: string[]; preview: string[][] } {
+    const parsed = PreviewSchema.safeParse(raw);
+    if (!parsed.success)
+      throw new UploadError('BAD_MAPPING', 'Preview options are not valid', parsed.error.issues);
+    const { file, encoding, delimiter, headerRow } = parsed.data;
+    const entry = this.get(uploadId).files.find((f) => f.name === file);
+    if (!entry?.detection) throw new UploadError('BAD_MAPPING', `No CSV named ${file} in this upload`);
+    const text = decode(readFileSync(join(this.dir(uploadId), entry.name)), encoding).text;
+    try {
+      const t = parseTable(text, delimiter, headerRow);
+      return { header: t.header, preview: t.rows.slice(0, 10).map((r) => r.cells) };
+    } catch (e) {
+      throw new UploadError(
+        'BAD_MAPPING',
+        e instanceof Error ? e.message : 'The file could not be read with these settings',
+      );
+    }
   }
 
   setDetails(uploadId: string, raw: unknown): void {

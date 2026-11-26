@@ -123,6 +123,10 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     return { ok: true };
   });
 
+  app.post<{ Params: { uploadId: string } }>('/api/uploads/:uploadId/preview', async (req) =>
+    d.uploads.preview(req.params.uploadId, req.body),
+  );
+
   app.post<{ Params: { uploadId: string } }>('/api/uploads/:uploadId/details', async (req) => {
     d.uploads.setDetails(req.params.uploadId, req.body);
     return { ok: true };
@@ -178,6 +182,8 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     '/api/runs/:runId/figures/:figureId',
     async (req) => d.runs.figure(req.params.runId, req.params.figureId),
   );
+
+  app.get<{ Params: { runId: string } }>('/api/runs/:runId/kpo', async (req) => d.runs.kpo(req.params.runId));
 
   app.get<{ Params: { runId: string }; Querystring: { locale?: string } }>(
     '/api/runs/:runId/export/kpo.csv',

@@ -40,6 +40,9 @@ export interface KpoExport {
   synthetic: boolean;
 }
 
+/** Discrepancies that change a row of the KPO book itself. E1, E8 and E9 do not; they stay in the report. */
+const KPO_CORRECTION_TYPES = new Set(['E2', 'E3', 'E4', 'E5', 'E6', 'E7']);
+
 export function buildKpoExport(state: HeadroomState, inputs: RunInputs, rules: RuleBook): KpoExport {
   const committed = state.verified(keys.total('limit6m', 'committed'));
   if (committed?.value.t !== 'money') throw new ExportError('NOT_READY', 'The 6M total is not verified yet.');
@@ -79,6 +82,7 @@ export function buildKpoExport(state: HeadroomState, inputs: RunInputs, rules: R
   ];
   const corrections: Correction[] = [];
   for (const d of state.discrepancies.values()) {
+    if (!KPO_CORRECTION_TYPES.has(d.type)) continue;
     if (d.status !== 'verified' || d.baseline !== 'book' || !d.subjectKey?.startsWith('invoice:')) continue;
     const invNo = d.subjectKey.slice('invoice:'.length);
     const kpoRows = d.sources.filter(

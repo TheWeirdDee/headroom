@@ -54,6 +54,14 @@ export function installBoardMirror(state: HeadroomState, publish: Publish): () =
           });
         } else if (e.status === 'needs_user') {
           publish('hr.figure.needs_user', e.by, { key: e.key, figureId: e.recordId, reason: e.reason });
+        } else if (e.status === 'superseded') {
+          // A status change to superseded (conflict lost, or the user chose another value) is announced like a
+          // replacement, so every view of the board drops the figure (found by the web reducer test).
+          publish('hr.figure.superseded', e.by, {
+            key: e.key,
+            oldId: e.recordId,
+            ...(e.reason !== undefined ? { reason: e.reason } : {}),
+          });
         }
         return;
     }
