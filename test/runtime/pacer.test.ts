@@ -1,7 +1,7 @@
 // Request pacing for free-tier providers and the rate-limit retry (provider's retry delay honoured).
 import { describe, expect, it, afterEach } from 'vitest';
 import { acquire, configurePacer, pacerWaiting } from '../../src/runtime/pacer.ts';
-import { retryAfterMs, withRetry, isRateLimit } from '../../src/runtime/loop.ts';
+import { retryAfterMs, withRetry, isRateLimit, DailyQuotaError } from '../../src/runtime/loop.ts';
 
 afterEach(() => configurePacer(0));
 
@@ -76,5 +76,50 @@ describe('rate-limit retry', () => {
         { timeoutMs: 1000, retries: 0, backoffMs: [1], rateLimitRetries: 2, sleep: async () => {} },
       ),
     ).rejects.toThrow('RESOURCE_EXHAUSTED');
+  });
+
+  it('waits out a busy model (503 high demand) like a rate limit', async () => {
+    const waits: number[] = [];
+    let calls = 0;
+    const busy = Object.assign(
+      new Error('{"error":{"code":503,"message":"This model is currently experiencing high demand."}}'),
+      { status: 503 },
+    );
+    const ok = await withRetry(
+      async () => {
+        calls += 1;
+        if (calls <= 2) throw busy;
+        return 'done';
+      },
+      {
+        timeoutMs: 1000,
+        retries: 0,
+        backoffMs: [1],
+        rateLimitRetries: 3,
+        sleep: async (ms) => void waits.push(ms),
+      },
+    );
+    expect(ok).toBe('done');
+    expect(waits).toEqual([20_000, 20_000]);
+  });
+
+  it('stops at once when the daily quota is used up', async () => {
+    let calls = 0;
+    const daily = Object.assign(
+      new Error(
+        'RESOURCE_EXHAUSTED "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier" "retryDelay": "42898s"',
+      ),
+      { status: 429 },
+    );
+    await expect(
+      withRetry(
+        async () => {
+          calls += 1;
+          throw daily;
+        },
+        { timeoutMs: 1000, retries: 2, backoffMs: [1], rateLimitRetries: 6, sleep: async () => {} },
+      ),
+    ).rejects.toBeInstanceOf(DailyQuotaError);
+    expect(calls).toBe(1);
   });
 });
