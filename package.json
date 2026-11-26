@@ -18,7 +18,9 @@
     "check:licenses": "node scripts/check-licenses.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate:data": "tsx scripts/generate-profiles.ts"
+    "generate:data": "tsx scripts/generate-profiles.ts",
+    "start": "tsx src/server/main.ts",
+    "start:offline": "tsx src/server/main.ts --offline"
   },
   "dependencies": {
     "@fastify/multipart": "10.1.9",

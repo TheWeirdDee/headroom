@@ -68,6 +68,7 @@ export function createMemoryRuntime(opts: MemoryAdapterOptions): HrRuntime {
         toolNames: input.tools.map((t) => t.name),
         structuredOutput: input.structuredOutput !== undefined,
       };
+      const t0 = now();
       const response = await withRetry(() => opts.backend.infer(request), {
         ...DEFAULT_RETRY,
         retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
@@ -76,7 +77,7 @@ export function createMemoryRuntime(opts: MemoryAdapterOptions): HrRuntime {
       });
       metric.tokensIn += response.tokensIn;
       metric.tokensOut += response.tokensOut;
-      opts.observer?.onResponse(request, response);
+      opts.observer?.onResponse(request, response, now() - t0);
       const call = response.items.find((i) => i.type === 'function_call');
       if (call && call.type === 'function_call') {
         const veto = unsourcedVeto(call.name, call.args);

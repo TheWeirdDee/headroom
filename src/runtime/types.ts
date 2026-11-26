@@ -114,7 +114,8 @@ export interface ModelBackend {
 }
 
 export interface InferenceObserver {
-  onResponse(request: HrInferenceRequest, response: HrInferenceResponse): void;
+  /** Called after every successful inference, with the wall time it took (for replay timing). */
+  onResponse(request: HrInferenceRequest, response: HrInferenceResponse, latencyMs: number): void;
 }
 
 export interface HrRuntime {
