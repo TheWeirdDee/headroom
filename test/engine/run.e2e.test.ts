@@ -92,7 +92,8 @@ describe('end-to-end run (t01, fake model)', () => {
   it('evaluates the independence test per client and asks the questions it cannot answer', () => {
     expect(v('criterion:kestrel:1')).toEqual({ t: 'tri', value: 'met' });
     expect(v('criterion:kestrel:8')).toEqual({ t: 'tri', value: 'unknown' });
-    expect(v('criterion:javor:6')).toEqual({ t: 'tri', value: 'met' });
+    // Coverage starts 2026-03 (first statement row): only the trailing window Dec-Nov is evaluated: 58%.
+    expect(v('criterion:javor:6')).toEqual({ t: 'tri', value: 'not_met' });
     expect(
       [...run.rt.state.questions.values()].filter((q) => q.askedBy === 'independence-checker'),
     ).toHaveLength(4);

@@ -14,6 +14,7 @@ import {
   type Tri,
 } from '../../domain/independence.ts';
 import { sha256 } from '../../util/hash.ts';
+import { coverageStart } from '../../engine/inputs.ts';
 import type { Client, Figure, Question, SourceRef } from '../../domain/types.ts';
 import type { HrEvent } from '../../runtime/types.ts';
 import type { Criterion } from '../../domain/rules/schema.ts';
@@ -72,6 +73,7 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
   const threshold = rules.decimalParam('R-INDEP-C6-WINDOWS', 'shareThreshold');
   const metThreshold = rules.intParam('R-INDEP', 'metThreshold');
   const exempt = inputs.profile.activityExemptFromIndependenceTest;
+  const coverage = coverageStart(inputs);
   let timer: NodeJS.Timeout | undefined;
 
   rt.join({ id: ID, name: 'IndependenceChecker', kind: 'agent' });
@@ -186,7 +188,7 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
         ['committed', base, state.config.asOf],
         ['withDraft', withDraft, inputs.draft.issueDate],
       ] as const) {
-        const r = maxShare(facts, client.id, state.config.year, through);
+        const r = maxShare(facts, client.id, state.config.year, through, coverage);
         const [firstInput, ...moreInputs] = r?.inputFigureIds ?? [];
         if (!r || !firstInput) continue;
         const key = keys.share12m(client.id, scope);
@@ -203,7 +205,7 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
           derivation: {
             ruleId: 'R-INDEP-C6-WINDOWS',
             inputs: r.inputFigureIds,
-            formula: `${r.clientIncome} / ${r.totalIncome} RSD from ${r.window.from} to ${r.window.to}, highest of ${r.windowsEvaluated} periods`,
+            formula: `${r.clientIncome} / ${r.totalIncome} RSD from ${r.window.from} to ${r.window.to}, highest of ${r.windowsEvaluated} periods${coverage ? `; your files cover from ${coverage}` : ''}`,
           },
           producedBy: ID,
           idempotencyKey: `${ID}/${key}/${r.share}/${r.inputFigureIds.join(',')}`,

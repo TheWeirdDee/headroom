@@ -17,6 +17,7 @@ import { computeTotals } from '../limit-keeper/compute.ts';
 import { figureValueEquals } from '../../runtime/state.ts';
 import type { Figure, FigureValue } from '../../domain/types.ts';
 import type { SourceContext } from './sources.ts';
+import { coverageStart } from '../../engine/inputs.ts';
 
 export type DerivationCheck =
   | { kind: 'ok' }
@@ -141,7 +142,7 @@ function expectedValue(f: Figure, ins: Figure[], ctx: SourceContext): FigureValu
         figureIds: [],
       });
     const through = p.scope === 'withDraft' ? ctx.inputs.draft.issueDate : cfg.asOf;
-    const r = maxShare(incomes, p.clientId, cfg.year, through);
+    const r = maxShare(incomes, p.clientId, cfg.year, through, coverageStart(ctx.inputs));
     return r ? { t: 'ratio', value: r.share, window: r.window } : undefined;
   }
   if (p?.kind === 'criterion' && p.n === 6) {
@@ -199,6 +200,7 @@ function expectedShareFraction(
     clientId,
     ctx.state.config.year,
     withDraft ? ctx.inputs.draft.issueDate : ctx.state.config.asOf,
+    coverageStart(ctx.inputs),
   );
 }
 

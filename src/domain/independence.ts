@@ -34,14 +34,26 @@ function endOfMonth(d: IsoDate): IsoDate {
   return toIso({ y, m, d: daysInMonth(y, m) });
 }
 
+function firstOfMonth(d: IsoDate): IsoDate {
+  const { y, m } = parseIso(d);
+  return toIso({ y, m, d: 1 });
+}
+
 /**
- * Windows evaluated for criterion 6: every 12-calendar-month window that starts or ends in the tax year
- * and has ended by the end of the `through` month. Windows reaching further into the future hold only
- * part of their income, so their share would be misleading (Headroom convention, stated on the card).
+ * Windows evaluated for criterion 6 (R-INDEP-C6-WINDOWS, R-INDEP-C6-HORIZON): every 12-calendar-month
+ * window that starts or ends in the tax year and has ended by the end of the `through` month, and either
+ * lies inside the period the inputs cover (from `coverageFrom`) or is the trailing window ending with the
+ * `through` month. Windows reaching into the future, or mostly before the data starts, hold only part of
+ * their income and would give a misleading share.
  */
-export function criterion6Windows(taxYear: number, through: IsoDate): DateWindow[] {
+export function criterion6Windows(taxYear: number, through: IsoDate, coverageFrom?: IsoDate): DateWindow[] {
   const limit = endOfMonth(through);
-  return twelveMonthWindowsForTaxYear(taxYear).filter((w) => compareIso(w.to, limit) <= 0);
+  const covered = coverageFrom ? firstOfMonth(coverageFrom) : undefined;
+  return twelveMonthWindowsForTaxYear(taxYear).filter(
+    (w) =>
+      compareIso(w.to, limit) <= 0 &&
+      (covered === undefined || compareIso(w.from, covered) >= 0 || w.to === limit),
+  );
 }
 
 /** Highest share of total income from `clientId` across the evaluated windows (ties: earliest window). */
@@ -50,9 +62,10 @@ export function maxShare(
   clientId: string,
   taxYear: number,
   through: IsoDate,
+  coverageFrom?: IsoDate,
 ): ShareResult | undefined {
   let best: ShareResult | undefined;
-  const windows = criterion6Windows(taxYear, through);
+  const windows = criterion6Windows(taxYear, through, coverageFrom);
   for (const w of windows) {
     const inW = incomes.filter((i) => isBetween(i.date, w.from, w.to));
     if (inW.length === 0) continue;

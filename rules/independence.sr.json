@@ -133,9 +133,9 @@
     {
       "id": "R-INDEP-C6-HORIZON",
       "status": "product",
-      "title": "Criterion 6 periods not yet complete",
-      "statement_sr": "Periodi od 12 meseci koji se završavaju posle meseca obračuna još nisu potpuni i ne ocenjuju se.",
-      "statement_en": "A 12-month period that ends after the month being checked (the as-of month, or the draft invoice month for the with-draft share) holds only part of its income, so Headroom does not evaluate it yet. Its share could still reach 70% later.",
+      "title": "Criterion 6 periods Headroom can evaluate",
+      "statement_sr": "Ocenjuju se periodi od 12 meseci koji su završeni do meseca obračuna i koje vaši fajlovi pokrivaju, kao i poslednjih 12 meseci zaključno sa mesecom obračuna.",
+      "statement_en": "Headroom evaluates the 12-month periods that have ended by the month being checked (the as-of month, or the draft invoice month for the with-draft share) and that your files cover, plus always the 12 months up to that month. A period reaching into the future, or mostly before your files start, holds only part of its income, so its share would mislead. Another period may still reach 70% later.",
       "sources": [
         {
           "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
@@ -145,7 +145,9 @@
         }
       ],
       "params": {
-        "evaluateWindowsEndingBy": "end_of_month_of_as_of_or_draft"
+        "evaluateWindowsEndingBy": "end_of_month_of_as_of_or_draft",
+        "coverageFrom": "earliest statement or KPO date",
+        "alwaysIncludeTrailingWindow": true
       },
       "note": "A Headroom convention, not a legal rule."
     },

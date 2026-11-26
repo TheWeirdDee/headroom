@@ -25,3 +25,12 @@ export function statementRowRef(
   const fileIdx = statements.findIndex((s) => s.file === row.file);
   return `S${fileIdx + 1}-${row.rowIndex}`;
 }
+
+/** The earliest date the code-parsed inputs (statement rows, KPO rows) cover, for criterion 6 windows. */
+export function coverageStart(inputs: Pick<RunInputs, 'statements' | 'kpo'>): string | undefined {
+  const dates = [
+    ...inputs.statements.flatMap((s) => s.rows.map((r) => r.date)),
+    ...(inputs.kpo?.rows.map((r) => r.entryDate) ?? []),
+  ];
+  return dates.length === 0 ? undefined : dates.reduce((a, b) => (a < b ? a : b));
+}
