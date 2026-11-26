@@ -12,6 +12,15 @@ import { replaySource, sampleRecorder } from '../engine/recordings.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..');
 
+function replaySpeed(argv: string[]): number {
+  const i = argv.indexOf('--speed');
+  if (i < 0) return 1;
+  const raw = argv[i + 1] ?? '';
+  if (!/^\d+(\.\d+)?$/.test(raw) || Number.parseFloat(raw) <= 0)
+    throw new Error('--speed needs a positive number, for example --speed 2');
+  return Number.parseFloat(raw);
+}
+
 async function main(): Promise<void> {
   const env = loadEnv(ROOT);
   const rules = loadRules();
@@ -25,7 +34,8 @@ async function main(): Promise<void> {
     rules,
     profilesDir: join(ROOT, 'data', 'profiles'),
     liveFetcher: env.offline ? offlineFetcher : liveFetcher,
-    replay: replaySource(join(ROOT, 'runs')),
+    // --speed N plays recorded runs N times faster (PRD 14.6); the default keeps the recorded timing.
+    replay: replaySource(join(ROOT, 'runs'), { speed: replaySpeed(process.argv) }),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),
   });
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };
