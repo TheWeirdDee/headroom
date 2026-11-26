@@ -418,4 +418,12 @@ const md = [
 ].join('\n');
 writeFileSync(join(outDir, 'RESULTS.md'), md);
 process.stdout.write(`\nWrote ${join(outDir, 'results.json')} and RESULTS.md\n`);
+// CI assertions: a figure shown without a source is a blocker, and in fake mode (where the model cannot
+// misread) a wrong verified figure is a pipeline bug.
+if (unsourced > 0 || (mode === 'fake' && wrongVerified > 0)) {
+  process.stderr.write(
+    `FAILED: ${unsourced} unsourced figure(s), ${wrongVerified} wrong verified figure(s)\n`,
+  );
+  process.exit(1);
+}
 process.exit(0);

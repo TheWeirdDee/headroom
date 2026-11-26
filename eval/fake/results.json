@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T12:49:26.486Z",
+  "generatedAt": "2026-11-26T12:51:57.414Z",
   "conditions": {
     "date": "2026-11-26",
     "mode": "fake",
@@ -75,7 +75,7 @@
     },
     {
       "name": "Median loops running at once (peak)",
-      "value": "14"
+      "value": "15"
     },
     {
       "name": "Median loop time / wall time",
