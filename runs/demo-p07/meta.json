@@ -1,0 +1,13 @@
+{
+  "profileId": "p07",
+  "runId": "run-9049b96f5c05",
+  "recordedAt": "2026-11-26T20:34:44.203Z",
+  "models": {
+    "reader": "gemini-3.5-flash-lite",
+    "verifier": "gemini-3.5-flash-lite"
+  },
+  "mozaik": {
+    "name": "@mozaik-ai/core",
+    "version": "6.0.0"
+  }
+}
