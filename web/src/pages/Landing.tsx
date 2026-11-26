@@ -6,6 +6,7 @@ import { useApp } from '../state/app.ts';
 import { useStartSample } from '../state/useStartSample.ts';
 import type { Rule } from '../api/types.ts';
 import { ruleRsd } from '../format/money.ts';
+import { ShowcaseCard, ShowcaseProof, useShowcaseRun } from '../components/Showcase.tsx';
 
 const SHOWCASE = 'p07';
 const TAGLINE =
@@ -46,50 +47,62 @@ export function Landing() {
   const offline = health?.mode === 'offline';
   const limit = ruleRsd(rules, 'R-LIMIT-6M', 'limitRSD') ?? '6M';
   const vat = ruleRsd(rules, 'R-VAT-8M', 'thresholdRSD') ?? '8M';
+  const showcase = useShowcaseRun();
 
   return (
     <div className="mx-auto max-w-[1100px] px-4">
-      <section className="py-16 md:py-24" aria-labelledby="hero">
-        <p className="text-sm font-medium tracking-wide text-accent uppercase">
-          For Serbian flat-rate entrepreneurs (paušalci)
-        </p>
-        <h1
-          id="hero"
-          className="mt-3 max-w-3xl text-4xl leading-tight font-semibold tracking-tight md:text-5xl"
-        >
-          {TAGLINE}
-        </h1>
-        <p className="mt-5 max-w-2xl text-lg text-muted">
-          Headroom reads your bank statement, invoices and KPO book, finds what does not match, and shows the
-          room left under the {limit} limit, the {vat} VAT threshold and the independence test. Each figure
-          links to the line it came from.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Link
-            to="/check"
-            className="inline-flex items-center gap-2 rounded bg-accent px-5 py-3 font-medium text-ink hover:bg-accent/90"
-          >
-            <FileCheck2 size={18} aria-hidden /> Check my invoice
-          </Link>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => start(SHOWCASE)}
-            className="inline-flex items-center gap-2 rounded border border-line px-5 py-3 font-medium hover:border-muted disabled:opacity-60"
-          >
-            <PlayCircle size={18} aria-hidden /> {busy ? 'Starting...' : 'Try with sample data'}
-          </button>
-        </div>
-        <p className="mt-3 text-sm text-muted">
-          {offline || needsKey
-            ? 'The sample runs as a recorded run: real agents on Mozaik, with the model answers played back. No key needed.'
-            : 'The sample is synthetic: an invented entrepreneur with planted mistakes.'}
-        </p>
-        {error && (
-          <p role="alert" className="mt-3 text-sm text-danger">
-            {error}
+      <section
+        className="grid gap-10 py-16 md:py-24 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start"
+        aria-labelledby="hero"
+      >
+        <div>
+          <p className="text-sm font-medium tracking-wide text-accent uppercase">
+            For Serbian flat-rate entrepreneurs (paušalci)
           </p>
+          <h1
+            id="hero"
+            className="mt-3 max-w-3xl text-4xl leading-tight font-semibold tracking-tight md:text-5xl"
+          >
+            {TAGLINE}
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg text-muted">
+            Headroom reads your bank statement, invoices and KPO book, finds what does not match, and shows
+            the room left under the {limit} limit, the {vat} VAT threshold and the independence test. Each
+            figure links to the line it came from.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              to="/check"
+              className="inline-flex items-center gap-2 rounded bg-accent px-5 py-3 font-medium text-ink hover:bg-accent/90"
+            >
+              <FileCheck2 size={18} aria-hidden /> Check my invoice
+            </Link>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => start(SHOWCASE)}
+              className="inline-flex items-center gap-2 rounded border border-line px-5 py-3 font-medium hover:border-muted disabled:opacity-60"
+            >
+              <PlayCircle size={18} aria-hidden /> {busy ? 'Starting...' : 'Try with sample data'}
+            </button>
+          </div>
+          <p className="mt-3 text-sm text-muted">
+            {offline || needsKey
+              ? 'The sample runs as a recorded run: real agents on Mozaik, with the model answers played back. No key needed.'
+              : 'The sample is synthetic: an invented entrepreneur with planted mistakes.'}
+          </p>
+          {error && (
+            <p role="alert" className="mt-3 text-sm text-danger">
+              {error}
+            </p>
+          )}
+        </div>
+        {showcase.runId && (
+          <aside aria-label="Headroom card from the recorded sample run">
+            <ShowcaseCard runId={showcase.runId} />
+          </aside>
         )}
+        {showcase.error && <p className="text-sm text-muted">{showcase.error}</p>}
       </section>
 
       <section className="grid gap-8 border-t border-line py-12 md:grid-cols-2" aria-labelledby="problem">
@@ -145,6 +158,21 @@ export function Landing() {
           Rules, sources and limits <ArrowRight size={14} aria-hidden />
         </Link>
       </section>
+
+      {showcase.runId && (
+        <section className="border-t border-line py-12" aria-labelledby="proof-title">
+          <h2 id="proof-title" className="text-xl font-semibold">
+            See the proof
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            What the agents found in the sample profile, each with the figure behind it. Open one to follow it
+            back to the statement row, invoice line or NBS rate it came from.
+          </p>
+          <div className="mt-6">
+            <ShowcaseProof runId={showcase.runId} />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

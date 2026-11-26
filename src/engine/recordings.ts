@@ -144,12 +144,14 @@ export function loadRecording(
 export function replaySource(
   runsDir: string,
   opts: { speed?: number; preserveTiming?: boolean } = {},
-): { backend(profileId: string): LoadedRecording | undefined } {
+): {
+  backend(profileId: string, override?: { preserveTiming?: boolean }): LoadedRecording | undefined;
+} {
   return {
-    backend(profileId) {
+    backend(profileId, override) {
       const dir = join(runsDir, `demo-${profileId}`);
       if (!existsSync(join(dir, 'meta.json')) || !existsSync(join(dir, 'responses.jsonl'))) return undefined;
-      return loadRecording(dir, opts);
+      return loadRecording(dir, { ...opts, ...override });
     },
   };
 }

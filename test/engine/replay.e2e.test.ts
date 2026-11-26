@@ -120,6 +120,20 @@ describe('replay', () => {
     expect(board(s)).toBe(board(recorded));
   }, 60_000);
 
+  it('serves one shared showcase replay of the recording for the landing page', async () => {
+    const m = manager(runsDir, 'replay');
+    const [a, b] = await Promise.all([m.showcase('p07'), m.showcase('p07')]);
+    expect(a).toBeDefined();
+    expect(b).toBe(a);
+    expect(await m.showcase('p01')).toBeUndefined();
+    let s = m.snapshot(a ?? '') as unknown as Snap;
+    for (let i = 0; i < 300 && s.status === 'running'; i++) {
+      await new Promise((r) => setTimeout(r, 50));
+      s = m.snapshot(a ?? '') as unknown as Snap;
+    }
+    expect(board(s)).toBe(board(recorded));
+  }, 60_000);
+
   it('fails loudly with REPLAY_MISS when a recorded response is missing', async () => {
     const file = join(runsDir, 'demo-p07', 'responses.jsonl');
     const lines = readFileSync(file, 'utf8').split('\n').filter(Boolean);

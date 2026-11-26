@@ -58,7 +58,10 @@ export interface RunRecord {
 
 export interface ReplaySource {
   /** Recorded model responses and Kurs bodies for a sample profile, if a recording exists. */
-  backend(profileId: string):
+  backend(
+    profileId: string,
+    override?: { preserveTiming?: boolean },
+  ):
     | {
         backend: ModelBackend;
         kurs: Fetcher;
@@ -104,6 +107,7 @@ function csvHeader(dir: string, file: string): string[] {
 
 export class RunManager {
   private readonly runs = new Map<string, RunRecord>();
+  private showcaseRun: Promise<string> | undefined;
 
   constructor(private readonly o: RunManagerOptions) {}
 
@@ -139,12 +143,29 @@ export class RunManager {
       });
   }
 
+  /**
+   * The landing page's showcase: one replay of the committed recording of `profileId`, without delays,
+   * started on first request and shared by every visitor. Undefined when there is no recording.
+   */
+  async showcase(profileId: string): Promise<string | undefined> {
+    if (!this.o.replay?.backend(profileId)) return undefined;
+    this.showcaseRun ??= this.start({ profileId, mode: 'replay', fast: true });
+    try {
+      return await this.showcaseRun;
+    } catch (e) {
+      this.showcaseRun = undefined;
+      throw e;
+    }
+  }
+
   async start(req: {
     profileId?: string;
     uploadDir?: string;
     uploadId?: string;
     draft?: Draft;
     mode: 'live' | 'replay';
+    /** Replay without the recorded delays (the landing page's showcase). */
+    fast?: boolean;
   }): Promise<string> {
     const { env } = this.o;
     const isSample = req.profileId !== undefined;
@@ -186,7 +207,10 @@ export class RunManager {
     if (req.draft) inputs.draft = req.draft;
 
     const runId = `run-${randomUUID().replace(/-/g, '').slice(0, 12)}`;
-    const replay = req.mode === 'replay' && req.profileId ? this.o.replay?.backend(req.profileId) : undefined;
+    const replay =
+      req.mode === 'replay' && req.profileId
+        ? this.o.replay?.backend(req.profileId, req.fast ? { preserveTiming: false } : undefined)
+        : undefined;
     if (req.mode === 'replay' && !replay)
       throw new RunError('REPLAY_NOT_AVAILABLE', 'This sample profile has no recording.');
     const recorder =

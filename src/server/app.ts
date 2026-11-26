@@ -223,6 +223,13 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
       .send(d.runs.report(req.params.runId)),
   );
 
+  // The landing page's hero card and proof excerpt come from a replay of the committed demo recording.
+  app.get('/api/showcase', async (_req, reply) => {
+    const runId = await d.runs.showcase('p07');
+    if (!runId) return sendError(reply, 404, 'NO_RECORDING', 'No recorded sample run yet.');
+    return { runId };
+  });
+
   app.get('/api/evidence', async (_req, reply) => {
     if (!existsSync(d.evidenceFile))
       return sendError(reply, 404, 'NO_EVIDENCE', 'No evaluation results yet. Run npm run eval.');
