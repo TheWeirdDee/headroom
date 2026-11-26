@@ -6,7 +6,9 @@ Before a Serbian paušalac sends an invoice, Headroom shows how much room is lef
 
 Built for the JigJoy Black Friday AI Hackathon (track: Agents in Finance) on Mozaik (`@mozaik-ai/core` 6.0.0).
 
-> Demo GIF: recorded from the offline replay of `runs/demo-p07` once that recording is made with a real model (`npm run record-demo`). Until then, run the app (below) to see it.
+![The run screen replaying the recorded sample: seven agent lanes, the Figure Board filling with verified figures, the timeline of overlapping loops, and the headroom card turning red when the StatementReader finds a payment with no invoice](docs/demo.gif)
+
+The offline replay of `runs/demo-p07` (a real-model run, shown at 32 times its recorded speed): the readers work at once, the Verifier checks each figure, and the card shows that a 240,000 RSD payment with no invoice takes the total over the 6M line.
 
 ## Who it is for, and the moment
 
@@ -33,7 +35,11 @@ Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns
 npm run start:offline        # bundled sample, recorded model outputs, no key, no network
 ```
 
-Or click **Try with sample data** on the landing page. Offline mode is real Mozaik execution with recorded model outputs, not a video. If a recorded run asks for anything that was not recorded, it stops with `REPLAY_MISS` instead of inventing an answer.
+Or click **Try with sample data** on the landing page. Offline mode is real Mozaik execution with recorded model outputs, not a video. If a recorded run asks for anything that was not recorded, it stops with `REPLAY_MISS` instead of inventing an answer. `npm run start:offline -- --speed 4` plays it four times faster.
+
+The recording in `runs/demo-p07` was made on 26 Nov 2026 with `gemini-3.5-flash-lite` as both reader and verifier model, on Mozaik 6.0.0 (`runs/demo-p07/meta.json`, `summary.json`). In that run: 65 loops, none failed; 83 model requests; 215 figures verified and 0 shown without a source; 23 conflicts between agents, all settled; all five errors planted in the sample (E1, E2, E3, E5, E9) found; the 6M and 8M totals equal to the sample's ground truth. Two figures were contested by code checks (an invoice amount cited without its currency) and verified after the reader read the invoice again. Replaying it five times gives the same board each time. We use `gemini-3.5-flash-lite` for the recording because `gemini-3.5-flash`, the default, was answering "high demand" at the time.
+
+It took three recordings. The first missed E1: the Verifier's model rejected correct judgements as too literal ("Uplata za konsultacije", a payment for consultations, was not accepted as a client payment; "Nemačka" was not accepted as Germany), and a reader did not re-read a contested row, so the payment never reached the E1 check. The second found all five but left one contract criterion contested for the same reason. The fixes (the Verifier gets the same category meanings as the reader; every reader re-reads a contested figure at most twice, then the question goes to you) are in the git history next to the recordings.
 
 ## What you will see
 
@@ -69,7 +75,7 @@ Concurrency carries the product. Three readers, the Verifier, the RateClerk and 
 
 ## Proof it is concurrent
 
-From the evaluation in fake mode (deterministic test model, 14 profiles): a median peak of 13 loops running at the same time, 63 loops for the showcase profile `p07`. The run screen draws every loop as a bar on a timeline. Live-model medians for loop overlap and wall time are published once the live evaluation has run.
+In the real-model recording of `p07` (`runs/demo-p07/summary.json`): 65 loops, at most 15 running at the same time, 4,993 s of loop time inside 483 s of wall time (10.3 loops' worth of work in flight on average). Most of that wall time is the request pacer: the free Gemini tier allows few requests a minute, so loops wait their turn, and that waiting counts as loop time. In fake mode (deterministic test model, 14 profiles) the median peak is 14.5 loops at once. The run screen draws every loop as a bar on a timeline. Live-model medians over all profiles are published once the live evaluation has run.
 
 ## Every number has a source
 
@@ -90,8 +96,8 @@ Every figure carries `SourceRef`s: a document page and line range with the excer
 | Figures shown without a source                                 | 0                                                                                               | 0      |                                                                                           |
 | Runs with 6M and 8M totals (with the draft) equal to the truth | 14 / 14                                                                                         |        |                                                                                           |
 | Profiles with identical headroom across runs                   | 14 / 14                                                                                         |        |                                                                                           |
-| Median loops running at once (peak)                            | 14                                                                                              |        |                                                                                           |
-| Median loop time / wall time                                   | 0.19                                                                                            |        | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
+| Median loops running at once (peak)                            | 14.5                                                                                            |        |                                                                                           |
+| Median loop time / wall time                                   | 0.15                                                                                            |        | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
 | Median wall time per run                                       | 1.6 s                                                                                           |        |                                                                                           |
 | Median tokens per run (in / out)                               | 19000 / 4582                                                                                    |        |                                                                                           |
 | Verifier contests by reason (all runs)                         | UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0 |        |                                                                                           |

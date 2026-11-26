@@ -5,6 +5,8 @@ import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import type { Band, CardVM, Crossing, Discrepancy, MoneyVM } from '../api/types.ts';
 import { formatRsd, formatDateSr } from '../format/money.ts';
 
+const SEVERITY: Band[] = ['green', 'amber', 'red', 'crossed'];
+
 const BAND: Record<Band, { label: string; cls: string; bar: string; Icon: typeof CircleCheck }> = {
   green: { label: 'Room left', cls: 'text-accent', bar: 'bg-accent', Icon: CircleCheck },
   amber: { label: 'Getting close', cls: 'text-amber', bar: 'bg-amber', Icon: Info },
@@ -148,8 +150,12 @@ export function HeadroomCard({
     );
   const l = card.limit6m;
   const v = card.vat8m;
-  const crossing = crossings[crossings.length - 1];
-  const crossingD = crossing ? discrepancies[crossing.discrepancyId] : undefined;
+  // Every finding that flips the band is shown (latest report per finding), the most severe first: a
+  // payment that pushes the total over the line must not be hidden by a later, smaller crossing.
+  const shown = [...new Map(crossings.map((c) => [c.discrepancyId, c])).values()].sort(
+    (a, b) => SEVERITY.indexOf(b.bandAfter) - SEVERITY.indexOf(a.bandAfter),
+  );
+  const over = shown.some((c) => c.bandAfter === 'crossed');
   return (
     <section className="space-y-4 rounded border border-line bg-panel p-5" aria-label="Headroom">
       <div className="flex items-baseline justify-between gap-2">
@@ -208,19 +214,26 @@ export function HeadroomCard({
         )}
       </div>
 
-      {crossing && (
-        <div role="status" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
-          <p className="flex items-center gap-1 font-medium text-amber">
+      {shown.length > 0 && (
+        <div
+          role="status"
+          className={`rounded border p-3 text-sm ${over ? 'border-danger/60 bg-danger/10' : 'border-amber/50 bg-amber/10'}`}
+        >
+          <p className={`flex items-center gap-1 font-medium ${over ? 'text-danger' : 'text-amber'}`}>
             <TriangleAlert size={14} aria-hidden /> A correction changes the band
           </p>
-          <p className="mt-1">
-            {crossingD?.title ?? crossing.discrepancyType} moves the total by{' '}
-            <span className="num font-medium">{formatRsd(crossing.deltaRSD)}</span>, from{' '}
-            {BAND[crossing.bandBefore].label.toLowerCase()} to {BAND[crossing.bandAfter].label.toLowerCase()}
-            {crossing.baseline === 'book'
-              ? ', measured from your own book.'
-              : ', measured from the corrected figures.'}
-          </p>
+          <ul className="mt-1 space-y-1">
+            {shown.map((c) => (
+              <li key={c.discrepancyId}>
+                {discrepancies[c.discrepancyId]?.title ?? c.discrepancyType} moves the total by{' '}
+                <span className="num font-medium">{formatRsd(c.deltaRSD)}</span>, from{' '}
+                {BAND[c.bandBefore].label.toLowerCase()} to {BAND[c.bandAfter].label.toLowerCase()}
+                {c.baseline === 'book'
+                  ? ', measured from your own book.'
+                  : ', measured from the corrected figures.'}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
