@@ -59,6 +59,31 @@ describe('review regressions (full runs)', () => {
     ).toHaveLength(0);
   }, 60_000);
 
+  it('a contested payment class is read again with the checker note, then verified', async () => {
+    const fake = fakeModel();
+    const seen: string[] = [];
+    let disputed = '';
+    const backend: ModelBackend = {
+      async infer(req) {
+        seen.push(`${req.agentId}|${req.user}`);
+        // The first fidelity check of a payment class answers "not supported" (a too-literal checker).
+        if (!disputed && req.agentId === 'verifier' && req.user.includes('kind of incoming bank payment')) {
+          disputed = req.loopInputKey;
+          const text = JSON.stringify({ normalizedValue: '', supports: false, reason: 'not stated' });
+          return { items: [{ type: 'message', text }], tokensIn: 1, tokensOut: 1 };
+        }
+        return fake.infer(req);
+      },
+    };
+    const { run } = await runT01(backend);
+    expect(disputed).not.toBe('');
+    const ref = /fidelity:payment:([^:]+):class/.exec(disputed)?.[1] ?? '';
+    expect(seen.some((s) => s.startsWith('statement-reader|') && s.includes('<checker_feedback>'))).toBe(
+      true,
+    );
+    expect(run.rt.state.verified(`payment:${ref}:class`)).toBeDefined();
+  }, 60_000);
+
   it('changing only the draft date converts it again at that date’s NBS rate', async () => {
     const { run } = await runT01();
     expect(run.rt.state.verified('draft:amountRSD')?.value).toMatchObject({ amount: '588216.00' });

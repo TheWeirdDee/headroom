@@ -18,6 +18,8 @@ export interface ModelQuestion {
   excerpt: string;
   excerptSha256: string;
   allowed: string[]; // the normalised answers a model may give
+  /** What each allowed value means, in the words the producing agent was given (same definitions). */
+  meanings?: string;
 }
 
 export type FidelityCheck =
@@ -101,6 +103,8 @@ export function checkFidelity(f: Figure, ctx: SourceContext): FidelityCheck {
                 excerpt: row.rawLine,
                 excerptSha256: st.rawLineSha256,
                 allowed: ['client_payment', 'own_transfer', 'refund', 'fee', 'other'],
+                meanings:
+                  'client_payment: a client paying for work or goods; own_transfer: the entrepreneur moving their own money (another own account, a currency exchange); refund; fee: bank fees or interest; other.',
               },
             }
           : fail('class is not text');
@@ -165,6 +169,8 @@ export function checkFidelity(f: Figure, ctx: SourceContext): FidelityCheck {
                 excerpt: ex,
                 excerptSha256: doc.excerptSha256,
                 allowed: [],
+                meanings:
+                  'The address may name the country in any language (for example Serbian "Nemačka" is DE, "Srbija" is RS) or only show a city or postcode format; give the code of the country it shows.',
               },
             }
           : fail('country is not text');

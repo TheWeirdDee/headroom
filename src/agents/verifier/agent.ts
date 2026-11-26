@@ -63,6 +63,7 @@ export function registerVerifier(deps: AgentDeps): void {
       `Claim is about: ${q.field}`,
       `Claimed value: ${q.claimed}`,
       ...(q.allowed.length ? [`Allowed values: ${q.allowed.join(', ')}`] : []),
+      ...(q.meanings ? [`Meaning: ${q.meanings}`] : []),
       '<source>',
       fenceSafe(q.excerpt),
       '</source>',
