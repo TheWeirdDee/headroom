@@ -53,7 +53,7 @@ export function MappingDialog({
   onSaved: () => void;
 }) {
   const det = file.detection;
-  const [st, setSt] = useState(() => (det ? initial(det, file.mapping) : undefined));
+  const [st, setSt] = useState(() => (det ? initial(det, file.mapping ?? det.guess) : undefined));
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [table, setTable] = useState(() => ({ header: det?.header ?? [], preview: det?.preview ?? [] }));

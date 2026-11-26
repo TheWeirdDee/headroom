@@ -24,6 +24,8 @@ export interface CsvDetection {
   header: string[];
   preview: string[][]; // first 10 data rows
   mapping?: StatementMapping | KpoMapping; // complete guess, when every required column was found
+  /** A guess that still needs the user: a statement without a currency column needs the account currency. */
+  guess?: StatementMapping;
 }
 
 /** First line (1-based) within the first 15 whose cells look like a statement or KPO header. */
@@ -83,19 +85,18 @@ export function detectCsv(bytes: Buffer, forcedKind?: 'statement' | 'kpo'): CsvD
     );
     const dateFormat = guessDateFormat(col(stmt.date));
     if (!dateFormat) return { kind, ...base };
-    return {
-      kind,
-      ...base,
-      mapping: {
-        kind: 'statement',
-        encoding,
-        delimiter,
-        headerRow,
-        decimal: guessDecimal(amountSamples),
-        dateFormat,
-        columns: stmt,
-      },
+    const guess: StatementMapping = {
+      kind: 'statement',
+      encoding,
+      delimiter,
+      headerRow,
+      decimal: guessDecimal(amountSamples),
+      dateFormat,
+      columns: stmt,
     };
+    // Without a currency column the account currency cannot be guessed: the mapper asks for it, otherwise
+    // every row would be refused at run time.
+    return stmt.currency === undefined ? { kind, ...base, guess } : { kind, ...base, mapping: guess };
   }
   if (kind === 'kpo' && kpo) {
     const amountSamples = [...col(kpo.products), ...col(kpo.services), ...col(kpo.total)].filter(

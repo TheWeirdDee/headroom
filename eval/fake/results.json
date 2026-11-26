@@ -1,0 +1,174 @@
+{
+  "generatedAt": "2026-11-26T12:49:26.486Z",
+  "conditions": {
+    "date": "2026-11-26",
+    "mode": "fake",
+    "models": {
+      "reader": "fake-model (test)",
+      "verifier": "fake-model (test)"
+    },
+    "mozaikVersion": "6.0.0",
+    "runsPerProfile": 1,
+    "profiles": [
+      "c01",
+      "c02",
+      "p01",
+      "p02",
+      "p03",
+      "p04",
+      "p05",
+      "p06",
+      "p07",
+      "p08",
+      "p09",
+      "p10",
+      "p11",
+      "p12"
+    ],
+    "seed": "headroom-2026-11-26"
+  },
+  "metrics": [
+    {
+      "name": "Planted errors detected",
+      "value": "40 / 40 (100.0%)",
+      "note": "on 14 synthetic profiles we designed"
+    },
+    {
+      "name": "False discrepancies on clean profiles",
+      "value": "0 in 2 runs",
+      "target": "0",
+      "passed": true
+    },
+    {
+      "name": "Findings that were not planted (all profiles)",
+      "value": "0"
+    },
+    {
+      "name": "Verified invoice facts equal to the truth",
+      "value": "459 / 459 (100.0%)",
+      "note": "issue date, amount in RSD and kind of every invoice"
+    },
+    {
+      "name": "Wrong figures that got verified",
+      "value": "0",
+      "target": "0",
+      "passed": true,
+      "note": "the most important miss: listed below with figure ids"
+    },
+    {
+      "name": "Contested figures that were in fact wrong",
+      "value": "0 / 0"
+    },
+    {
+      "name": "Figures shown without a source",
+      "value": "0",
+      "target": "0",
+      "passed": true
+    },
+    {
+      "name": "Runs with 6M and 8M totals (with the draft) equal to the truth",
+      "value": "14 / 14"
+    },
+    {
+      "name": "Profiles with identical headroom across runs",
+      "value": "14 / 14"
+    },
+    {
+      "name": "Median loops running at once (peak)",
+      "value": "14"
+    },
+    {
+      "name": "Median loop time / wall time",
+      "value": "0.19",
+      "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
+    },
+    {
+      "name": "Median wall time per run",
+      "value": "1.6 s"
+    },
+    {
+      "name": "Median tokens per run (in / out)",
+      "value": "19000 / 4582"
+    },
+    {
+      "name": "Verifier contests by reason (all runs)",
+      "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0"
+    },
+    {
+      "name": "Planted book errors that surfaced as real agent conflicts",
+      "value": "17 / 17",
+      "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+    },
+    {
+      "name": "Messy CSV layouts parsed without errors",
+      "value": "7 / 7",
+      "note": "02-windows-1250.csv: account currency asked from the user"
+    }
+  ],
+  "perType": [
+    {
+      "type": "E1",
+      "planted": 5,
+      "found": 5,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E2",
+      "planted": 4,
+      "found": 4,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E3",
+      "planted": 5,
+      "found": 5,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E4",
+      "planted": 4,
+      "found": 4,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E5",
+      "planted": 5,
+      "found": 5,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E6",
+      "planted": 4,
+      "found": 4,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E7",
+      "planted": 4,
+      "found": 4,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E8",
+      "planted": 4,
+      "found": 4,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E9",
+      "planted": 5,
+      "found": 5,
+      "missed": 0,
+      "extra": 0
+    }
+  ],
+  "misses": []
+}

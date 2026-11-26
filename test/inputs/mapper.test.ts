@@ -16,8 +16,8 @@ const fx = (name: string): Buffer => readFileSync(join('test/fixtures/csv', name
 function statement(name: string, extra: Partial<StatementMapping> = {}) {
   const d = detectCsv(fx(name));
   expect(d.kind).toBe('statement');
-  expect(d.mapping).toBeDefined();
-  const m = { ...(d.mapping as StatementMapping), ...extra };
+  const m = { ...((d.mapping ?? d.guess) as StatementMapping), ...extra };
+  expect(m.kind).toBe('statement');
   return { d, ...parseStatement(name, fx(name), m) };
 }
 
@@ -39,6 +39,9 @@ describe('messy CSV layouts', () => {
   it('02: Windows-1250 with Serbian letters and a direction column (account currency chosen by the user)', () => {
     const { d, rows, errors } = statement('02-windows-1250.csv', { accountCurrency: 'RSD' });
     expect(d.encoding).toBe('windows-1250');
+    // No currency column: detection offers a guess but leaves the mapping to the user (account currency).
+    expect(d.mapping).toBeUndefined();
+    expect(d.guess?.columns).toMatchObject({ date: 0, amount: 3, direction: 4 });
     expect(errors).toEqual([]);
     expect(rows[0]?.counterparty).toBe('Šumadija Žito d.o.o.');
     expect(brief(rows)).toEqual([
@@ -110,7 +113,7 @@ describe('messy CSV layouts', () => {
     );
     const d = detectCsv(bad);
     const { rows, errors } = parseStatement('bad.csv', bad, {
-      ...(d.mapping as StatementMapping),
+      ...((d.mapping ?? d.guess) as StatementMapping),
       accountCurrency: 'RSD',
     });
     expect(rows).toHaveLength(1);

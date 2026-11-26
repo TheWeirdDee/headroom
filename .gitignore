@@ -7,6 +7,7 @@ web/dist/
 runs/*
 !runs/demo-p07/
 eval/raw/
+eval/**/raw/
 uploads/
 data/user/
 coverage/

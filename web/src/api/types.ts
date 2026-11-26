@@ -378,6 +378,7 @@ export interface CsvDetection {
   header: string[];
   preview: string[][];
   mapping?: StatementMapping | KpoMapping;
+  guess?: StatementMapping;
 }
 
 export interface UploadedFile {
