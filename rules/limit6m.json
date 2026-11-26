@@ -1,0 +1,109 @@
+{
+  "rules": [
+    {
+      "id": "R-LIMIT-6M",
+      "status": "verified",
+      "title": "Paušal turnover limit",
+      "statement_sr": "Pravo na paušalno oporezivanje ne može se priznati obvezniku čiji je ukupan promet u godini koja prethodi godini za koju se utvrđuje porez, odnosno čiji je planirani promet kada počinje obavljanje delatnosti - veći od 6.000.000 dinara.",
+      "statement_en": "Flat-rate taxation is not granted to a taxpayer whose total turnover in the year before the tax year (or planned turnover when starting) is above 6,000,000 dinars. When the limit is crossed during a year, the tax office orders business books from mid-year or from the next year (Art. 42). Headroom sums the calendar-year turnover of issued invoices against this limit.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 40 stav 2 tačka 4; Član 42 stav 4-5"
+        },
+        {
+          "url": "https://biznis.rs/vesti/srbija/limit-od-sest-miliona-dinara-koci-razvoj-preduzetnika/",
+          "title": "Biznis.rs, 7 Nov 2025: Limit od šest miliona dinara koči razvoj preduzetnika",
+          "accessed": "2026-11-26",
+          "quote": "Ključni limit za ostanak u paušalnom sistemu – godišnji promet od šest miliona dinara – nije se menjao još od 2013. godine"
+        }
+      ],
+      "params": {
+        "limitRSD": "6000000.00"
+      }
+    },
+    {
+      "id": "R-LIMIT-6M-BASIS",
+      "status": "assumption",
+      "title": "What counts toward the 6M limit",
+      "statement_sr": "Promet se računa po datumu izdavanja fakture u kalendarskoj godini; avansi bez fakture se ne računaju kao promet.",
+      "statement_en": "Turnover is counted by invoice issue date within the calendar year, summed across all activities. A payment received without an invoice is shown as a discrepancy, not as turnover.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 43 stav 4"
+        }
+      ],
+      "params": {
+        "dateBasis": "invoice_issue_date"
+      },
+      "note": "Not settled for advances received before an invoice. Minimax counts revenue by supply date (datum prometa)."
+    },
+    {
+      "id": "R-LIMIT-6M-CONSEQUENCE",
+      "status": "verified",
+      "title": "What crossing 6M means",
+      "statement_sr": "Ukoliko preduzetnik pređe limit od šest miliona dinara prelazi u režim vođenja poslovnih knjiga, od 1. jula ako je limit pređen u prvoj polovini godine, ili od 1. januara naredne godine ako se prekoračenje dogodi kasnije.",
+      "statement_en": "Crossing 6M means keeping full business books: from 1 July if crossed in the first half of the year, otherwise from 1 January of the next year.",
+      "sources": [
+        {
+          "url": "https://biznis.rs/vesti/srbija/limit-od-sest-miliona-dinara-koci-razvoj-preduzetnika/",
+          "title": "Biznis.rs, 7 Nov 2025: Limit od šest miliona dinara koči razvoj preduzetnika",
+          "accessed": "2026-11-26",
+          "quote": "To se dešava od 1. jula ako je limit pređen u prvoj polovini godine, ili od 1. januara naredne ako se prekoračenje dogodi kasnije."
+        },
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 42 stav 5"
+        }
+      ],
+      "params": {},
+      "note": "The Serbian statement is quoted from Biznis.rs reporting; the legal basis is ZPDG Art. 42(5)."
+    },
+    {
+      "id": "R-LIMIT-6M-INDEP-EXCLUSION",
+      "status": "verified",
+      "title": "Independence-test income is outside the 6M turnover",
+      "statement_sr": "U ukupni promet obveznika u smislu stava 2. tačka 4) ovog člana ne uračunava se prihod koji se oporezuje saglasno članu 85. stav 1. tačka 17) ovog zakona.",
+      "statement_en": "Income taxed as other income after a failed independence test is not counted in the 6M turnover. Headroom does not apply this automatically; it notes it when a client shows \"fails\".",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 40 stav 6"
+        }
+      ],
+      "params": {
+        "applyAutomatically": false
+      }
+    },
+    {
+      "id": "R-LIMIT-BANDS",
+      "status": "product",
+      "title": "Card bands",
+      "statement_sr": "Zelena ispod 80%, žuta od 80% do 90%, crvena od 90% do 100%, prekoračeno od 100%.",
+      "statement_en": "Green below 80%, amber from 80% to below 90%, red from 90% to below 100%, crossed at 100% or more. The 90% line mirrors the Minimax warning.",
+      "sources": [
+        {
+          "url": "https://rs-minimax.knowledgeowl.com/help/upozorenje-za-ulazak-pausalaca-u-knjigase-ili-za-ulazak-u-sistem-pdv-a",
+          "title": "Minimax help: Upozorenje za ulazak paušalaca u knjigaše ili za ulazak u sistem PDV-a (updated 23 Jul 2026), quoting Ministry of Finance opinion 011-00-00369/2017-04 of 9 Jun 2017",
+          "accessed": "2026-11-26",
+          "quote": "kada pređete 90% limita (5.400.000,00)"
+        }
+      ],
+      "params": {
+        "amberFrom": "0.80",
+        "redFrom": "0.90",
+        "crossedFrom": "1.00"
+      },
+      "note": "A Headroom display convention, not a legal rule."
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "rules": [
+    {
+      "id": "R-VAT-8M",
+      "status": "verified",
+      "title": "VAT registration threshold",
+      "statement_sr": "Malim obveznikom smatra se lice čiji ukupan promet dobara i usluga u prethodnih 12 meseci nije veći od 8.000.000 dinara.",
+      "statement_en": "A small taxpayer is one whose total turnover of goods and services in the previous 12 months is not above 8,000,000 dinars. \"Previous 12 months\" is 365 days (366 in a leap period) ending on the day of the turnover.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dodatu_vrednost.html",
+          "title": "Zakon o porezu na dodatu vrednost, consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 33 stav 1"
+        },
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-26",
+          "quote": "issued an invoice for the amount of RSD 200,000.00 on 18.08.2023 ... (in the specific example, the period from 19.08.2022. to 18.08.2023. is considered)"
+        },
+        {
+          "url": "https://rs-minimax.knowledgeowl.com/help/upozorenje-za-ulazak-pausalaca-u-knjigase-ili-za-ulazak-u-sistem-pdv-a",
+          "title": "Minimax help: Upozorenje za ulazak paušalaca u knjigaše ili za ulazak u sistem PDV-a (updated 23 Jul 2026), quoting Ministry of Finance opinion 011-00-00369/2017-04 of 9 Jun 2017",
+          "accessed": "2026-11-26",
+          "quote": "izraz „prethodnih 12 meseci“ podrazumeva vremenski period koji se određuje u danima – 365 dana, odnosno 366 dana ako je reč o prestupnoj godini"
+        }
+      ],
+      "params": {
+        "thresholdRSD": "8000000.00",
+        "window": "365d"
+      }
+    },
+    {
+      "id": "R-VAT-8M-SCOPE",
+      "status": "verified",
+      "title": "What counts toward 8M",
+      "statement_sr": "Ukupnim prometom smatra se promet dobara i usluga iz člana 28. stav 1. tač. 1) i 2) ovog zakona. Ako se promet usluga vrši poreskom obvezniku, mestom prometa usluga smatra se mesto u kojem primalac usluga ima sedište.",
+      "statement_en": "Counted: all goods, including goods exported abroad (exempt with the right to deduction), services to clients in Serbia, and services to foreign clients that are not businesses. Not counted: services to foreign business clients, because they are supplied where the client has its seat.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dodatu_vrednost.html",
+          "title": "Zakon o porezu na dodatu vrednost, consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 33 stav 6; Član 28 stav 1; Član 12 st. 4-5; Član 24 stav 1 tač. 2-3"
+        }
+      ],
+      "params": {
+        "includeProducts": true,
+        "includeServicesDomestic": true,
+        "includeServicesForeignNonBusiness": true,
+        "includeServicesForeignBusiness": false
+      },
+      "note": "Special place-of-supply cases (real estate, transport and others in Član 12 stav 6) are not modelled."
+    },
+    {
+      "id": "R-VAT-8M-REGISTRATION",
+      "status": "verified",
+      "title": "After crossing 8M",
+      "statement_sr": "Obveznik koji je u prethodnih 12 meseci ostvario ukupan promet veći od 8.000.000 dinara dužan je da u roku od pet dana od dana kada je ostvario taj promet, podnese evidencionu prijavu poreskom organu.",
+      "statement_en": "A taxpayer whose turnover in the previous 12 months goes above 8,000,000 dinars must file a VAT registration (evidenciona prijava) within five days of the day that turnover was reached.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dodatu_vrednost.html",
+          "title": "Zakon o porezu na dodatu vrednost, consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 38 stav 1"
+        },
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-26",
+          "quote": "The registration declaration is submitted within five days from the date of the turnover exceeding RSD 8,000.000"
+        }
+      ],
+      "params": {}
+    },
+    {
+      "id": "R-VAT-8M-BASIS",
+      "status": "assumption",
+      "title": "Date used for the 8M window",
+      "statement_sr": "Promet se raspoređuje po datumu izdavanja fakture.",
+      "statement_en": "Turnover is placed in the window by invoice issue date.",
+      "sources": [
+        {
+          "url": "https://rs-minimax.knowledgeowl.com/help/upozorenje-za-ulazak-pausalaca-u-knjigase-ili-za-ulazak-u-sistem-pdv-a",
+          "title": "Minimax help: Upozorenje za ulazak paušalaca u knjigaše ili za ulazak u sistem PDV-a (updated 23 Jul 2026), quoting Ministry of Finance opinion 011-00-00369/2017-04 of 9 Jun 2017",
+          "accessed": "2026-11-26",
+          "quote": "Program račune, odnosno prihode, gleda prema datumu prometa."
+        }
+      ],
+      "params": {
+        "dateBasis": "invoice_issue_date"
+      },
+      "note": "Minimax uses the supply date. Usually the same date on an invoice."
+    }
+  ]
+}

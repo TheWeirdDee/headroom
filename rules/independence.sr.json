@@ -1,0 +1,213 @@
+{
+  "rules": [
+    {
+      "id": "R-INDEP",
+      "status": "verified",
+      "title": "Independence test (test samostalnosti)",
+      "statement_sr": "17) naknada isplaćena preduzetniku ili preduzetniku paušalcu koji obavlja aktivnosti uz naknadu za istog nalogodavca ili za lice koje se u smislu zakona kojim se uređuje porez na dobit pravnih lica smatra povezanim licem s nalogodavcem (u daljem tekstu: povezano lice s nalogodavcem), i koji dodatno ispunjava najmanje pet od navedenih devet kriterijuma, ili je prema okolnostima slučaja prilikom otpočinjanja poslovne saradnje moglo da se zaključi da će ispuniti najmanje pet od devet navedenih kriterijuma koji su naknadno i ispunjeni.",
+      "statement_en": "Income from a client is treated as \"other income\" instead of self-employment income if, for that client, at least five of the nine criteria are met (or it could be concluded at the start of the work that five would be met and they later were). Evaluated per client.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 85 stav 1 tačka 17"
+        },
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-26",
+          "locator": "Independence test, p. 27-29"
+        }
+      ],
+      "params": {
+        "metThreshold": 5,
+        "criteriaCount": 9,
+        "criteria": [
+          {
+            "n": 1,
+            "text_sr": "nalogodavac ili povezano lice s nalogodavcem određuje radno vreme preduzetniku ili preduzetniku paušalcu ili su odmor i odsustva preduzetnika ili preduzetnika paušalca zavisni od odluke nalogodavca ili povezanog lica s nalogodavcem i naknada preduzetniku ili preduzetniku paušalcu se ne umanjuje srazmerno vremenu provedenom na odmoru",
+            "text_en": "The client (or a related party) sets your working hours, or your leave and absences depend on the client and your pay is not reduced for time on leave.",
+            "evalMode": "contract_field",
+            "contractField": "workingHoursSetByClient"
+          },
+          {
+            "n": 2,
+            "text_sr": "preduzetnik ili preduzetnik paušalac uobičajeno koristi prostorije koje obezbedi ili obavlja poslove u mestu koje odredi nalogodavac ili povezano lice s nalogodavcem za potrebe obavljanja poslova koji su mu povereni",
+            "text_en": "You usually work in premises the client provides, or in a place the client decides.",
+            "evalMode": "contract_field",
+            "contractField": "workplaceSetByClient"
+          },
+          {
+            "n": 3,
+            "text_sr": "nalogodavac ili povezano lice s nalogodavcem vrši ili organizuje stručno osposobljavanje ili usavršavanje preduzetnika ili preduzetnika paušalca",
+            "text_en": "The client provides or organises your professional training.",
+            "evalMode": "contract_field",
+            "contractField": "trainingByClient"
+          },
+          {
+            "n": 4,
+            "text_sr": "nalogodavac je angažovao preduzetnika ili preduzetnika paušalca nakon oglašavanja u sredstvima informisanja potrebe za angažovanjem fizičkih lica ili angažujući treće lice koje se uobičajeno bavi pronalaženjem lica podobnih za radno angažovanje, a čija je usluga rezultirala angažovanjem tog preduzetnika ili preduzetnika paušalca",
+            "text_en": "The client hired you after advertising for individuals, or through a recruiter whose service led to your engagement.",
+            "evalMode": "user_answer",
+            "question_en": "Did this client hire you after advertising for people, or through a recruiter?"
+          },
+          {
+            "n": 5,
+            "text_sr": "nalogodavac ili povezano lice s nalogodavcem obezbeđuje sopstveni osnovni alat, opremu ili druga osnovna materijalna ili nematerijalna sredstva potrebna za redovan rad preduzetnika ili preduzetnika paušalca ili finansira njihovu nabavku, osim specijalizovanih alata, opreme ili drugih specijalizovanih materijalnih ili nematerijalnih sredstava koji mogu biti neophodni u cilju izvršavanja specifičnog posla ili naloga, ili nalogodavac ili povezano lice s nalogodavcem uobičajeno rukovodi procesom rada preduzetnika ili preduzetnika paušalca, osim takvog rukovođenja koje podrazumeva davanje osnovnog naloga u vezi sa naručenim poslom i razumnu kontrolu rezultata rada ili nadzor nalogodavca, kao dobrog privrednika, nad obavljanjem posla koji je naručio",
+            "text_en": "The client provides or pays for your basic tools, equipment or other assets (except specialised ones needed for a specific job), or usually manages how you work beyond basic instructions and reasonable control of results.",
+            "evalMode": "contract_field",
+            "contractField": "equipmentOrManagementByClient"
+          },
+          {
+            "n": 6,
+            "text_sr": "najmanje 70% od ukupno ostvarenih prihoda preduzetnika ili preduzetnika paušalca u periodu od 12 meseci koji počinje ili se završava u odnosnoj poreskoj godini je ostvareno od jednog nalogodavca ili od povezanog lica s nalogodavcem",
+            "text_en": "At least 70% of your total income in a 12-month period that starts or ends in the tax year comes from one client (or its related party).",
+            "evalMode": "computed"
+          },
+          {
+            "n": 7,
+            "text_sr": "preduzetnik ili preduzetnik paušalac obavlja poslove iz delatnosti nalogodavca ili povezanog lica s nalogodavcem, a za tako obavljene poslove njegov ugovor o angažovanju ne sadrži klauzulu po kojoj preduzetnik ili preduzetnik paušalac snosi uobičajeni poslovni rizik za posao isporučen klijentu nalogodavca ili povezanog lica s nalogodavcem, ukoliko takav klijent postoji",
+            "text_en": "You do work in the client's line of business, and your contract has no clause making you bear the usual business risk for work delivered to the client's customer.",
+            "evalMode": "contract_field",
+            "contractField": "clientLineOfBusinessWithoutRiskClause"
+          },
+          {
+            "n": 8,
+            "text_sr": "ugovor o angažovanju preduzetnika ili preduzetnika paušalca sadrži delimičnu ili potpunu zabranu preduzetniku ili preduzetniku paušalcu da pruža usluge po osnovu ugovora sa drugim nalogodavcima, izuzev delimične zabrane koja obuhvata pružanje usluga ograničenom broju direktnih konkurenata nalogodavcu",
+            "text_en": "Your contract fully or partly forbids you from working for other clients (a partial ban covering a limited number of the client's direct competitors does not count).",
+            "evalMode": "contract_field",
+            "contractField": "nonCompeteClause"
+          },
+          {
+            "n": 9,
+            "text_sr": "preduzetnik ili preduzetnik paušalac obavlja aktivnosti uz naknadu za istog nalogodavca ili za povezano lice s nalogodavcem, neprekidno ili sa prekidima 130 ili više radnih dana u periodu od 12 meseci koji počinje ili se završava u odnosnoj poreskoj godini, pri čemu se obavljanjem aktivnosti u jednom radnom danu smatra obavljanje aktivnosti u bilo kom periodu tokom tog radnog dana između 00 i 24 časa",
+            "text_en": "You work for the same client on 130 or more working days (continuously or with breaks) in a 12-month period that starts or ends in the tax year; any activity during a day counts as a working day.",
+            "evalMode": "user_answer",
+            "question_en": "Did you work for this client on 130 or more working days in a 12-month period that starts or ends this year?"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R-INDEP-EXEMPT",
+      "status": "verified",
+      "title": "Who the test does not apply to",
+      "statement_sr": "Izuzetno od odredaba stava 1. tačka 17) ovog člana, naknada koju ostvari preduzetnik ili preduzetnik paušalac koji prema zakonu koji uređuje relevantnu delatnost koju on obavlja ne može da bude u radnom odnosu kod nalogodavca, ne smatra se drugim prihodom u smislu ovog člana.",
+      "statement_en": "The test does not apply to an entrepreneur who, under the law governing their activity, cannot be employed by the client (for example a lawyer).",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 85 stav 19"
+        },
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-26",
+          "quote": "If an entrepreneur or sole proprietor performs an activity based on which he cannot be employed with the principal (e.g., a lawyer), the income he earns from that principal is not considered as other income"
+        }
+      ],
+      "params": {}
+    },
+    {
+      "id": "R-INDEP-C6-WINDOWS",
+      "status": "verified",
+      "title": "Criterion 6 periods",
+      "statement_sr": "u periodu od 12 meseci koji počinje ili se završava u odnosnoj poreskoj godini",
+      "statement_en": "Every 12-calendar-month period that starts or ends in the tax year is checked; the card shows the highest share and its period.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 85 stav 1 tačka 17 podtačka (6)"
+        }
+      ],
+      "params": {
+        "shareThreshold": "0.70",
+        "windowUnit": "calendar_month"
+      }
+    },
+    {
+      "id": "R-INDEP-C6-HORIZON",
+      "status": "product",
+      "title": "Criterion 6 periods not yet complete",
+      "statement_sr": "Periodi od 12 meseci koji se završavaju posle meseca obračuna još nisu potpuni i ne ocenjuju se.",
+      "statement_en": "A 12-month period that ends after the month being checked (the as-of month, or the draft invoice month for the with-draft share) holds only part of its income, so Headroom does not evaluate it yet. Its share could still reach 70% later.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 85 stav 1 tačka 17 podtačka (6)"
+        }
+      ],
+      "params": {
+        "evaluateWindowsEndingBy": "end_of_month_of_as_of_or_draft"
+      },
+      "note": "A Headroom convention, not a legal rule."
+    },
+    {
+      "id": "R-INDEP-C6-BASIS",
+      "status": "assumption",
+      "title": "Criterion 6 income basis",
+      "statement_sr": "Prihodi se računaju po izdatim fakturama (u dinarima, po datumu izdavanja).",
+      "statement_en": "Income is counted from issued invoices in RSD by issue date. The law says \"ostvarenih prihoda\" (income earned) and does not say invoiced or received.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 85 stav 1 tačka 17 podtačka (6)"
+        }
+      ],
+      "params": {
+        "basis": "invoiced"
+      }
+    },
+    {
+      "id": "R-INDEP-CONSEQUENCE",
+      "status": "verified",
+      "title": "What failing the test means",
+      "statement_sr": "Lice je dužno da plati porez na drugi prihod u visini od 20 odsto, kao i pripadajući PIO doprinos u visini od 25,5 procenata, bez ikakvih normiranih troškova.",
+      "statement_en": "Income from that client may be taxed as other income: 20% tax plus 25.5% pension and disability (PIO) contributions, with no standardised expenses deducted. Headroom does not calculate any amount.",
+      "sources": [
+        {
+          "url": "https://biznis.rs/preduzetnik/preduzetnici-na-proveri-poslovne-samostalnosti/",
+          "title": "Biznis.rs, 18 Feb 2021: Preduzetnici na proveri poslovne samostalnosti",
+          "accessed": "2026-11-26",
+          "quote": "dužno da plati porez na drugi prihod u visini od 20 odsto, kao i pripadajući PIO doprinos u visini od 25,5 procenata"
+        },
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 86 stav 1; Član 85 stav 5 tačka 1"
+        }
+      ],
+      "params": {
+        "taxRate": "0.20",
+        "pioRate": "0.255"
+      },
+      "note": "The Serbian statement is quoted from Biznis.rs reporting; the legal basis for the 20% rate and the gross base is ZPDG Art. 86(1) and Art. 85(5)(1)."
+    },
+    {
+      "id": "R-INDEP-WHO-FILES",
+      "status": "assumption",
+      "title": "Who files when the client is foreign",
+      "statement_sr": "Proverite ko podnosi prijavu i plaća porez.",
+      "statement_en": "Check who files and pays. Not confirmed for foreign clients.",
+      "sources": [
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-26",
+          "locator": "Independence test, p. 27-29"
+        }
+      ],
+      "params": {}
+    }
+  ]
+}

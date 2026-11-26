@@ -1,0 +1,83 @@
+{
+  "rules": [
+    {
+      "id": "R-FX",
+      "status": "verified",
+      "title": "Exchange rate used",
+      "statement_sr": "Za potrebe knjigovodstva i statistike primenjuje se zvanični srednji kurs dinara.",
+      "statement_en": "For bookkeeping, the official NBS middle rate of the dinar applies.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html",
+          "title": "Zakon o deviznom poslovanju (\"Sl. glasnik RS\" 62/2006 ... 19/2025)",
+          "accessed": "2026-11-26",
+          "locator": "Član 41 stav 2"
+        },
+        {
+          "url": "https://kurs.resenje.org/doc/",
+          "title": "Kurs API documentation (data from the National Bank of Serbia)",
+          "accessed": "2026-11-26",
+          "quote": "HTTP JSON API to get information on Serbian Dinar currency exchange rates based on official data from National Bank of Serbia"
+        }
+      ],
+      "params": {
+        "rateField": "exchange_middle"
+      }
+    },
+    {
+      "id": "R-FX-DATE",
+      "status": "assumption",
+      "title": "Which date's rate",
+      "statement_sr": "Koristi se srednji kurs na dan izdavanja fakture.",
+      "statement_en": "A foreign-currency invoice is converted at the NBS middle rate on its issue date.",
+      "sources": [
+        {
+          "url": "https://unija.com/sr/kpo-knjiga/",
+          "title": "Unija: KPO knjiga, kako se vodi i ko je vodi",
+          "accessed": "2026-11-26",
+          "quote": "uvek se koristi zvaničan srednji kurs dinara na dan prometa dobara i usluga"
+        }
+      ],
+      "params": {
+        "fxDateRule": "invoice_issue_date"
+      },
+      "note": "One source says the date of supply. When an invoice states the same issue and supply date, both readings agree."
+    },
+    {
+      "id": "R-FX-NONPUB",
+      "status": "assumption",
+      "title": "Days with no new rate",
+      "statement_sr": "Za dan za koji NBS ne objavljuje kurs koristi se poslednji objavljeni kurs.",
+      "statement_en": "On weekends and holidays, when NBS publishes no new rate, the most recent published rate is used. Both the requested date and the rate date are shown.",
+      "sources": [
+        {
+          "url": "https://kurs.resenje.org/doc/",
+          "title": "Kurs API documentation (data from the National Bank of Serbia)",
+          "accessed": "2026-11-26",
+          "quote": "If the rate is not published ... rate from the last known day will be used for that day."
+        }
+      ],
+      "params": {}
+    },
+    {
+      "id": "R-FX-ROUNDING",
+      "status": "assumption",
+      "title": "Rounding",
+      "statement_sr": "Iznos u dinarima se zaokružuje na dve decimale (pola naviše).",
+      "statement_en": "The RSD amount is rounded to two decimals, half up.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html",
+          "title": "Zakon o deviznom poslovanju (\"Sl. glasnik RS\" 62/2006 ... 19/2025)",
+          "accessed": "2026-11-26",
+          "locator": "Član 41 stav 2"
+        }
+      ],
+      "params": {
+        "rsdRounding": "half_up",
+        "places": 2
+      },
+      "note": "No source states the rounding convention."
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "rules": [
+    {
+      "id": "R-KPO",
+      "status": "verified",
+      "title": "KPO book entries",
+      "statement_sr": "Preduzetnici paušalci dužni su da vode samo poslovnu knjigu o ostvarenom prometu. U poslovnu knjigu KPO knjiže se prihodi od prodatih proizvoda i izvršenih usluga.",
+      "statement_en": "A paušal entrepreneur keeps only the KPO book, recording income from products sold and services provided; every issued invoice is entered, paid or not.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 43 stav 4"
+        },
+        {
+          "url": "https://www.paragraf.rs/propisi/pravilnik-o-poslovnim-knjigama-finansijski-rezultat-po-sistemu-prostog-knjigovodstva.html",
+          "title": "Pravilnik o poslovnim knjigama i iskazivanju finansijskog rezultata po sistemu prostog knjigovodstva (\"Sl. glasnik RS\" 140/2004 i 44/2018)",
+          "accessed": "2026-11-26",
+          "locator": "Član 7"
+        },
+        {
+          "url": "https://unija.com/sr/kpo-knjiga/",
+          "title": "Unija: KPO knjiga, kako se vodi i ko je vodi",
+          "accessed": "2026-11-26",
+          "quote": "Svaka izdata faktura se unosi u KPO knjigu."
+        }
+      ],
+      "params": {}
+    },
+    {
+      "id": "R-KPO-LAYOUT",
+      "status": "verified",
+      "title": "KPO form layout",
+      "statement_sr": "KNJIGA O OSTVARENOM PROMETU PAUŠALNO OPOREZOVANIH OBVEZNIKA: 1 Redni broj; 2 Datum i opis knjiženja; 3 od prodaje proizvoda; 4 od izvršenih usluga; 5 Svega prihodi od delatnosti (3 + 4).",
+      "statement_en": "Columns: 1 row number; 2 date and description; 3 income from products; 4 income from services; 5 total (3 + 4). Header: PIB, taxpayer name, business name, address, taxpayer code, activity code.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/pravilnik-o-poslovnim-knjigama-finansijski-rezultat-po-sistemu-prostog-knjigovodstva.html",
+          "title": "Pravilnik o poslovnim knjigama i iskazivanju finansijskog rezultata po sistemu prostog knjigovodstva (\"Sl. glasnik RS\" 140/2004 i 44/2018)",
+          "accessed": "2026-11-26",
+          "locator": "Član 3 stav 3, Član 7 and form KPO"
+        }
+      ],
+      "params": {
+        "columns": [
+          "Redni broj",
+          "Datum i opis knjiženja",
+          "Prihod od delatnosti od prodaje proizvoda",
+          "Prihod od delatnosti od izvršenih usluga",
+          "Svega prihodi od delatnosti (3 + 4)"
+        ],
+        "headerFields": [
+          "PIB",
+          "Obveznik",
+          "Firma - radnje",
+          "Sedište",
+          "Šifra poreskog obveznika",
+          "Šifra delatnosti"
+        ]
+      }
+    },
+    {
+      "id": "R-KPO-DATE",
+      "status": "assumption",
+      "title": "KPO entry date",
+      "statement_sr": "U kolonu 2 unosi se datum izdavanja fakture i broj fakture.",
+      "statement_en": "Column 2 takes the invoice issue date and number.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/pravilnik-o-poslovnim-knjigama-finansijski-rezultat-po-sistemu-prostog-knjigovodstva.html",
+          "title": "Pravilnik o poslovnim knjigama i iskazivanju finansijskog rezultata po sistemu prostog knjigovodstva (\"Sl. glasnik RS\" 140/2004 i 44/2018)",
+          "accessed": "2026-11-26",
+          "locator": "Član 7 tačka 2"
+        },
+        {
+          "url": "https://unija.com/sr/kpo-knjiga/",
+          "title": "Unija: KPO knjiga, kako se vodi i ko je vodi",
+          "accessed": "2026-11-26",
+          "quote": "Kolona 2: datum i opis knjiženja – unosi se datum i broj fakture"
+        }
+      ],
+      "params": {
+        "entryDate": "invoice_issue_date"
+      },
+      "note": "The rulebook says \"datum i opis knjiženja\" without naming issue or supply date."
+    },
+    {
+      "id": "R-PAYMENT-NO-INVOICE",
+      "status": "assumption",
+      "title": "Payment with no invoice",
+      "statement_sr": "Uplata za koju nije pronađena faktura.",
+      "statement_en": "A payment was received with no matching invoice. Headroom states only the fact and its statement row; no legal obligation or deadline is claimed.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-26",
+          "locator": "Član 43 stav 4"
+        }
+      ],
+      "params": {}
+    },
+    {
+      "id": "R-NUMBERING",
+      "status": "assumption",
+      "title": "Invoice numbering gaps",
+      "statement_sr": "Praznina u numeraciji faktura, vredi proveriti.",
+      "statement_en": "A gap in invoice numbering is shown as worth checking, not as an error.",
+      "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/pravilnik-o-poslovnim-knjigama-finansijski-rezultat-po-sistemu-prostog-knjigovodstva.html",
+          "title": "Pravilnik o poslovnim knjigama i iskazivanju finansijskog rezultata po sistemu prostog knjigovodstva (\"Sl. glasnik RS\" 140/2004 i 44/2018)",
+          "accessed": "2026-11-26",
+          "locator": "Član 7"
+        }
+      ],
+      "params": {},
+      "note": "Whether continuous numbering is legally required was not confirmed."
+    }
+  ]
+}
