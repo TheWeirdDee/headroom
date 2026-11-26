@@ -1,0 +1,304 @@
+// Headroom card (PRD 16.2). Every number is the server's display string for a verified figure and opens its
+// sources. The bar width is display only; the band comes from the server, computed with exact decimals.
+import { Link } from 'react-router';
+import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
+import type { Band, CardVM, Crossing, Discrepancy, MoneyVM } from '../api/types.ts';
+import { formatRsd, formatDateSr } from '../format/money.ts';
+
+const BAND: Record<Band, { label: string; cls: string; bar: string; Icon: typeof CircleCheck }> = {
+  green: { label: 'Room left', cls: 'text-accent', bar: 'bg-accent', Icon: CircleCheck },
+  amber: { label: 'Getting close', cls: 'text-amber', bar: 'bg-amber', Icon: Info },
+  red: { label: 'Very close', cls: 'text-danger', bar: 'bg-danger', Icon: TriangleAlert },
+  crossed: { label: 'Over the line', cls: 'text-danger', bar: 'bg-danger', Icon: CircleAlert },
+};
+
+function Num({
+  m,
+  onOpen,
+  className = '',
+}: {
+  m: MoneyVM;
+  onOpen: (id: string) => void;
+  className?: string;
+}) {
+  if (!m.figureId) return <span className={`num ${className}`}>{m.display}</span>;
+  const id = m.figureId;
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(id)}
+      className={`num underline decoration-line decoration-dotted underline-offset-4 hover:decoration-accent ${className}`}
+      title="Show sources"
+    >
+      {m.display}
+    </button>
+  );
+}
+
+function pct(committed: string, limit: string): number {
+  const c = Number.parseFloat(committed);
+  const l = Number.parseFloat(limit);
+  return l > 0 ? Math.max(0, Math.min(100, (c / l) * 100)) : 0;
+}
+
+function Bar({
+  committed,
+  withDraft,
+  limit,
+  band,
+}: {
+  committed: string;
+  withDraft: string;
+  limit: string;
+  band: Band;
+}) {
+  const a = pct(committed, limit);
+  const b = pct(withDraft, limit);
+  return (
+    <div className="relative mt-3 h-2 rounded bg-panel-2" aria-hidden>
+      <div
+        className={`absolute inset-y-0 left-0 rounded ${BAND[band].bar} opacity-90`}
+        style={{ width: `${a}%` }}
+      />
+      <div
+        className={`absolute inset-y-0 rounded-r ${BAND[band].bar} opacity-40`}
+        style={{ left: `${a}%`, width: `${Math.max(0, b - a)}%` }}
+      />
+      <div className="absolute inset-y-[-3px] w-px bg-muted" style={{ left: '90%' }} />
+    </div>
+  );
+}
+
+function BandChip({ band }: { band: Band }) {
+  const { label, cls, Icon } = BAND[band];
+  return (
+    <span className={`inline-flex items-center gap-1 text-sm font-medium ${cls}`}>
+      <Icon size={14} aria-hidden /> {label}
+    </span>
+  );
+}
+
+const INDEP: Record<string, { label: string; cls: string; Icon: typeof CircleCheck }> = {
+  passes: { label: 'Passes', cls: 'text-accent', Icon: CircleCheck },
+  at_risk: { label: 'At risk', cls: 'text-amber', Icon: TriangleAlert },
+  fails: { label: 'Fails', cls: 'text-danger', Icon: CircleAlert },
+  not_applicable: { label: 'Not applicable', cls: 'text-muted', Icon: Info },
+  pending: { label: 'Pending', cls: 'text-muted', Icon: Info },
+};
+
+function IndepStatus({
+  status,
+  figureId,
+  onOpen,
+}: {
+  status: string;
+  figureId?: string;
+  onOpen: (id: string) => void;
+}) {
+  const s = INDEP[status] ?? { label: status, cls: 'text-muted', Icon: Info };
+  const body = (
+    <>
+      <s.Icon size={12} aria-hidden /> {s.label}
+    </>
+  );
+  return figureId ? (
+    <button
+      type="button"
+      onClick={() => onOpen(figureId)}
+      className={`inline-flex items-center gap-1 text-xs font-medium underline decoration-dotted underline-offset-4 ${s.cls}`}
+    >
+      {body}
+    </button>
+  ) : (
+    <span className={`inline-flex items-center gap-1 text-xs font-medium ${s.cls}`}>{body}</span>
+  );
+}
+
+function RuleChip({ id }: { id: string }) {
+  return (
+    <Link
+      to={`/about#${id}`}
+      className="inline-flex items-center gap-1 rounded border border-amber/40 bg-amber/10 px-1.5 py-0.5 text-xs text-amber hover:bg-amber/20"
+      title="An assumption: not confirmed by an official source"
+    >
+      <Info size={11} aria-hidden /> Assumption {id}
+    </Link>
+  );
+}
+
+export function HeadroomCard({
+  card,
+  crossings,
+  discrepancies,
+  onOpen,
+}: {
+  card: CardVM | null;
+  crossings: Crossing[];
+  discrepancies: Record<string, Discrepancy>;
+  onOpen: (figureId: string) => void;
+}) {
+  if (!card)
+    return (
+      <section className="rounded border border-line bg-panel p-5" aria-label="Headroom">
+        <h2 className="font-medium">Headroom</h2>
+        <p className="mt-2 text-sm text-muted">
+          Shown once the totals are verified. No number appears here before a second agent has checked it.
+        </p>
+      </section>
+    );
+  const l = card.limit6m;
+  const v = card.vat8m;
+  const crossing = crossings[crossings.length - 1];
+  const crossingD = crossing ? discrepancies[crossing.discrepancyId] : undefined;
+  return (
+    <section className="space-y-4 rounded border border-line bg-panel p-5" aria-label="Headroom">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="font-medium">Headroom</h2>
+        <span className="text-xs text-muted">as of {formatDateSr(card.asOf)}</span>
+      </div>
+
+      <div className="rounded border border-line bg-ink/50 p-3 text-sm">
+        <span className="text-muted">This invoice: </span>
+        <span className="num font-medium">{card.draft.amount.display}</span>
+        {card.draft.amountRSD && (
+          <>
+            <span className="text-muted"> = </span>
+            <Num m={card.draft.amountRSD} onOpen={onOpen} className="font-medium" />
+          </>
+        )}
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm text-muted">6M flat-rate limit, {card.asOf.slice(0, 4)}</h3>
+          <BandChip band={l.band} />
+        </div>
+        <p className="mt-1 text-3xl font-semibold tracking-tight">
+          <Num m={l.headroomWithDraft} onOpen={onOpen} className={BAND[l.band].cls} />
+        </p>
+        <p className="text-xs text-muted">left after this invoice</p>
+        <Bar
+          committed={l.committed.amount}
+          withDraft={l.withDraft.amount}
+          limit={l.limit.amount}
+          band={l.band}
+        />
+        <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
+          <dt className="text-muted">Invoiced so far</dt>
+          <dd className="text-right">
+            <Num m={l.committed} onOpen={onOpen} />
+          </dd>
+          <dt className="text-muted">With this invoice</dt>
+          <dd className="text-right">
+            <Num m={l.withDraft} onOpen={onOpen} />{' '}
+            <span className="num text-muted">({l.ratioWithDraft.display})</span>
+          </dd>
+          <dt className="text-muted">Limit</dt>
+          <dd className="text-right">
+            <Num m={l.limit} onOpen={onOpen} />
+          </dd>
+        </dl>
+        {(l.band === 'red' || l.band === 'crossed') && l.consequenceRuleId && (
+          <p className="mt-2 text-xs text-muted">
+            What crossing means:{' '}
+            <Link to={`/about#${l.consequenceRuleId}`} className="text-accent hover:underline">
+              {l.consequenceRuleId}
+            </Link>
+          </p>
+        )}
+      </div>
+
+      {crossing && (
+        <div role="status" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
+          <p className="flex items-center gap-1 font-medium text-amber">
+            <TriangleAlert size={14} aria-hidden /> A correction changes the band
+          </p>
+          <p className="mt-1">
+            {crossingD?.title ?? crossing.discrepancyType} moves the total by{' '}
+            <span className="num font-medium">{formatRsd(crossing.deltaRSD)}</span>, from{' '}
+            {BAND[crossing.bandBefore].label.toLowerCase()} to {BAND[crossing.bandAfter].label.toLowerCase()}
+            {crossing.baseline === 'book'
+              ? ', measured from your own book.'
+              : ', measured from the corrected figures.'}
+          </p>
+        </div>
+      )}
+
+      <div className="border-t border-line pt-4">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm text-muted">8M VAT threshold, last 365 days</h3>
+          <BandChip band={v.band} />
+        </div>
+        <p className="mt-1 text-xl font-semibold">
+          <Num m={v.headroomWithDraft} onOpen={onOpen} className={BAND[v.band].cls} />
+        </p>
+        <Bar
+          committed={v.committed.amount}
+          withDraft={v.withDraft.amount}
+          limit={v.threshold.amount}
+          band={v.band}
+        />
+        <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
+          <dt className="text-muted">Counted turnover</dt>
+          <dd className="text-right">
+            <Num m={v.committed} onOpen={onOpen} />
+          </dd>
+          <dt className="text-muted">With this invoice</dt>
+          <dd className="text-right">
+            <Num m={v.withDraft} onOpen={onOpen} />
+          </dd>
+        </dl>
+        {v.assumptionRuleIds.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {v.assumptionRuleIds.map((id) => (
+              <RuleChip key={id} id={id} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t border-line pt-4">
+        <h3 className="text-sm text-muted">Independence test, per client</h3>
+        <ul className="mt-2 space-y-2">
+          {card.independence.map((c) => (
+            <li key={c.clientId} className="rounded border border-line p-2 text-sm">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">{c.clientName}</span>
+                <IndepStatus
+                  status={c.status}
+                  {...(c.statusFigureId ? { figureId: c.statusFigureId } : {})}
+                  onOpen={onOpen}
+                />
+              </div>
+              <p className="num mt-1 text-xs text-muted">
+                {c.met} of 9 criteria met · {c.notMet} not met · {c.unknown} unknown
+                {c.share12mWithDraft && (
+                  <>
+                    {' '}
+                    · share of income{' '}
+                    <button
+                      type="button"
+                      className="underline decoration-dotted underline-offset-4"
+                      onClick={() => c.share12mWithDraft && onOpen(c.share12mWithDraft.figureId)}
+                    >
+                      {c.share12mWithDraft.display}
+                    </button>
+                  </>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {card.assumptionRuleIds.length > 0 && (
+        <div className="flex flex-wrap gap-1 border-t border-line pt-3">
+          {card.assumptionRuleIds.map((id) => (
+            <RuleChip key={id} id={id} />
+          ))}
+        </div>
+      )}
+      <p className="text-xs text-muted">{card.disclaimer}</p>
+    </section>
+  );
+}

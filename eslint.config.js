@@ -62,7 +62,9 @@ export default tseslint.config(
   {
     ignores: [
       'node_modules/**',
-      'web/**',
+      'web/dist/**',
+      'web/node_modules/**',
+      'web/vite.config.ts',
       'coverage/**',
       'runs/**',
       'data/**',
@@ -94,6 +96,11 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    // The browser app: browser globals; it computes nothing (PRD 15.4), so the domain rules do not apply.
+    files: ['web/src/**/*.{ts,tsx}'],
+    languageOptions: { globals: { ...globals.browser } },
   },
   {
     files: ['src/runtime/mozaik/**'],

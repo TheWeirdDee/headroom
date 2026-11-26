@@ -1,7 +1,7 @@
 {
   "name": "headroom",
   "version": "0.1.0",
-  "description": "Before a Serbian pau\u0161alac sends an invoice, Headroom shows how much room is left under the 6M limit, and proves every number.",
+  "description": "Before a Serbian paušalac sends an invoice, Headroom shows how much room is left under the 6M limit, and proves every number.",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "packages/claims"
   ],
   "scripts": {
+    "setup": "npm ci && npm --prefix web ci && npm run build:web",
     "lint": "eslint . && node scripts/check-emoji.mjs && node scripts/slop-scan.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
@@ -20,7 +21,11 @@
     "format:check": "prettier --check .",
     "generate:data": "tsx scripts/generate-profiles.ts",
     "start": "tsx src/server/main.ts",
-    "start:offline": "tsx src/server/main.ts --offline"
+    "start:offline": "tsx src/server/main.ts --offline",
+    "dev": "node scripts/dev.mjs",
+    "build:web": "npm --prefix web run build",
+    "build": "npm run typecheck && npm run build:web",
+    "test:e2e": "npm run build:web && playwright test --trace off"
   },
   "dependencies": {
     "@fastify/multipart": "10.1.9",
@@ -37,6 +42,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
     "@types/node": "22.20.7",
     "@types/pdfkit": "0.17.7",
     "@types/seedrandom": "3.0.8",
