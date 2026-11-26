@@ -30,6 +30,7 @@ import {
 } from '@mozaik-ai/core';
 import { Mailbox } from '../mailbox.ts';
 import { unsourcedVeto } from '../veto.ts';
+import { patchGeminiSignatures } from './gemini-signatures.ts';
 import { installBoardMirror } from '../board-mirror.ts';
 import { DEFAULT_RETRY, withRetry } from '../loop.ts';
 import { acquire as paceRequest, pacerRpm } from '../pacer.ts';
@@ -201,6 +202,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     if (input.structuredOutput && !model.specification.supportsStructuredOutput) {
       throw new Error(`Model ${input.model} does not support structured output`);
     }
+    patchGeminiSignatures(model.endpoint);
     return model.endpoint.infer(input);
   }
 
