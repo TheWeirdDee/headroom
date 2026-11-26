@@ -46,10 +46,10 @@ interface Snap {
   card: unknown;
 }
 
-function manager(runsDir: string, mode: 'record' | 'replay'): RunManager {
+function manager(runsDir: string, mode: 'record' | 'replay', runEnv: AppEnv = env): RunManager {
   const t0 = Date.now();
   return new RunManager({
-    env,
+    env: runEnv,
     rules,
     profilesDir: 'data/profiles',
     liveFetcher: async (u) => rates[u] ?? { status: 503, body: '' },
@@ -112,6 +112,13 @@ describe('replay', () => {
       expect(board(s)).toBe(expected);
     }
   }, 120_000);
+
+  it('replays with the recorded models even when the configured models differ', async () => {
+    const other: AppEnv = { ...env, models: { reader: 'gemini-3.5-flash', verifier: 'gemini-3.5-flash' } };
+    const s = await run(manager(runsDir, 'replay', other), 'replay');
+    expect(s.loops.filter((l) => l.status === 'failed')).toEqual([]);
+    expect(board(s)).toBe(board(recorded));
+  }, 60_000);
 
   it('fails loudly with REPLAY_MISS when a recorded response is missing', async () => {
     const file = join(runsDir, 'demo-p07', 'responses.jsonl');
