@@ -93,14 +93,24 @@ describe('requestHash (PRD 14.6)', () => {
 });
 
 describe('veto and retry helpers', () => {
-  it('vetoes post_figures calls with missing or empty sources only', () => {
-    expect(unsourcedVeto('post_figures', '{"figures":[{"sources":[{}]},{"sources":[]}]}')).toBe(
-      'figure 1 has no sources',
+  it('vetoes submit calls whose values carry no evidence, and nothing else', () => {
+    expect(unsourcedVeto('submit_invoice', '{"amount":{"value":"1","excerpt":" "}}')).toBe(
+      'amount has a value but no excerpt',
     );
-    expect(unsourcedVeto('post_figures', '{"figures":[{"key":"k"}]}')).toBe('figure 0 has no sources');
-    expect(unsourcedVeto('post_figures', '{"figures":[{"sources":[{}]}]}')).toBeUndefined();
-    expect(unsourcedVeto('other_tool', '{"figures":[{}]}')).toBeUndefined();
-    expect(unsourcedVeto('post_figures', 'not json')).toBeUndefined();
+    expect(
+      unsourcedVeto('submit_invoice', '{"amount":{"value":"1","excerpt":"Iznos: 1,00"},"supplyDate":null}'),
+    ).toBeUndefined();
+    expect(
+      unsourcedVeto('submit_rows', '{"rows":[{"index":1,"invoiceNumber":"2026-001","reasonExcerpt":""}]}'),
+    ).toBe('rows[0] names an invoice without citing the row text');
+    expect(
+      unsourcedVeto('submit_rows', '{"rows":[{"index":1,"invoiceNumber":null,"reasonExcerpt":""}]}'),
+    ).toBeUndefined();
+    expect(
+      unsourcedVeto('submit_criteria', '{"criteria":[{"n":1,"value":"met","field":"","fieldValue":"x"}]}'),
+    ).toBe('criteria[0] gives a criterion without citing a contract field');
+    expect(unsourcedVeto('other_tool', '{"amount":{"value":"1","excerpt":""}}')).toBeUndefined();
+    expect(unsourcedVeto('submit_invoice', 'not json')).toBeUndefined();
   });
 
   it('classifies transient errors', () => {

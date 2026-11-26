@@ -115,3 +115,18 @@ export function chunk<T>(items: T[], size: number): T[][] {
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
   return out;
 }
+
+const FENCE_TAGS = /<(\/?)(document|rows|contract|criteria|source|checker_feedback)\b/gi;
+
+/**
+ * Data placed between fence tags in a prompt cannot close or open a fence: a tag-like sequence in user
+ * data gets a space after "<". Document text is data, never instructions (PRD 20.4).
+ */
+export function fenceSafe(text: string): string {
+  return text.replace(FENCE_TAGS, '< $1$2');
+}
+
+/** A file name or label safe to put inside a tag attribute. */
+export function attrSafe(text: string): string {
+  return text.replace(/["<>\n]/g, '_');
+}

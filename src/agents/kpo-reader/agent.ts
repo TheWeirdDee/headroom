@@ -12,6 +12,7 @@ import {
   submitTool,
   type AgentDeps,
 } from '../common.ts';
+import { fenceSafe } from '../common.ts';
 import { isValidInvoiceNumber, keys, normalizeInvoiceNumber } from '../../domain/keys.ts';
 import { duplicateMatches } from '../../domain/discrepancies.ts';
 import { existingRowKind, type ExistingKpoRow } from '../../domain/kpo.ts';
@@ -101,6 +102,7 @@ export function registerKpoReader(deps: AgentDeps): void {
   const schema = jsonSchema(MatchesSubmission);
   const limit = new Semaphore(rt.state.config.concurrency.kpo);
   const matches: Match[] = [];
+  const unreadRows: number[] = [];
 
   rt.join({ id: ID, name: 'KpoReader', kind: 'agent' });
 
@@ -122,7 +124,7 @@ export function registerKpoReader(deps: AgentDeps): void {
     );
     const user = [
       '<rows>',
-      ...rows.map((r) => `${r.rowIndex}: ${r.entryDate} | ${r.description}`),
+      ...rows.map((r) => `${r.rowIndex}: ${r.entryDate} | ${fenceSafe(r.description)}`),
       '</rows>',
     ].join('\n');
     await limit.run(async () => {
@@ -140,6 +142,19 @@ export function registerKpoReader(deps: AgentDeps): void {
       }).done;
       if (result.status === 'failed')
         setStatus(rt, ID, { kind: 'error', message: `rows ${from}-${to}: ${result.error ?? 'loop failed'}` });
+      // Rows the reader could not match are reported, never silently dropped.
+      const missing = rows.filter((r) => !matches.some((m) => m.row.rowIndex === r.rowIndex));
+      if (missing.length > 0) {
+        unreadRows.push(...missing.map((r) => r.rowIndex));
+        postDiscrepancy(deps, {
+          type: 'E-DOC-UNREADABLE',
+          subjectKey: `kpo-rows:${from}-${to}`,
+          producedBy: ID,
+          detail: `KPO book rows ${missing.map((r) => r.rowIndex).join(', ')} could not be matched to invoices${result.error ? ` (${result.error})` : ''}.`,
+          sources: missing.map((r) => kpoSource(file, r)),
+          figureIds: [],
+        });
+      }
     });
   }
 
@@ -183,6 +198,8 @@ export function registerKpoReader(deps: AgentDeps): void {
       });
     }
     rt.publish('hr.kpo.claims', ID, {
+      complete: unreadRows.length === 0,
+      unreadRows,
       invoiceNumbers: [...claimed].sort(),
       rowsWithoutInvoice: matches.filter((m) => !m.invNo).map((m) => m.row.rowIndex),
     });
@@ -196,7 +213,12 @@ export function registerKpoReader(deps: AgentDeps): void {
     const book = inputs.kpo;
     if (!book || book.rows.length === 0) {
       setStatus(rt, ID, { kind: 'done', summary: 'No KPO book provided' });
-      rt.publish('hr.kpo.claims', ID, { invoiceNumbers: [], rowsWithoutInvoice: [] });
+      rt.publish('hr.kpo.claims', ID, {
+        complete: true,
+        unreadRows: [],
+        invoiceNumbers: [],
+        rowsWithoutInvoice: [],
+      });
       rt.publish('hr.reader.done', ID, { agentId: ID });
       return;
     }

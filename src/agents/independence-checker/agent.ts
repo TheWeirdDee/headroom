@@ -3,6 +3,7 @@
 // criterion 6 is computed by code over every qualifying 12-month window; the status is code.
 import { z } from 'zod';
 import { AGENTS, jsonSchema, loadPrompt, setStatus, submitTool, type AgentDeps } from '../common.ts';
+import { attrSafe, fenceSafe } from '../common.ts';
 import { keys, parseKey } from '../../domain/keys.ts';
 import { invoiceRecords, verifiedInvoiceFigures } from '../facts.ts';
 import {
@@ -110,8 +111,8 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
       },
     );
     const user = [
-      `<contract client="${client.name}">`,
-      ...(lines.length ? lines : ['(no contract details provided)']),
+      `<contract client="${attrSafe(client.name)}">`,
+      ...(lines.length ? lines.map(fenceSafe) : ['(no contract details provided)']),
       '</contract>',
       '<criteria>',
       ...contractCriteria.map((c) => `${c.n} (field ${c.contractField}): ${c.text_en}`),

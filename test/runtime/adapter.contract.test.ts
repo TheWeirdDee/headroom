@@ -207,16 +207,20 @@ for (const kind of ['mozaik', 'memory'] as AdapterKind[]) {
 
     it('vetoes a board write without sources before the tool runs', async () => {
       const backend = scripted((req) =>
-        req.step === 0 ? call('post_figures', { figures: [{ key: 'k', sources: [] }] }) : msg('done'),
+        req.step === 0
+          ? call('submit_invoice', { isInvoice: true, amount: { value: '4000.00', excerpt: '' } })
+          : msg('done'),
       );
       const state = makeState();
       const rt = makeRuntime(kind, backend, state);
       rt.join({ id: 'reader', name: 'reader', kind: 'agent' });
-      const tool = recordingTool();
+      const tool = recordingTool('submit_invoice');
       await rt.startLoop(loopInput('reader', { tools: [tool] })).done;
       await rt.shutdown();
-      expect(tool.calls).toEqual([{ __vetoed: 'figure 0 has no sources' }]);
-      expect(state.vetoedWrites).toEqual([{ agentId: 'reader', reason: 'figure 0 has no sources' }]);
+      expect(tool.calls).toEqual([{ __vetoed: 'amount has a value but no excerpt' }]);
+      expect(state.vetoedWrites).toEqual([
+        { agentId: 'reader', reason: 'amount has a value but no excerpt' },
+      ]);
     });
 
     it('runs loops concurrently: four loops overlap in time', async () => {

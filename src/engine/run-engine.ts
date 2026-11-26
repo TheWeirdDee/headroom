@@ -60,6 +60,8 @@ export interface RunOptions {
   now?: () => number;
   runTimeoutMs?: number;
   quietMs?: number;
+  /** Called with every completion summary (the first, and each one after the run re-opens). */
+  onCompleted?: (s: RunSummary) => void;
 }
 
 export interface Run {
@@ -67,8 +69,12 @@ export interface Run {
   rt: HrRuntime;
   human: HumanApi;
   events: HrEvent[];
-  /** Resolves with the summary when the run goes quiet (or times out). */
+  /** Resolves with the summary when the run first goes quiet (or times out). */
   done: Promise<RunSummary>;
+  /** The latest summary; answers and draft changes re-open the run and produce a new one. */
+  latest(): RunSummary | undefined;
+  /** Stop the runtime (deleting the run, or shutting the server down). */
+  dispose(): Promise<void>;
 }
 
 /** Peak number of loops running at the same time, from loop start and end times. */
@@ -136,7 +142,9 @@ export function startRun(o: RunOptions): Run {
     parseErrors: [...o.inputs.statements.flatMap((s) => s.errors), ...(o.inputs.kpo?.errors ?? [])],
   });
 
-  const done = (async (): Promise<RunSummary> => {
+  let latest: RunSummary | undefined;
+  let settling: Promise<RunSummary> | undefined;
+  const settle = async (): Promise<RunSummary> => {
     const result = await waitForQuiescence(
       {
         probe: () => ({
@@ -149,12 +157,33 @@ export function startRun(o: RunOptions): Run {
       },
       o.runTimeoutMs ?? 300_000,
     );
-    rt.publish('hr.run.stopping', 'engine', { reason: result });
     const summary = summarize(result);
+    latest = summary;
+    settling = undefined;
     rt.publish('hr.run.completed', 'engine', summary);
-    await rt.shutdown();
+    o.onCompleted?.(summary);
     return summary;
-  })();
+  };
+  settling = settle();
+  const done = settling;
+
+  /** Answering a question or changing the draft re-opens a quiet run (PRD 14.4). */
+  function reopen(reason: string): void {
+    if (settling) return;
+    rt.publish('hr.run.reopened', 'engine', { reason });
+    settling = settle();
+  }
+  const humanApi: HumanApi = {
+    answer(questionId, answer) {
+      const r = human.answer(questionId, answer);
+      if (r.ok) reopen('answer');
+      return r;
+    },
+    changeDraft(draft) {
+      human.changeDraft(draft);
+      reopen('draft');
+    },
+  };
 
   function summarize(result: 'quiet' | 'timeout'): RunSummary {
     const loops = rt.loopMetrics();
@@ -210,5 +239,16 @@ export function startRun(o: RunOptions): Run {
     };
   }
 
-  return { runId: o.runId, rt, human, events, done };
+  return {
+    runId: o.runId,
+    rt,
+    human: humanApi,
+    events,
+    done,
+    latest: () => latest,
+    async dispose() {
+      rt.publish('hr.run.stopping', 'engine', { reason: 'disposed' });
+      await rt.shutdown();
+    },
+  };
 }

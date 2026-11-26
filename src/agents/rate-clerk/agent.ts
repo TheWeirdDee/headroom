@@ -19,7 +19,8 @@ export function registerRateClerk(deps: AgentDeps): void {
   const { rt, rules } = deps;
   const state = rt.state;
   const cfg = state.config;
-  const converted = new Set<string>(); // invoice numbers with an amountRSD proposal
+  // Invoice number -> ids of the verified inputs last converted; a new verified input re-converts.
+  const converted = new Map<string, string>();
   const e5Done = new Set<string>();
   const rateFigures = new Map<string, Figure>(); // fx key -> figure
 
@@ -92,7 +93,6 @@ export function registerRateClerk(deps: AgentDeps): void {
   }
 
   async function convertInvoice(invNo: string): Promise<void> {
-    if (converted.has(invNo)) return;
     const cur = verifiedValue(invNo, 'currency');
     const issue = verifiedValue(invNo, 'issueDate');
     const amount = verifiedValue(invNo, 'amount');
@@ -105,7 +105,10 @@ export function registerRateClerk(deps: AgentDeps): void {
       amount.value.t !== 'money'
     )
       return;
-    converted.add(invNo);
+    const supplyFig = verifiedValue(invNo, 'supplyDate');
+    const signature = [cur.id, issue.id, amount.id, supplyFig?.id ?? ''].join(',');
+    if (converted.get(invNo) === signature) return;
+    converted.set(invNo, signature);
     const key = keys.invoice(invNo, 'amountRSD');
     if (cur.value.text === 'RSD') {
       state.postFigure({
@@ -115,11 +118,11 @@ export function registerRateClerk(deps: AgentDeps): void {
         sources: [{ type: 'derived', figureIds: [amount.id] }, ruleSrc('R-FX')],
         derivation: { ruleId: 'R-FX', inputs: [amount.id], formula: 'amount already in RSD' },
         producedBy: ID,
-        idempotencyKey: `${ID}/${key}`,
+        idempotencyKey: `${ID}/${key}/${signature}`,
       });
       return;
     }
-    const supply = verifiedValue(invNo, 'supplyDate');
+    const supply = supplyFig;
     const date = fxDate(cfg.fxDateRule, {
       issueDate: issue.value.iso,
       ...(supply?.value.t === 'date' ? { supplyDate: supply.value.iso } : {}),
@@ -148,7 +151,7 @@ export function registerRateClerk(deps: AgentDeps): void {
         formula: `${amount.value.amount} ${cur.value.text} x ${fx.value.rate} / ${fx.value.parity}, rounded ${cfg.rsdRounding.replace('_', ' ')} to 2 decimals`,
       },
       producedBy: ID,
-      idempotencyKey: `${ID}/${key}`,
+      idempotencyKey: `${ID}/${key}/${signature}/${fx.id}`,
     });
     setStatus(rt, ID, { kind: 'idle' });
   }
@@ -284,6 +287,11 @@ export function registerRateClerk(deps: AgentDeps): void {
   });
 
   // LimitKeeper asks for the rate of a foreign payment's date to measure an E1's effect on the total.
+  // What-if: a changed draft (amount, currency or date) is converted again at the right rate.
+  rt.on(ID, { types: ['hr.draft.changed'] }, async () => {
+    await convertDraft();
+  });
+
   rt.on(ID, { types: ['hr.rate.needed'] }, async (e: HrEvent) => {
     const { currency, date } = e.payload as { currency: string; date: string };
     await rateFigure(currency, date);

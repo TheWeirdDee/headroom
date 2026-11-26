@@ -74,6 +74,9 @@ function expectedValue(f: Figure, ins: Figure[], ctx: SourceContext): FigureValu
     if (amount?.value.t !== 'money') return undefined;
     if (!rate) return amount.value.currency === 'RSD' ? rsd(amount.value.amount) : undefined;
     if (rate.value.t !== 'rate' || rate.value.base !== amount.value.currency) return undefined;
+    // The rate must be the one for the cited date (R-FX-DATE), not merely any NBS rate.
+    const date = ins.find((x) => x.value.t === 'date');
+    if (date?.value.t === 'date' && rate.value.requestedDate !== date.value.iso) return undefined;
     return rsd(convertToRsd(amount.value.amount, rate.value.rate, rate.value.parity, cfg.rsdRounding));
   }
   if (p?.kind === 'total' || p?.kind === 'headroom' || p?.kind === 'ratio') {

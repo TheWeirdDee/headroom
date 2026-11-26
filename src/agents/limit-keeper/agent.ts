@@ -211,7 +211,13 @@ export function registerLimitKeeper(deps: AgentDeps): void {
 
   /** E8: gaps in verified invoice numbering, once the InvoiceReader is done. */
   function checkNumbering(invoiceNumbers: string[]): void {
-    if (!invoicesDone || gapsChecked) return;
+    // Wait until every invoice figure has been checked, so a number still being verified is not a gap.
+    if (
+      !invoicesDone ||
+      gapsChecked ||
+      state.figuresWhere((f) => f.status === 'proposed' && f.key.startsWith('invoice:')).length > 0
+    )
+      return;
     gapsChecked = true;
     const records = invoiceRecords(verifiedInvoiceFigures(state));
     for (const gap of numberingGaps(invoiceNumbers)) {
@@ -315,7 +321,9 @@ export function registerLimitKeeper(deps: AgentDeps): void {
   });
 
   rt.on(ID, { types: ['hr.kpo.claims'] }, (e: HrEvent) => {
-    kpoClaims = new Set((e.payload as { invoiceNumbers: string[] }).invoiceNumbers);
+    const p = e.payload as { invoiceNumbers: string[]; complete: boolean };
+    // A book with rows that could not be read cannot show that an invoice is missing from it.
+    kpoClaims = p.complete ? new Set(p.invoiceNumbers) : undefined;
     schedule();
   });
 

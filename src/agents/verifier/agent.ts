@@ -3,6 +3,7 @@
 // Its model context holds only the claimed value and the cited excerpt, never the producer's reasoning.
 import { z } from 'zod';
 import { AGENTS, Semaphore, jsonSchema, loadPrompt, setStatus, type AgentDeps } from '../common.ts';
+import { fenceSafe } from '../common.ts';
 import { checkSources, type SourceContext } from './sources.ts';
 import { checkDerivation } from './derive.ts';
 import { checkFidelity, checkPlausibility, type ModelQuestion } from './fidelity.ts';
@@ -63,7 +64,7 @@ export function registerVerifier(deps: AgentDeps): void {
       `Claimed value: ${q.claimed}`,
       ...(q.allowed.length ? [`Allowed values: ${q.allowed.join(', ')}`] : []),
       '<source>',
-      q.excerpt,
+      fenceSafe(q.excerpt),
       '</source>',
     ].join('\n');
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -164,23 +165,43 @@ export function registerVerifier(deps: AgentDeps): void {
 
   function contest(f: Figure, reason: RejectionReason, detail: string, checks: VerificationCheck[]): void {
     state.countRejection(reason);
-    const n = (contests.get(f.key) ?? 0) + 1;
-    contests.set(f.key, n);
+    // Each producer gets the first claim plus two corrected re-proposals per key (PRD 8.6).
+    const ck = `${f.key}|${f.producedBy}`;
+    const n = (contests.get(ck) ?? 0) + 1;
+    contests.set(ck, n);
     if (n >= MAX_CONTESTS_PER_KEY) {
       state.setFigureStatus(f.id, 'needs_user', ID, checks, `${reason}: ${detail}`);
+      const candidates = state.board
+        .versions(f.key)
+        .map((r) => state.figures.get(r.id))
+        .filter(
+          (x): x is Figure => x !== undefined && (x.status === 'needs_user' || x.status === 'contested'),
+        );
       askUser(
         f.key,
-        `The value for ${f.key} was disputed ${n} times (${detail}). Please check the source document.`,
+        `The value for ${f.key} was disputed ${n} times (${detail}). Check the source document and pick the right value.`,
+        candidates,
       );
       return;
     }
     state.setFigureStatus(f.id, 'contested', ID, checks, `${reason}: ${detail}`);
   }
 
-  function askUser(subjectKey: string, text: string): void {
+  /** Ask the user to pick between candidate values; the answer settles the key (see the handler below). */
+  const candidatesOf = new Map<string, string[]>(); // question id -> candidate figure ids
+  function askUser(subjectKey: string, text: string, candidates: Figure[]): void {
     const id = `q-verifier-${sha256(subjectKey).slice(0, 12)}`;
-    if (state.questions.has(id)) return;
-    const q: Question = { id, askedBy: ID, subjectKey, text, options: ['Checked'] };
+    const byValue = new Map<string, Figure>();
+    for (const c of candidates) if (!byValue.has(valueText(c))) byValue.set(valueText(c), c);
+    if (byValue.size === 0) return;
+    candidatesOf.set(
+      id,
+      [...byValue.values()].map((c) => c.id),
+    );
+    const existing = state.questions.get(id);
+    if (existing && existing.answer === undefined) existing.options = [...byValue.keys()];
+    if (existing) return;
+    const q: Question = { id, askedBy: ID, subjectKey, text, options: [...byValue.keys()] };
     state.questions.set(id, q);
     rt.publish('hr.question.asked', ID, { question: q });
   }
@@ -280,6 +301,11 @@ export function registerVerifier(deps: AgentDeps): void {
     if (p && DERIVED_KINDS.has(p.kind)) return verify(b.id); // re-derivation: the newer version is checked; verifying it supersedes the old
     if (p?.kind === 'invoice' && p.field === 'amountRSD' && a.producedBy === b.producedBy)
       return verify(b.id);
+    // The user changed an answer: the newer answer replaces the older one.
+    const qa = a.sources[0];
+    const qb = b.sources[0];
+    if (qa?.type === 'user_answer' && qb?.type === 'user_answer' && qa.questionId === qb.questionId)
+      return verify(b.id);
     setStatus(rt, ID, { kind: 'resolving_conflict', key: b.key });
     const [oa, ob] = await Promise.all([
       a.status === 'verified'
@@ -287,7 +313,19 @@ export function registerVerifier(deps: AgentDeps): void {
         : evaluate(a),
       evaluate(b),
     ]);
-    if ('wait' in ob || 'stale' in ob) return 'wait' in ob ? park(b, ob.inputs) : undefined;
+    if ('wait' in ob) return park(b, ob.inputs);
+    if ('stale' in ob) {
+      if (state.figures.get(b.id)?.status === 'proposed') {
+        state.setFigureStatus(
+          b.id,
+          'superseded',
+          ID,
+          undefined,
+          'an input was replaced; a newer version follows',
+        );
+      }
+      return;
+    }
     if ('wait' in oa || 'stale' in oa) return verify(b.id);
     const aOk = oa.pass;
     const bOk = ob.pass;
@@ -340,6 +378,7 @@ export function registerVerifier(deps: AgentDeps): void {
       askUser(
         b.key,
         `Two sources of equal weight disagree on ${b.key}: ${valueText(a)} or ${valueText(b)}. Which is right?`,
+        [a, b],
       );
       return;
     }
@@ -414,6 +453,31 @@ export function registerVerifier(deps: AgentDeps): void {
       });
     }
   }
+
+  // The user's choice settles a key the Verifier could not: the chosen value is verified, the rest retire.
+  rt.on(ID, { types: ['hr.question.answered'] }, (e: HrEvent) => {
+    const { questionId, answer, answeredAt } = e.payload as {
+      questionId: string;
+      answer: string;
+      answeredAt: string;
+    };
+    const ids = candidatesOf.get(questionId);
+    if (!ids) return;
+    const figs = ids.map((id) => state.figures.get(id)).filter((x): x is Figure => x !== undefined);
+    const chosen = figs.find((f) => valueText(f) === answer);
+    if (!chosen) return;
+    for (const f of figs) {
+      if (f.id === chosen.id || f.status === 'superseded') continue;
+      state.setFigureStatus(f.id, 'superseded', ID, undefined, `the user chose ${answer}`);
+    }
+    if (chosen.status !== 'verified' && chosen.status !== 'superseded') {
+      state.setFigureStatus(chosen.id, 'verified', ID, [
+        ...(chosen.checks ?? []),
+        { name: 'fidelity', passed: true, detail: `chosen by you at ${answeredAt}` },
+      ]);
+      afterVerified(chosen);
+    }
+  });
 
   rt.on(ID, { types: ['hr.figure.proposed'] }, (e: HrEvent) => {
     const { figure, result } = e.payload as { figure?: Figure; result: string };

@@ -12,6 +12,7 @@ import {
   submitTool,
   type AgentDeps,
 } from '../common.ts';
+import { fenceSafe } from '../common.ts';
 import { keys, normalizeInvoiceNumber, isValidInvoiceNumber, parseKey } from '../../domain/keys.ts';
 import { cmp } from '../../domain/money.ts';
 import { sha256 } from '../../util/hash.ts';
@@ -19,6 +20,7 @@ import { statementRowRef } from '../../engine/inputs.ts';
 import { postDiscrepancy } from '../discrepancy.ts';
 import type { StatementRow } from '../../inputs/tables.ts';
 import type { SourceRef } from '../../domain/types.ts';
+import type { HrEvent } from '../../runtime/types.ts';
 
 const ID = AGENTS.statementReader;
 const CHUNK = 25;
@@ -99,7 +101,6 @@ export function registerStatementReader(deps: AgentDeps): void {
   const classified: Classified[] = [];
   let ownDone = false;
   let invoicesDone = false;
-  let e1Checked = false;
 
   rt.join({ id: ID, name: 'StatementReader', kind: 'agent' });
 
@@ -151,7 +152,9 @@ export function registerStatementReader(deps: AgentDeps): void {
         return `Accepted ${ok.length} rows.`;
       },
     );
-    const user = ['<rows>', ...rows.map((r) => `${r.rowIndex}: ${r.rawLine}`), '</rows>'].join('\n');
+    const user = ['<rows>', ...rows.map((r) => `${r.rowIndex}: ${fenceSafe(r.rawLine)}`), '</rows>'].join(
+      '\n',
+    );
     await limit.run(async () => {
       setStatus(rt, ID, { kind: 'reading_statement_chunk', file, from: first, to: last });
       const result = await rt.startLoop({
@@ -170,15 +173,33 @@ export function registerStatementReader(deps: AgentDeps): void {
           kind: 'error',
           message: `${file} rows ${first}-${last}: ${result.error ?? 'loop failed'}`,
         });
+      // Rows the reader could not classify are reported, never silently dropped.
+      const missing = rows.filter(
+        (r) => !classified.some((c) => c.row.file === r.file && c.row.rowIndex === r.rowIndex),
+      );
+      const [m0] = missing;
+      if (m0) {
+        postDiscrepancy(deps, {
+          type: 'E-DOC-UNREADABLE',
+          subjectKey: `rows:${file}:${first}-${last}`,
+          producedBy: ID,
+          detail: `${file} rows ${missing.map((r) => r.rowIndex).join(', ')} could not be classified${result.error ? ` (${result.error})` : ''}.`,
+          sources: missing.map((r) => rowSource(r)),
+          figureIds: [],
+        });
+      }
     });
   }
 
   /** E1: client payments with no invoice link and no invoice of the same amount and currency on the board. */
+  /**
+   * E1: incoming rows whose verified class is client_payment and whose verified invoice link is "none",
+   * with no invoice of the same amount and currency on the board. Built from verified figures only, and
+   * re-checked as more of them are verified.
+   */
+  const e1Posted = new Set<string>();
   function checkUnmatched(): void {
-    if (!ownDone || !invoicesDone || e1Checked) return;
-    e1Checked = true;
-    const candidates = classified.filter((c) => c.cls === 'client_payment' && c.invoiceNumber === null);
-    setStatus(rt, ID, { kind: 'searching_unmatched_payments', count: candidates.length });
+    if (!ownDone || !invoicesDone) return;
     const invoiceAmounts = rt.state
       .figuresWhere(
         (f) =>
@@ -188,12 +209,25 @@ export function registerStatementReader(deps: AgentDeps): void {
           f.key.endsWith(':amount'),
       )
       .map((f) => f.value);
-    for (const c of candidates) {
+    let candidates = 0;
+    for (const c of classified) {
+      const ref = statementRowRef(c.row, inputs.statements);
+      if (e1Posted.has(ref)) continue;
+      const cls = rt.state.verified(keys.payment(ref, 'class'));
+      const link = rt.state.verified(keys.paymentLink(ref));
+      if (
+        cls?.value.t !== 'text' ||
+        cls.value.text !== 'client_payment' ||
+        link?.value.t !== 'text' ||
+        link.value.text !== 'none'
+      )
+        continue;
+      candidates += 1;
       const matched = invoiceAmounts.some(
         (v) => v.t === 'money' && v.currency === c.row.currency && cmp(v.amount, c.row.amount) === 0,
       );
       if (matched) continue;
-      const ref = statementRowRef(c.row, inputs.statements);
+      e1Posted.add(ref);
       postDiscrepancy(deps, {
         type: 'E1',
         subjectKey: `payment:${ref}`,
@@ -201,18 +235,30 @@ export function registerStatementReader(deps: AgentDeps): void {
         detail: `${c.row.date}: ${c.row.amount} ${c.row.currency} from ${c.row.counterparty || 'an unnamed payer'}. No invoice names it and none has the same amount and currency.`,
         sources: [
           rowSource(c.row),
+          { type: 'derived', figureIds: [cls.id, link.id] },
           { type: 'rule', ruleId: 'R-PAYMENT-NO-INVOICE', url: deps.rules.url('R-PAYMENT-NO-INVOICE') },
         ],
-        figureIds: [],
+        figureIds: [cls.id, link.id],
         ...(c.row.currency === 'RSD' ? { deltaRSD: c.row.amount } : {}),
         payment: { currency: c.row.currency, amount: c.row.amount, date: c.row.date },
       });
     }
+    if (candidates > 0) setStatus(rt, ID, { kind: 'searching_unmatched_payments', count: candidates });
     setStatus(rt, ID, {
       kind: 'done',
-      summary: `Classified ${classified.length} incoming rows; ${candidates.length} without an invoice reference`,
+      summary: `Classified ${classified.length} incoming rows; ${e1Posted.size} without an invoice`,
     });
   }
+
+  rt.on(ID, { types: ['hr.figure.verified'] }, (e: HrEvent) => {
+    const key = (e.payload as { key: string }).key;
+    if (
+      key.startsWith('payment:') ||
+      key.startsWith('link:payment:') ||
+      (key.startsWith('invoice:') && key.endsWith(':amount'))
+    )
+      checkUnmatched();
+  });
 
   rt.on(ID, { types: ['hr.run.started'] }, () => {
     const work: Array<Promise<void>> = [];
