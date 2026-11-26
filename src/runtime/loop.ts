@@ -113,7 +113,7 @@ export async function withRetry<T>(fn: () => Promise<T>, policy: RetryPolicy): P
         // 30 s, then 20 s for overload), then try again.
         limited += 1;
         attempt -= 1;
-        policy.onRetry?.(attempt + 1, error);
+        policy.onRetry?.(limited, error);
         await sleep(retryAfterMs(error) ?? (isRateLimit(error) ? 30_000 : 20_000));
         continue;
       }
