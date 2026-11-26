@@ -1,0 +1,51 @@
+{
+  "name": "headroom",
+  "version": "0.1.0",
+  "description": "Before a Serbian paušalac sends an invoice, Headroom shows how much room is left under the 6M limit, and proves every number.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "packages/claims"
+  ],
+  "scripts": {
+    "lint": "eslint . && node scripts/check-emoji.mjs && node scripts/slop-scan.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@fastify/multipart": "10.1.9",
+    "@fastify/static": "10.1.12",
+    "@mozaik-ai/core": "6.0.0",
+    "csv-parse": "7.0.3",
+    "csv-stringify": "6.9.0",
+    "decimal.js": "10.6.0",
+    "fastify": "5.12.8",
+    "iconv-lite": "0.7.3",
+    "pdf-parse": "2.4.5",
+    "pdfkit": "0.21.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.7",
+    "@types/pdfkit": "0.17.7",
+    "@types/seedrandom": "3.0.8",
+    "eslint": "10.15.0",
+    "fast-check": "4.11.0",
+    "globals": "17.14.0",
+    "license-checker": "25.0.1",
+    "prettier": "3.10.1",
+    "seedrandom": "3.0.5",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.74.0",
+    "vitest": "5.1.2"
+  }
+}

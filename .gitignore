@@ -1,0 +1,25 @@
+node_modules/
+web/node_modules/
+web/dist/
+.env
+.env.*
+!.env.example
+runs/*
+!runs/demo-p07/
+eval/raw/
+uploads/
+data/user/
+coverage/
+test-results/
+playwright-report/
+# planning files - never pushed
+HEADROOM_PRD.md
+*PRD*.md
+RESEARCH_NOTES.md
+SPONSOR_BEHAVIOUR.md
+PROGRESS.md
+OUTREACH_DRAFTS.md
+PLAN*.md
+REPORT*.md
+phase-*-report.md
+notes/
