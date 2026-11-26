@@ -196,7 +196,7 @@ export function Run() {
               </div>
             </section>
           </div>
-          <div className="xl:sticky xl:top-4 xl:self-start">
+          <div className="order-first xl:sticky xl:top-4 xl:order-none xl:self-start">
             <HeadroomCard
               card={view.card}
               crossings={view.crossings}

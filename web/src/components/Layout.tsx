@@ -13,12 +13,15 @@ export function Layout() {
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-line">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-4 py-3">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <Link to="/" className="text-lg font-semibold tracking-tight">
             Headroom
           </Link>
-          <nav className="ml-auto flex items-center gap-5 text-sm" aria-label="Main">
-            <NavLink to="/#how" className={() => 'text-muted hover:text-text'}>
+          <nav
+            className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 text-sm sm:gap-x-5"
+            aria-label="Main"
+          >
+            <NavLink to="/#how" className={() => 'hidden text-muted hover:text-text sm:inline'}>
               How it works
             </NavLink>
             <NavLink to="/evidence" className={nav}>
