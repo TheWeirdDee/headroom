@@ -216,7 +216,8 @@ export class RunManager {
       headers,
       run: undefined as unknown as Run,
     };
-    const config = defaultRunConfig(year, asOf, { models: env.models });
+    // A replay asks the models it was recorded with, so its request hashes match the recording.
+    const config = defaultRunConfig(year, asOf, { models: replay?.models ?? env.models });
     const run = startRun({
       runId,
       inputs,
