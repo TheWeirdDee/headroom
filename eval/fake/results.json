@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T12:51:57.414Z",
+  "generatedAt": "2026-11-26T20:27:07.531Z",
   "conditions": {
     "date": "2026-11-26",
     "mode": "fake",
@@ -75,11 +75,11 @@
     },
     {
       "name": "Median loops running at once (peak)",
-      "value": "15"
+      "value": "14.5"
     },
     {
       "name": "Median loop time / wall time",
-      "value": "0.19",
+      "value": "0.15",
       "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
     },
     {

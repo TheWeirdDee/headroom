@@ -15,8 +15,8 @@ Fake mode uses the deterministic test model: it measures the pipeline, not model
 | Figures shown without a source | 0 | 0 |  |
 | Runs with 6M and 8M totals (with the draft) equal to the truth | 14 / 14 |  |  |
 | Profiles with identical headroom across runs | 14 / 14 |  |  |
-| Median loops running at once (peak) | 15 |  |  |
-| Median loop time / wall time | 0.19 |  | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
+| Median loops running at once (peak) | 14.5 |  |  |
+| Median loop time / wall time | 0.15 |  | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
 | Median wall time per run | 1.6 s |  |  |
 | Median tokens per run (in / out) | 19000 / 4582 |  |  |
 | Verifier contests by reason (all runs) | UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0 |  |  |
