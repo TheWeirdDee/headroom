@@ -232,6 +232,8 @@ export interface Snapshot {
   loops: LoopMetric[];
   agents: Record<string, AgentStatus>;
   card: CardVM | null;
+  /** Events the board does not keep (crossings, errors, vetoes, corroborations), folded into the view. */
+  viewEvents?: HrEvent[];
   summary: RunSummary | null;
   parseErrors: Array<{ file: string; lineNo: number; message: string }>;
   unreadable: Array<{ fileName: string; reason: string }>;

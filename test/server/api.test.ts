@@ -144,8 +144,8 @@ describe('API basics and errors', () => {
 
   it('has no showcase without a recording', async () => {
     const r = await a.inject({ url: '/api/showcase' });
-    expect(r.statusCode).toBe(404);
-    expect((r.json() as { error: { code: string } }).error.code).toBe('NO_RECORDING');
+    expect(r.statusCode).toBe(200);
+    expect(r.json()).toEqual({ runId: null });
   });
 
   it('serves the rules with their status', async () => {

@@ -224,10 +224,9 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
   );
 
   // The landing page's hero card and proof excerpt come from a replay of the committed demo recording.
-  app.get('/api/showcase', async (_req, reply) => {
-    const runId = await d.runs.showcase('p07');
-    if (!runId) return sendError(reply, 404, 'NO_RECORDING', 'No recorded sample run yet.');
-    return { runId };
+  app.get('/api/showcase', async () => {
+    // No recording yet is a normal state (null), not an error: the landing page then leaves the sections out.
+    return { runId: (await d.runs.showcase('p07')) ?? null };
   });
 
   app.get('/api/evidence', async (_req, reply) => {

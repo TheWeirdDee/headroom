@@ -46,6 +46,9 @@ test('sample run: lanes, verified board, headroom card, findings, drawer, questi
   const card = page.getByRole('region', { name: 'Headroom' });
   await expect(card.getByText('left after this invoice')).toBeVisible({ timeout: 30_000 });
   await expect(card.getByText('A correction changes the band')).toBeVisible();
+  // A reload rebuilds the view from the snapshot: the crossing, which is not on the board, is kept.
+  await page.reload();
+  await expect(card.getByText('A correction changes the band')).toBeVisible({ timeout: 30_000 });
 
   // Planted discrepancies are listed with their type.
   for (const t of ['E1', 'E2', 'E3', 'E5', 'E9'])

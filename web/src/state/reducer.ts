@@ -116,9 +116,9 @@ function patchFigure(v: RunView, id: string, patch: Partial<Figure>): RunView {
 export function reduce(v: RunView, a: Action): RunView {
   if (a.type === 'snapshot') {
     const s = a.snapshot;
-    const { figures, questions, discrepancies, loops, agents, card, summary, ...rest } = s;
-    return {
-      ...v,
+    const { figures, questions, discrepancies, loops, agents, card, summary, viewEvents, ...rest } = s;
+    const base: RunView = {
+      ...emptyView(v.runId),
       loaded: true,
       snapshot: rest,
       status: s.status,
@@ -133,12 +133,18 @@ export function reduce(v: RunView, a: Action): RunView {
       summary,
       rejections: s.rejections,
       lastEventId: s.lastEventId,
+      seq: v.seq,
     };
+    // Crossings, errors, vetoes and corroborations are not on the board: the snapshot carries their events.
+    return (viewEvents ?? []).reduce((acc, e) => applyEvent(acc, e), base);
   }
   if (a.id <= v.lastEventId) return v; // already applied (snapshot or earlier delivery)
-  const e = a.event;
+  return applyEvent({ ...v, lastEventId: a.id }, a.event);
+}
+
+function applyEvent(v: RunView, e: HrEvent): RunView {
   const p = e.payload as Record<string, unknown>;
-  let n: RunView = { ...v, lastEventId: a.id, seq: v.seq + 1 };
+  let n: RunView = { ...v, seq: v.seq + 1 };
   switch (e.type) {
     case 'hr.figure.proposed':
       n = setFigure(n, p['figure'] as Figure);
@@ -252,7 +258,7 @@ export function reduce(v: RunView, a: Action): RunView {
       n = { ...n, status: 'running' };
       break;
     default:
-      return { ...v, lastEventId: a.id };
+      return v;
   }
   return n;
 }

@@ -2,7 +2,7 @@
 // HeadroomCard, DiscrepancyList and SourceDrawer components fed by a replay of the committed demo recording
 // (GET /api/showcase), so every number on them opens its sources like it does on the run screen.
 import { useEffect, useMemo, useState } from 'react';
-import { getJson, ApiError } from '../api/client.ts';
+import { getJson } from '../api/client.ts';
 import { useRun, useRunConnection } from '../state/store.ts';
 import { HeadroomCard } from './HeadroomCard.tsx';
 import { DiscrepancyList } from './DiscrepancyList.tsx';
@@ -12,15 +12,9 @@ export function useShowcaseRun(): { runId?: string; error?: string } {
   const [state, setState] = useState<{ runId?: string; error?: string }>({});
   useEffect(() => {
     let live = true;
-    getJson<{ runId: string }>('/api/showcase').then(
-      (r) => live && setState({ runId: r.runId }),
-      (e: unknown) =>
-        live &&
-        setState({
-          // No recording yet is a normal state: the sections are simply not shown.
-          error:
-            e instanceof ApiError && e.code === 'NO_RECORDING' ? undefined : 'Could not load the sample run.',
-        }),
+    getJson<{ runId: string | null }>('/api/showcase').then(
+      (r) => live && setState(r.runId ? { runId: r.runId } : {}),
+      () => live && setState({ error: 'Could not load the sample run.' }),
     );
     return () => {
       live = false;

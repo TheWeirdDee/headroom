@@ -54,7 +54,18 @@ export interface RunRecord {
   recording?: { recordedAt: string; models: { reader: string; verifier: string } };
   agents: Map<string, unknown>;
   headers: Map<string, string[]>;
+  /** Events whose effect lives only in the client's view (crossings, errors, vetoes...), for snapshots. */
+  viewEvents: HrEvent[];
 }
+
+/** Event types the client folds into its view but the board does not keep; sent again in every snapshot. */
+const VIEW_EVENT_TYPES = new Set([
+  'hr.headroom.crossing',
+  'hr.participant.error',
+  'hr.write.vetoed',
+  'hr.figure.corroborated',
+  'hr.loop.failed',
+]);
 
 export interface ReplaySource {
   /** Recorded model responses and Kurs bodies for a sample profile, if a recording exists. */
@@ -238,6 +249,7 @@ export class RunManager {
       ...(replay ? { recording: { recordedAt: replay.recordedAt, models: replay.models } } : {}),
       agents: new Map(),
       headers,
+      viewEvents: [],
       run: undefined as unknown as Run,
     };
     // A replay asks the models it was recorded with, so its request hashes match the recording.
@@ -259,6 +271,7 @@ export class RunManager {
         (e) => hub.push(e),
         (e) => {
           if (e.type === 'hr.headroom.updated') record.card = e.payload as CardVM;
+          if (VIEW_EVENT_TYPES.has(e.type)) record.viewEvents.push(e);
           if (e.type === 'hr.agent.status')
             record.agents.set((e.payload as { agentId: string }).agentId, e.payload);
           if (e.type === 'hr.run.completed') record.summary = e.payload as RunSummary;
@@ -308,6 +321,7 @@ export class RunManager {
       agents: Object.fromEntries(r.agents),
       card: r.card ?? null,
       summary: r.summary ?? null,
+      viewEvents: r.viewEvents,
       parseErrors: [...r.inputs.statements.flatMap((x) => x.errors), ...(r.inputs.kpo?.errors ?? [])],
       unreadable: r.inputs.documents
         .filter((d) => d.kind === 'unreadable')
