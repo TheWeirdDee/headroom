@@ -2,6 +2,8 @@
 // normal run status. Full runs on Mozaik with the deterministic test model, with failures injected.
 import { describe, expect, it } from 'vitest';
 import { loadInputSet } from '../../src/engine/load-inputs.ts';
+import { buildKpoExport, kpoCsv } from '../../src/exporters/kpo.ts';
+import { kpoPdf } from '../../src/exporters/kpo-pdf.ts';
 import { startRun, type Run, type RunSummary } from '../../src/engine/run-engine.ts';
 import { loadRules } from '../../src/domain/rules/loader.ts';
 import { defaultRunConfig } from '../../src/config/defaults.ts';
@@ -15,7 +17,7 @@ const NOW = Date.parse('2026-11-26T09:00:00Z');
 async function start(
   fail: (r: HrInferenceRequest) => boolean = () => false,
   spec = smallProfile(),
-): Promise<Run> {
+): Promise<Run & { inputs: Awaited<ReturnType<typeof loadInputSet>>['inputs'] }> {
   const { inputs, year, asOf } = await loadInputSet(await writeTempProfile(spec));
   const started = Date.now();
   const clock = (): number => NOW + (Date.now() - started);
@@ -26,7 +28,7 @@ async function start(
       return model.infer(r);
     },
   };
-  return startRun({
+  const run = startRun({
     runId: 'run-gaps',
     inputs,
     rules: loadRules(),
@@ -38,6 +40,7 @@ async function start(
     quietMs: 400,
     runTimeoutMs: 30_000,
   });
+  return Object.assign(run, { inputs });
 }
 
 const cards = (run: Run): CardVM[] =>
@@ -111,6 +114,17 @@ describe('incomplete cards and degraded runs', () => {
     },
     60_000,
   );
+
+  it('marks the KPO export of an incomplete run, and not that of a complete one', async () => {
+    const broken = await start((r) => r.agentId === 'invoice-reader' && r.user.includes('2026-001'));
+    const s = await broken.done;
+    const gaps = s.headroom?.completeness.gaps.map((g) => g.text) ?? [];
+    const x = buildKpoExport(broken.rt.state, broken.inputs, loadRules(), gaps);
+    expect(kpoCsv(x)).toContain('INCOMPLETE: not every input is verified');
+    expect((await kpoPdf(x)).length).toBeGreaterThan(1000);
+    expect(kpoCsv(buildKpoExport(broken.rt.state, broken.inputs, loadRules()))).not.toContain('INCOMPLETE');
+    await broken.dispose();
+  }, 40_000);
 
   it('is failed, with no verdict, when no model request succeeds', async () => {
     const run = await start(() => true);

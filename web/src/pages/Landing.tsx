@@ -139,7 +139,7 @@ const STEPS = [
   },
   {
     title: 'Only checked numbers count',
-    text: 'A Verifier re-derives every figure from the line it cites before it reaches your card. Click any number to see the invoice line, bank row or NBS rate behind it.',
+    text: 'A Verifier checks every figure against the line it cites before it reaches your card. Click any number to see the invoice line, bank row or NBS rate behind it.',
   },
 ];
 
@@ -215,7 +215,7 @@ const FAQ: Array<{ q: string; a: ReactNode }> = [
   },
   {
     q: 'Can I try it without my own files?',
-    a: '“Try with sample data” replays a real recorded run of a synthetic entrepreneur with planted mistakes. No key and no network are needed for that.',
+    a: '“Try with sample data” replays a real recorded run of a synthetic entrepreneur with planted mistakes. “Catch a wrong number” replays it with one misreading injected on purpose, so you can watch the Verifier reject it. No key is needed for either.',
   },
 ];
 
@@ -327,11 +327,14 @@ export function Landing() {
                 </>
               }
             >
-              Invoice apps only know the invoices you issued inside them. A payment that landed without an
-              invoice, or a euro invoice converted at the wrong rate, stays invisible until the year is over.
+              A Serbian flat-rate entrepreneur (paušalac) has to keep full books above {limit} of turnover in
+              a year, register for VAT above {vat} in 12 months, and can have one client&apos;s income taxed
+              more heavily if it fails the independence test. Invoice apps only know the invoices you issued
+              inside them, so money that arrived without an invoice, or a euro invoice converted at the wrong
+              rate, can push you over a line you do not see.
             </SectionHead>
           </Reveal>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
             <Reveal className="bg-ink p-8">
               <p className="mb-5 font-mono text-[11px] tracking-wide text-muted uppercase">
                 The limit has not moved
@@ -347,6 +350,12 @@ export function Landing() {
                 What crossing it means
               </p>
               <Cited rule={rule('R-LIMIT-6M-CONSEQUENCE')} />
+            </Reveal>
+            <Reveal className="bg-ink p-8" delay={200}>
+              <p className="mb-5 font-mono text-[11px] tracking-wide text-muted uppercase">
+                The independence test
+              </p>
+              <Cited rule={rule('R-INDEP-CONSEQUENCE')} />
             </Reveal>
           </div>
         </section>
@@ -451,7 +460,9 @@ export function Landing() {
           </Reveal>
           <Reveal className="mt-12">
             <p className="mb-3 font-mono text-[11px] tracking-wide text-muted uppercase">
-              Every agent loop of that run. Overlapping bars ran at the same time.
+              Every agent loop of that recorded run. A bar runs from a loop&apos;s start to its answer,
+              waiting for the free tier&apos;s rate limit included; npm run prove measures the model requests
+              that were really in flight together.
             </p>
             <ShowcaseTimeline recorded={showcase.recorded} />
           </Reveal>

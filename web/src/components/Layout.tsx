@@ -6,7 +6,7 @@ import { useApp, useAppBoot } from '../state/app.ts';
 import { useHashScroll } from '../state/useHashScroll.ts';
 
 const DISCLAIMER =
-  'Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act.';
+  'Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act.';
 
 export const REPO_URL = 'https://github.com/TheWeirdDee/headroom';
 
@@ -170,6 +170,8 @@ export function Layout() {
         </div>
         <div className="border-t border-line">
           <p className="mx-auto max-w-[1200px] px-4 py-5 text-xs text-muted">
+            {/* A live server runs your own files; the hosted and offline ones only synthetic samples. */}
+            {health?.mode !== 'live' && 'Synthetic data only. '}
             {DISCLAIMER} {health && <span>Headroom {health.version}.</span>}
           </p>
         </div>

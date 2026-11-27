@@ -353,6 +353,8 @@ export interface KpoRow {
 }
 
 export interface KpoExport {
+  /** Why this book is not complete; empty when every input behind it is verified. */
+  incomplete?: string[];
   book: {
     year: number;
     rows: KpoRow[];

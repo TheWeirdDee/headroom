@@ -38,12 +38,21 @@ export interface KpoExport {
   corrections: Correction[];
   disclaimer: string;
   synthetic: boolean;
+  /** Why this book is not complete; empty when every input behind it is verified. */
+  incomplete: string[];
 }
+
+export const INCOMPLETE_BOOK = 'INCOMPLETE: not every input is verified. Do not use this as your KPO book.';
 
 /** Discrepancies that change a row of the KPO book itself. E1, E8 and E9 do not; they stay in the report. */
 const KPO_CORRECTION_TYPES = new Set(['E2', 'E3', 'E4', 'E5', 'E6', 'E7']);
 
-export function buildKpoExport(state: HeadroomState, inputs: RunInputs, rules: RuleBook): KpoExport {
+export function buildKpoExport(
+  state: HeadroomState,
+  inputs: RunInputs,
+  rules: RuleBook,
+  incomplete: string[] = [],
+): KpoExport {
   const committed = state.verified(keys.total('limit6m', 'committed'));
   if (committed?.value.t !== 'money') throw new ExportError('NOT_READY', 'The 6M total is not verified yet.');
   const records = invoiceRecords(verifiedInvoiceFigures(state));
@@ -111,6 +120,7 @@ export function buildKpoExport(state: HeadroomState, inputs: RunInputs, rules: R
     corrections,
     disclaimer: inputs.synthetic ? DISCLAIMER : DISCLAIMER_USER_FILES,
     synthetic: inputs.synthetic,
+    incomplete,
   };
 }
 
@@ -129,6 +139,8 @@ export function kpoCsv(x: KpoExport, locale: 'default' | 'sr' = 'default'): stri
   const join = (cells: string[]): string => cells.map((c) => cell(c, sep)).join(sep);
   const lines: string[] = [];
   lines.push('KPO - KNJIGA O OSTVARENOM PROMETU PAUŠALNO OPOREZOVANIH OBVEZNIKA');
+  if (x.incomplete.length > 0)
+    lines.push(cell(INCOMPLETE_BOOK, sep), ...x.incomplete.map((g) => cell(g, sep)));
   for (const [k, v] of x.header) lines.push(join([k, v]));
   if (x.synthetic) lines.push('SYNTHETIC DATA');
   lines.push(cell(x.disclaimer, sep));
@@ -166,6 +178,7 @@ export function correctionsCsv(x: KpoExport): string {
         .map((v) => cell(v))
         .join(','),
     );
+  if (x.incomplete.length > 0) lines.push(cell(INCOMPLETE_BOOK));
   lines.push(cell(x.disclaimer));
   return `${BOM}${lines.join('\r\n')}\r\n`;
 }

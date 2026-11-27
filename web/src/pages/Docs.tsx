@@ -8,7 +8,7 @@ import { REPO_URL } from '../components/Layout.tsx';
 
 const TOC: Array<{ id: string; label: string }> = [
   { id: 'quick-start', label: 'Quick start' },
-  { id: 'try-offline', label: 'Try it offline' },
+  { id: 'try-offline', label: 'Try it without files' },
   { id: 'files', label: 'Your files' },
   { id: 'models', label: 'Models and keys' },
   { id: 'a-run', label: 'What happens in a run' },
@@ -72,6 +72,11 @@ export function Docs() {
         <header>
           <h1 className="text-5xl tracking-tight">Using Headroom</h1>
           <p className="mt-4 text-lg text-muted">
+            The problem: before sending an invoice, a Serbian flat-rate entrepreneur (paušalac) cannot easily
+            tell whether it crosses the 6M turnover limit or the 8M VAT threshold once foreign invoices are
+            converted and money that arrived with no invoice is counted.
+          </p>
+          <p className="mt-3 text-muted">
             Headroom runs on your own computer. It reads your bank statement, invoices and KPO book, checks
             every figure against its source, and shows the room left under the 6M paušal limit before you send
             an invoice. Not financial or tax advice.
@@ -95,14 +100,16 @@ npm start                 # then open http://localhost:4317`}</Code>
           </p>
         </Section>
 
-        <Section id="try-offline" title="Try it offline">
+        <Section id="try-offline" title="Try it without files">
           <p>
             No key and no network: the bundled sample replays a real recorded run. It is real Mozaik execution
             with the recorded model answers, not a video. If anything was not recorded, it stops with
             REPLAY_MISS rather than invent an answer.
           </p>
           <Code>{`npm run start:offline              # finishes in seconds
-npm run start:offline -- --speed 4 # recorded model latencies, four times faster`}</Code>
+npm run start:offline -- --speed 4 # recorded model latencies, four times faster
+npm run prove                      # measures model requests that overlap
+npm run demo:catch                 # the Verifier rejects an injected misread`}</Code>
         </Section>
 
         <Section id="files" title="Your files">
@@ -156,7 +163,6 @@ npm run start:offline -- --speed 4 # recorded model latencies, four times faster
                   ['Groq', 'groq/openai/gpt-oss-120b', 'GROQ_API_KEY'],
                   ['Anthropic', 'claude-sonnet-5-5', 'ANTHROPIC_API_KEY'],
                   ['OpenAI', 'gpt-5.4-mini', 'OPENAI_API_KEY'],
-                  ['DeepSeek', 'deepseek-v4-flash', 'DEEPSEEK_API_KEY'],
                 ].map(([p, m, k]) => (
                   <tr key={p}>
                     <td className="px-4 py-2">{p}</td>
@@ -167,6 +173,7 @@ npm run start:offline -- --speed 4 # recorded model latencies, four times faster
               </tbody>
             </table>
           </div>
+          <p>Headroom has been run with the Gemini and Groq models above, not with Claude or OpenAI ones.</p>
           <p>
             Requests are paced so a free tier slows a run down instead of failing it (10 a minute for Gemini,
             8 for Groq; change it with <code className="font-mono text-text">HEADROOM_MAX_RPM</code>). Rate
@@ -177,7 +184,8 @@ npm run start:offline -- --speed 4 # recorded model latencies, four times faster
         <Section id="a-run" title="What happens in a run">
           <ol className="list-decimal space-y-2 pl-5">
             <li>
-              Seven agents start at once on one Mozaik runtime, each in its own lane with a plain status line.
+              Seven agents join one Mozaik runtime, each with its own lane and a plain status line. One event
+              from you starts the run. Nothing calls an agent: each reacts to the events it cares about.
             </li>
             <li>
               Readers propose figures (invoice dates and amounts, payments, KPO rows) to a shared Figure
@@ -191,6 +199,14 @@ npm run start:offline -- --speed 4 # recorded model latencies, four times faster
             <li>
               The LimitKeeper totals verified turnover for the 6M limit and the 8M VAT window, with and
               without the draft.
+            </li>
+            <li>
+              Client payments with no invoice are not turnover, so the headline shows where the total would be
+              once they are invoiced, with the figure on invoices alone below it.
+            </li>
+            <li>
+              The card says <strong>Incomplete</strong>, with the reasons, until every input is verified. A
+              failed agent keeps it that way and ends the run degraded or failed.
             </li>
             <li>
               Questions only you can answer (for example some independence criteria) come to you; answering
@@ -216,8 +232,8 @@ npm run start:offline -- --speed 4 # recorded model latencies, four times faster
         <Section id="outputs" title="Exports">
           <p>
             The KPO tab shows your corrected KPO book in the official layout with a correction log. Export it
-            as CSV (English or Serbian headings) or PDF, plus a JSON run report with every figure and its
-            sources.
+            as CSV (decimal point, or decimal comma for Serbian spreadsheets) or PDF, plus a JSON run report
+            with every figure and its sources. An export of an incomplete run says so at the top.
           </p>
         </Section>
 

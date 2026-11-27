@@ -47,6 +47,18 @@ export function Kpo() {
             <Download size={14} aria-hidden /> Corrections CSV
           </a>
         </div>
+        {data && (data.incomplete?.length ?? 0) > 0 && (
+          <div role="alert" className="rounded border border-danger/60 bg-danger/10 p-3 text-sm">
+            <p className="font-medium text-danger">
+              Incomplete: not every input is verified. Do not use this as your KPO book.
+            </p>
+            <ul className="mt-1 text-muted">
+              {data.incomplete?.map((g) => (
+                <li key={g}>{g}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {error && (
           <p role="alert" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
             {error} The book is built from verified figures only, so it appears once the run has verified the

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { CircleCheck, CircleAlert } from 'lucide-react';
 import { getJson, ApiError } from '../api/client.ts';
 import type { Evidence as EvidenceData } from '../api/types.ts';
+import { REPO_URL } from '../components/Layout.tsx';
 
 export function Evidence() {
   const [data, setData] = useState<EvidenceData>();
@@ -23,6 +24,14 @@ export function Evidence() {
           anyone can run.
         </p>
       </div>
+      <p className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
+        The real-model runs below were made before later changes to the pipeline and have not been repeated
+        since. For the current code see the{' '}
+        <a className="underline" href={`${REPO_URL}/blob/main/docs/evaluation.md`}>
+          evaluation notes
+        </a>
+        : the keyless evaluation on all 14 samples, and one live run on a small sample.
+      </p>
       {error && <p className="rounded border border-line bg-panel p-4 text-sm text-muted">{error}</p>}
       {data && (
         <>

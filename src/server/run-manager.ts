@@ -434,7 +434,11 @@ export class RunManager {
 
   kpo(runId: string): KpoExport {
     const r = this.get(runId);
-    return buildKpoExport(r.run.rt.state, r.inputs, this.o.rules);
+    const card = r.card;
+    const incomplete = card
+      ? card.completeness.gaps.map((g) => g.text)
+      : ['The run has not verified its totals yet.'];
+    return buildKpoExport(r.run.rt.state, r.inputs, this.o.rules, incomplete);
   }
 
   report(runId: string): unknown {

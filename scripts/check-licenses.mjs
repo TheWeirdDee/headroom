@@ -2,6 +2,7 @@
 // Lists production dependency licences and fails on copyleft licences that conflict with MIT
 // distribution. Uses license-checker's JSON output.
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 
 const DENY = /\b(A?GPL|LGPL|SSPL|EUPL|CC-BY-NC|CC-BY-SA)\b/i;
@@ -23,11 +24,11 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const dirs = ['.', 'web'].filter((d) => d === '.' || process.argv.includes('--with-web'));
   let failed = false;
   for (const dir of dirs) {
+    // Run the installed script with Node itself: npx is a .cmd file on Windows, which cannot be spawned.
     const raw = execFileSync(
-      'npx',
+      process.execPath,
       [
-        '--no-install',
-        'license-checker',
+        createRequire(import.meta.url).resolve('license-checker/bin/license-checker'),
         '--production',
         '--excludePrivatePackages',
         '--json',

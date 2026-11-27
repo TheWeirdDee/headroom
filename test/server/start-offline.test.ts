@@ -37,7 +37,8 @@ beforeAll(async () => {
     stdio: 'ignore',
   });
   base = `http://127.0.0.1:${port}`;
-  for (let i = 0; i < 200; i++) {
+  // Starting the server compiles it; on a busy machine that can take a while.
+  for (let i = 0; i < 600; i++) {
     try {
       if ((await fetch(`${base}/api/health`)).ok) return;
     } catch {
@@ -46,7 +47,7 @@ beforeAll(async () => {
     await sleep(100);
   }
   throw new Error('the offline server did not start');
-}, 30_000);
+}, 90_000);
 
 afterAll(() => {
   server?.kill();

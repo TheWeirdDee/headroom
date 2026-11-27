@@ -19,7 +19,9 @@ export const KEY_ENV: Record<Provider, string[]> = {
   google: ['GEMINI_API_KEY', 'GOOGLE_API_KEY'],
   anthropic: ['ANTHROPIC_API_KEY'],
   openai: ['OPENAI_API_KEY'],
-  deepseek: ['DEEPSEEK_API_KEY'],
+  // Mozaik 6.0.0 calls DeepSeek through its OpenAI-compatible endpoint, which reads the OpenAI variables
+  // (set OPENAI_BASE_URL to DeepSeek's address).
+  deepseek: ['OPENAI_API_KEY'],
   groq: ['GROQ_API_KEY'],
 };
 

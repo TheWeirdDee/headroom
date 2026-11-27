@@ -4,7 +4,7 @@ import PDFDocument from 'pdfkit';
 import { join } from 'node:path';
 import { formatSr } from '../domain/money.ts';
 import { formatDateSr } from '../domain/dates.ts';
-import type { KpoExport } from './kpo.ts';
+import { INCOMPLETE_BOOK, type KpoExport } from './kpo.ts';
 
 const FONT_DIR = join(import.meta.dirname, '..', '..', 'assets', 'fonts');
 const REGULAR = join(FONT_DIR, 'Inter_400Regular.ttf');
@@ -22,6 +22,12 @@ export async function kpoPdf(x: KpoExport): Promise<Buffer> {
   const done = new Promise<void>((resolve) => doc.on('end', () => resolve()));
 
   doc.font(BOLD).fontSize(13).text('KPO - KNJIGA O OSTVARENOM PROMETU PAUŠALNO OPOREZOVANIH OBVEZNIKA');
+  if (x.incomplete.length > 0) {
+    doc.moveDown(0.3).font(BOLD).fontSize(11).fillColor('#b3261e').text(INCOMPLETE_BOOK);
+    doc.font(REGULAR).fontSize(9);
+    for (const gap of x.incomplete) doc.text(gap, { width: 740 });
+    doc.fillColor('black');
+  }
   doc.moveDown(0.4).font(REGULAR).fontSize(9);
   for (const [k, v] of x.header) doc.text(`${k}: ${v}`);
   if (x.synthetic) doc.font(BOLD).text('SYNTHETIC DATA').font(REGULAR);

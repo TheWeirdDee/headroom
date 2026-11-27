@@ -32,6 +32,12 @@ export function About() {
           invoice, it shows how much room is left under the {limit} turnover limit, the {vat} VAT threshold
           and the independence test, and it finds where your bank statement, invoices and KPO book disagree.
         </p>
+        <p className="mt-3 text-muted">
+          The problem: above {limit} of yearly turnover a paušalac has to keep full books, and above {vat} in
+          12 months must register for VAT. Whether the invoice about to be sent crosses a line depends on
+          every earlier invoice, the exchange rate of each foreign one, and money that arrived without an
+          invoice, which an invoicing app does not see.
+        </p>
         <p className="rounded border border-line bg-panel p-3">{health?.authorityBoundary}</p>
         <p className="text-sm text-muted">
           It does not file anything, does not tell you how much tax you owe, and does not give advice.
@@ -42,7 +48,9 @@ export function About() {
         <h2 className="text-xl font-semibold">How the agents work</h2>
         <ul className="list-disc space-y-1 pl-5 text-sm">
           <li>
-            Seven agents run at the same time on Mozaik, each in its own loop, sharing one board of figures.
+            Seven agents share one Mozaik runtime and one board of figures. Five ask a model (each request is
+            its own loop, many at once); two apply rules in code. Each acts when something it cares about
+            happens on the board.
           </li>
           <li>
             Readers (invoice, statement, KPO) propose figures with the exact line they came from. A model
