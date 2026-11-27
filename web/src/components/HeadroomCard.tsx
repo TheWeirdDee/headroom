@@ -38,6 +38,29 @@ function Num({
   );
 }
 
+/** Room under a limit; past it, the excess is shown as a positive amount and called "over". */
+function Room({
+  m,
+  onOpen,
+  className = '',
+}: {
+  m: MoneyVM;
+  onOpen: (id: string) => void;
+  className?: string;
+}) {
+  const over = m.amount.startsWith('-');
+  return (
+    <>
+      <Num
+        m={over ? { ...m, display: m.display.replace(/^-/, '') } : m}
+        onOpen={onOpen}
+        className={className}
+      />{' '}
+      {over ? 'over' : 'left'}
+    </>
+  );
+}
+
 function pct(committed: string, limit: string): number {
   const c = Number.parseFloat(committed);
   const l = Number.parseFloat(limit);
@@ -119,7 +142,7 @@ function Unbilled({ limit, onOpen }: { limit: CardVM['limit6m']; onOpen: (id: st
         ))}
       </p>
       <p className="mt-1 text-xs text-muted">
-        On your invoices alone, after this one: <Num m={limit.headroomWithDraft} onOpen={onOpen} /> left.
+        On your invoices alone, after this one: <Room m={limit.headroomWithDraft} onOpen={onOpen} />.
       </p>
     </>
   );
@@ -250,8 +273,8 @@ export function HeadroomCard({
           <>
             <p className="mt-1 text-3xl font-semibold tracking-tight text-muted">Incomplete</p>
             <p className="text-xs text-muted">
-              From the figures verified so far: <Num m={l.headroomWithDraft} onOpen={onOpen} /> left. This is
-              not the answer yet.
+              From the figures verified so far: <Room m={l.headroomWithDraft} onOpen={onOpen} />. This is not
+              the answer yet.
             </p>
             {l.unbilled?.crossed && (
               <p role="alert" className="mt-2 rounded border border-danger/60 bg-danger/10 p-2 text-sm">
@@ -263,9 +286,15 @@ export function HeadroomCard({
         ) : (
           <>
             <p className="mt-1 text-3xl font-semibold tracking-tight">
-              <Num m={l.headroomWithDraft} onOpen={onOpen} className={BAND[l.band].cls} />
+              <Num
+                m={{ ...l.headroomWithDraft, display: l.headroomWithDraft.display.replace(/^-/, '') }}
+                onOpen={onOpen}
+                className={BAND[l.band].cls}
+              />
             </p>
-            <p className="text-xs text-muted">left after this invoice</p>
+            <p className="text-xs text-muted">
+              {l.headroomWithDraft.amount.startsWith('-') ? 'over the limit' : 'left'} after this invoice
+            </p>
           </>
         )}
         <Bar
@@ -331,7 +360,7 @@ export function HeadroomCard({
           {v.band === 'incomplete' ? (
             <span className="text-muted">Incomplete</span>
           ) : (
-            <Num m={v.headroomWithDraft} onOpen={onOpen} className={BAND[v.band].cls} />
+            <Room m={v.headroomWithDraft} onOpen={onOpen} className={BAND[v.band].cls} />
           )}
         </p>
         <Bar

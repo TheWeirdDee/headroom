@@ -267,8 +267,8 @@ export function Intake() {
       <div>
         <h1 className="text-2xl font-semibold">Check my invoice</h1>
         <p className="mt-1 text-muted">
-          Your files are processed on this machine. In live mode, document text is sent to the model provider
-          to be read; the arithmetic is done here.
+          Your files stay on this machine. In live mode, document text is sent to the model provider to be
+          read; the arithmetic is done here.
         </p>
         {!noKey && health !== undefined && health.maxRpm > 0 && (
           <p className="mt-1 text-sm text-muted">

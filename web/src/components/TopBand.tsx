@@ -38,7 +38,12 @@ export function TopBand({
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1.5">
         <span className="font-medium text-text">Not financial or tax advice</span>
         {data && (
-          <span>Data: {data === 'sample' ? 'SAMPLE (SYNTHETIC)' : 'YOUR FILES (processed locally)'}</span>
+          <span>
+            Data:{' '}
+            {data === 'sample'
+              ? 'SAMPLE (SYNTHETIC)'
+              : 'YOUR FILES (kept on this computer; their text goes to the model)'}
+          </span>
         )}
         <span>Mode: {modeText}</span>
         {fault && <span className="font-medium text-danger">{fault}</span>}
