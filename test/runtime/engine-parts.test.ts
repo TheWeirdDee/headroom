@@ -31,8 +31,14 @@ describe('quiescence', () => {
   it('waits for continuous quiet and restarts the window when activity resumes', async () => {
     const seq = [busy, quiet, quiet, busy, quiet, quiet, quiet, quiet];
     let i = 0;
+    // A clock that moves 5 ms per probe, so the result does not depend on the system's timer resolution.
     const r = await waitForQuiescence(
-      { probe: () => seq[Math.min(i++, seq.length - 1)] ?? quiet, quietMs: 20, intervalMs: 5 },
+      {
+        probe: () => seq[Math.min(i++, seq.length - 1)] ?? quiet,
+        quietMs: 20,
+        intervalMs: 1,
+        now: () => i * 5,
+      },
       2000,
     );
     expect(r).toBe('quiet');

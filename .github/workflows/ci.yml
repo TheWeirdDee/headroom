@@ -5,6 +5,19 @@ on:
   pull_request:
 
 jobs:
+  # Git for Windows checks files out with CRLF by default; .gitattributes keeps them LF, so the recorded
+  # replay's hashes match. This job proves it on a Windows runner.
+  windows:
+    runs-on: windows-latest
+    steps:
+      - run: git config --global core.autocrlf true
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
   check:
     runs-on: ubuntu-latest
     steps:

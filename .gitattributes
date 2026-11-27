@@ -1,0 +1,8 @@
+# Check out every text file with LF line endings on every system. Recorded replays are matched by hashes
+# of prompts and input rows, so a CRLF checkout (Git for Windows default) makes every request miss.
+* text=auto eol=lf
+
+*.pdf binary
+*.png binary
+*.gif binary
+*.ttf binary
