@@ -12,11 +12,11 @@ export const REPO_URL = 'https://github.com/TheWeirdDee/headroom';
 
 const NAV: Array<{ to: string; label: string }> = [
   { to: '/#how', label: 'How it works' },
-  { to: '/#agents', label: 'Agents' },
-  { to: '/#proof', label: 'Proof' },
-  { to: '/#faq', label: 'FAQ' },
-  { to: '/docs', label: 'Docs' },
+  { to: '/agents', label: 'Agents' },
+  { to: '/proof', label: 'Proof' },
   { to: '/evidence', label: 'Evidence' },
+  { to: '/docs', label: 'Docs' },
+  { to: '/#faq', label: 'FAQ' },
 ];
 
 function NavItem({ to, label, onClick }: { to: string; label: string; onClick?: () => void }) {
@@ -101,32 +101,19 @@ export function Layout() {
           </nav>
         )}
       </header>
-      {health?.publicDemo && (
-        <div role="note" className="border-b border-amber/40 bg-amber/10 px-4 py-2 text-sm">
-          <div className="mx-auto max-w-[1200px]">
-            <span className="font-medium">Public sample instance.</span> Recorded runs of the synthetic
-            samples only: no model key on this server, and file uploads are off. To check your own files, run
-            Headroom on your computer (see the{' '}
-            <Link to="/docs#quick-start" className="underline">
-              docs
-            </Link>
-            ).
-          </div>
-        </div>
-      )}
-      {waking && !health && (
-        <div role="status" className="border-b border-line bg-panel px-4 py-2 text-sm text-muted">
-          <div className="mx-auto flex max-w-[1200px] items-center gap-2">
-            <span className="pulse-dot size-1.5 rounded-full bg-signal" aria-hidden />
-            Waking the sample server (it sleeps when idle; this takes up to a minute). The page below shows
-            the recorded run meanwhile.
-          </div>
-        </div>
-      )}
       {error && (
         <div role="alert" className="border-b border-danger/40 bg-danger/10 px-4 py-2 text-sm text-danger">
           <div className="mx-auto max-w-[1200px]">{error}</div>
         </div>
+      )}
+      {waking && !health && (
+        <p
+          role="status"
+          className="fixed right-3 bottom-3 left-3 z-30 flex items-center gap-2 rounded-full border border-line bg-panel/95 px-4 py-2 text-xs text-muted shadow-lg sm:left-auto"
+        >
+          <span className="pulse-dot size-1.5 shrink-0 rounded-full bg-signal" aria-hidden />
+          Waking the sample server, up to a minute. Showing the recorded run meanwhile.
+        </p>
       )}
       <main className="flex-1">
         <Outlet />
@@ -145,7 +132,8 @@ export function Layout() {
             links={[
               { to: '/check', label: 'Check my invoice' },
               { to: '/#how', label: 'How it works' },
-              { to: '/#agents', label: 'The seven agents' },
+              { to: '/agents', label: 'The seven agents' },
+              { to: '/proof', label: 'Proof' },
               { to: '/#faq', label: 'FAQ' },
             ]}
           />

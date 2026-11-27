@@ -1,0 +1,413 @@
+{
+  "seed": "headroom-2026-11-26",
+  "asOf": "2026-11-26",
+  "sets": [
+    {
+      "id": "gemini",
+      "folder": "eval",
+      "title": "Real model: Gemini, free tier",
+      "note": "Made on 27 November before later changes to the pipeline (the completeness gate, one-to-one payment matching, field checks and the Mozaik participant rework).",
+      "conditions": {
+        "date": "2026-11-27",
+        "mode": "live",
+        "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" },
+        "mozaikVersion": "6.0.0",
+        "runsPerProfile": { "c01": 2, "p02": 1, "p05": 1, "p06": 1, "p07": 2 },
+        "profiles": ["c01", "p02", "p05", "p06", "p07"],
+        "seed": "headroom-2026-11-26"
+      },
+      "metrics": [
+        {
+          "name": "Planted errors detected",
+          "value": "19 / 19 (100.0%)",
+          "note": "on 5 synthetic profiles we designed"
+        },
+        {
+          "name": "False discrepancies on clean profiles",
+          "value": "0 in 2 runs",
+          "target": "0",
+          "passed": true
+        },
+        { "name": "Findings that were not planted (all profiles)", "value": "0" },
+        {
+          "name": "Verified invoice facts equal to the truth",
+          "value": "222 / 222 (100.0%)",
+          "note": "issue date, amount in RSD and kind of every invoice"
+        },
+        {
+          "name": "Wrong figures that got verified",
+          "value": "0",
+          "target": "0",
+          "passed": true,
+          "note": "the most important miss: listed below with figure ids"
+        },
+        { "name": "Contested figures that were in fact wrong", "value": "0 / 0" },
+        { "name": "Figures shown without a source", "value": "0", "target": "0", "passed": true },
+        { "name": "Runs with 6M and 8M totals (with the draft) equal to the truth", "value": "7 / 7" },
+        {
+          "name": "Profiles with identical headroom across runs",
+          "value": "2 / 2",
+          "note": "measured only on profiles with more than one run: c01 (2 runs), p07 (2 runs)"
+        },
+        { "name": "Runs with a failed loop", "value": "0 / 7" },
+        { "name": "Median loops running at once (peak)", "value": "15" },
+        {
+          "name": "Median loop time / wall time",
+          "value": "10.73",
+          "note": "above 1 means loops overlapped"
+        },
+        { "name": "Median wall time per run", "value": "482.1 s" },
+        { "name": "Median tokens per run (in / out)", "value": "64203 / 6934" },
+        {
+          "name": "Verifier contests by reason (all runs)",
+          "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 5, IMPLAUSIBLE 0"
+        },
+        {
+          "name": "Planted book errors that surfaced as real agent conflicts",
+          "value": "8 / 8",
+          "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+        },
+        {
+          "name": "Messy CSV layouts parsed without errors",
+          "value": "7 / 7",
+          "note": "02-windows-1250.csv: account currency asked from the user"
+        }
+      ],
+      "perType": [
+        { "type": "E1", "planted": 2, "found": 2, "missed": 0, "extra": 0 },
+        { "type": "E2", "planted": 3, "found": 3, "missed": 0, "extra": 0 },
+        { "type": "E3", "planted": 3, "found": 3, "missed": 0, "extra": 0 },
+        { "type": "E4", "planted": 2, "found": 2, "missed": 0, "extra": 0 },
+        { "type": "E5", "planted": 2, "found": 2, "missed": 0, "extra": 0 },
+        { "type": "E6", "planted": 2, "found": 2, "missed": 0, "extra": 0 },
+        { "type": "E7", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E8", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E9", "planted": 3, "found": 3, "missed": 0, "extra": 0 }
+      ],
+      "misses": []
+    },
+    {
+      "id": "groq",
+      "folder": "eval/groq-gpt-oss-120b",
+      "title": "Real model: Groq, earlier code",
+      "note": "Both false findings came from Headroom, not the model, and were fixed afterwards (see the evaluation notes).",
+      "conditions": {
+        "date": "2026-11-27",
+        "mode": "live",
+        "models": { "reader": "groq/openai/gpt-oss-120b", "verifier": "groq/openai/gpt-oss-120b" },
+        "mozaikVersion": "6.0.0",
+        "runsPerProfile": { "c02": 1, "p01": 1 },
+        "profiles": ["c02", "p01"],
+        "stopped": "p03 run 1 hit the daily quota and was not counted",
+        "seed": "headroom-2026-11-26"
+      },
+      "metrics": [
+        {
+          "name": "Planted errors detected",
+          "value": "3 / 3 (100.0%)",
+          "note": "on 2 synthetic profiles we designed"
+        },
+        {
+          "name": "False discrepancies on clean profiles",
+          "value": "1 in 1 runs",
+          "target": "0",
+          "passed": false
+        },
+        { "name": "Findings that were not planted (all profiles)", "value": "2" },
+        {
+          "name": "Verified invoice facts equal to the truth",
+          "value": "60 / 60 (100.0%)",
+          "note": "issue date, amount in RSD and kind of every invoice"
+        },
+        {
+          "name": "Wrong figures that got verified",
+          "value": "0",
+          "target": "0",
+          "passed": true,
+          "note": "the most important miss: listed below with figure ids"
+        },
+        { "name": "Contested figures that were in fact wrong", "value": "0 / 0" },
+        { "name": "Figures shown without a source", "value": "0", "target": "0", "passed": true },
+        { "name": "Runs with 6M and 8M totals (with the draft) equal to the truth", "value": "2 / 2" },
+        {
+          "name": "Profiles with identical headroom across runs",
+          "value": "n/a",
+          "note": "every profile ran once"
+        },
+        { "name": "Runs with a failed loop", "value": "0 / 2" },
+        { "name": "Median loops running at once (peak)", "value": "15" },
+        {
+          "name": "Median loop time / wall time",
+          "value": "10.16",
+          "note": "above 1 means loops overlapped"
+        },
+        { "name": "Median wall time per run", "value": "575.6 s" },
+        { "name": "Median tokens per run (in / out)", "value": "67108.5 / 24588" },
+        {
+          "name": "Verifier contests by reason (all runs)",
+          "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0"
+        },
+        {
+          "name": "Planted book errors that surfaced as real agent conflicts",
+          "value": "0 / 0",
+          "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+        },
+        {
+          "name": "Messy CSV layouts parsed without errors",
+          "value": "7 / 7",
+          "note": "02-windows-1250.csv: account currency asked from the user"
+        }
+      ],
+      "perType": [
+        { "type": "E1", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E3", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E8", "planted": 1, "found": 1, "missed": 0, "extra": 0 }
+      ],
+      "misses": []
+    },
+    {
+      "id": "fake",
+      "folder": "eval/fake",
+      "title": "Deterministic test model: all 14 samples",
+      "note": "The test model cannot misread, so this measures the pipeline (rules, Verifier, conflicts, totals), not how well a model reads documents.",
+      "conditions": {
+        "date": "2026-11-27",
+        "mode": "fake",
+        "models": { "reader": "fake-model (test)", "verifier": "fake-model (test)" },
+        "mozaikVersion": "6.0.0",
+        "runsPerProfile": {
+          "c01": 2,
+          "c02": 2,
+          "p01": 2,
+          "p02": 2,
+          "p03": 2,
+          "p04": 2,
+          "p05": 2,
+          "p06": 2,
+          "p07": 2,
+          "p08": 2,
+          "p09": 2,
+          "p10": 2,
+          "p11": 2,
+          "p12": 2
+        },
+        "profiles": [
+          "c01",
+          "c02",
+          "p01",
+          "p02",
+          "p03",
+          "p04",
+          "p05",
+          "p06",
+          "p07",
+          "p08",
+          "p09",
+          "p10",
+          "p11",
+          "p12"
+        ],
+        "seed": "headroom-2026-11-26"
+      },
+      "metrics": [
+        {
+          "name": "Planted errors detected",
+          "value": "80 / 80 (100.0%)",
+          "note": "on 14 synthetic profiles we designed"
+        },
+        {
+          "name": "False discrepancies on clean profiles",
+          "value": "0 in 4 runs",
+          "target": "0",
+          "passed": true
+        },
+        { "name": "Findings that were not planted (all profiles)", "value": "0" },
+        {
+          "name": "Verified invoice facts equal to the truth",
+          "value": "918 / 918 (100.0%)",
+          "note": "issue date, amount in RSD and kind of every invoice"
+        },
+        {
+          "name": "Wrong figures that got verified",
+          "value": "0",
+          "target": "0",
+          "passed": true,
+          "note": "the most important miss: listed below with figure ids"
+        },
+        { "name": "Contested figures that were in fact wrong", "value": "0 / 0" },
+        { "name": "Figures shown without a source", "value": "0", "target": "0", "passed": true },
+        { "name": "Runs with 6M and 8M totals (with the draft) equal to the truth", "value": "28 / 28" },
+        {
+          "name": "Profiles with identical headroom across runs",
+          "value": "14 / 14",
+          "note": "measured only on profiles with more than one run: c01 (2 runs), c02 (2 runs), p01 (2 runs), p02 (2 runs), p03 (2 runs), p04 (2 runs), p05 (2 runs), p06 (2 runs), p07 (2 runs), p08 (2 runs), p09 (2 runs), p10 (2 runs), p11 (2 runs), p12 (2 runs)"
+        },
+        { "name": "Runs with a failed loop", "value": "0 / 28" },
+        { "name": "Median loops running at once (peak)", "value": "15" },
+        {
+          "name": "Median loop time / wall time",
+          "value": "0.26",
+          "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
+        },
+        { "name": "Median wall time per run", "value": "1.9 s" },
+        { "name": "Median tokens per run (in / out)", "value": "19000 / 4582" },
+        {
+          "name": "Verifier contests by reason (all runs)",
+          "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0"
+        },
+        {
+          "name": "Planted book errors that surfaced as real agent conflicts",
+          "value": "34 / 34",
+          "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+        },
+        {
+          "name": "Messy CSV layouts parsed without errors",
+          "value": "7 / 7",
+          "note": "02-windows-1250.csv: account currency asked from the user"
+        }
+      ],
+      "perType": [
+        { "type": "E1", "planted": 10, "found": 10, "missed": 0, "extra": 0 },
+        { "type": "E2", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
+        { "type": "E3", "planted": 10, "found": 10, "missed": 0, "extra": 0 },
+        { "type": "E4", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
+        { "type": "E5", "planted": 10, "found": 10, "missed": 0, "extra": 0 },
+        { "type": "E6", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
+        { "type": "E7", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
+        { "type": "E8", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
+        { "type": "E9", "planted": 10, "found": 10, "missed": 0, "extra": 0 }
+      ],
+      "misses": []
+    }
+  ],
+  "samples": [
+    {
+      "id": "p01",
+      "errors": ["E1", "E3", "E8"],
+      "invoices": 11,
+      "statementRows": 17,
+      "bookRows": 10,
+      "traits": []
+    },
+    {
+      "id": "p02",
+      "errors": ["E2", "E4", "E6"],
+      "invoices": 12,
+      "statementRows": 17,
+      "bookRows": 13,
+      "traits": []
+    },
+    {
+      "id": "p03",
+      "errors": ["E5", "E7", "E9"],
+      "invoices": 13,
+      "statementRows": 18,
+      "bookRows": 13,
+      "traits": ["foreign invoice dated on a weekend"]
+    },
+    {
+      "id": "p04",
+      "errors": ["E1", "E2", "E5"],
+      "invoices": 10,
+      "statementRows": 16,
+      "bookRows": 10,
+      "traits": []
+    },
+    {
+      "id": "p05",
+      "errors": ["E3", "E4", "E8", "E9"],
+      "invoices": 9,
+      "statementRows": 14,
+      "bookRows": 8,
+      "traits": []
+    },
+    {
+      "id": "p06",
+      "errors": ["E6", "E7"],
+      "invoices": 13,
+      "statementRows": 18,
+      "bookRows": 14,
+      "traits": []
+    },
+    {
+      "id": "p07",
+      "errors": ["E1", "E2", "E3", "E5", "E9"],
+      "invoices": 11,
+      "statementRows": 17,
+      "bookRows": 10,
+      "traits": ["the sample shown on this site", "one client above 70% of income"]
+    },
+    {
+      "id": "p08",
+      "errors": ["E4", "E6", "E8"],
+      "invoices": 11,
+      "statementRows": 16,
+      "bookRows": 12,
+      "traits": []
+    },
+    {
+      "id": "p09",
+      "errors": ["E1", "E3", "E7"],
+      "invoices": 12,
+      "statementRows": 18,
+      "bookRows": 11,
+      "traits": ["foreign invoice dated on a weekend"]
+    },
+    {
+      "id": "p10",
+      "errors": ["E2", "E5", "E9"],
+      "invoices": 12,
+      "statementRows": 17,
+      "bookRows": 12,
+      "traits": ["exempt from the independence test"]
+    },
+    {
+      "id": "p11",
+      "errors": ["E1", "E4", "E6", "E8"],
+      "invoices": 11,
+      "statementRows": 17,
+      "bookRows": 12,
+      "traits": ["an invoice carries a prompt-injection line"]
+    },
+    {
+      "id": "p12",
+      "errors": ["E3", "E5", "E7", "E9"],
+      "invoices": 10,
+      "statementRows": 15,
+      "bookRows": 9,
+      "traits": ["one client above 70% of income"]
+    },
+    { "id": "c01", "errors": [], "invoices": 9, "statementRows": 14, "bookRows": 9, "traits": [] },
+    { "id": "c02", "errors": [], "invoices": 9, "statementRows": 14, "bookRows": 9, "traits": [] }
+  ],
+  "recorded": {
+    "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" },
+    "loops": 65,
+    "failedLoops": 0,
+    "wallTimeMs": 482755,
+    "maxConcurrentLoops": 15,
+    "figures": { "proposed": 0, "verified": 215, "contested": 2, "superseded": 26, "needs_user": 0 },
+    "rejections": {
+      "UNSOURCED": 0,
+      "SOURCE_MISMATCH": 0,
+      "DERIVATION_MISMATCH": 0,
+      "NOT_SUPPORTED_BY_SOURCE": 2,
+      "IMPLAUSIBLE": 0
+    },
+    "tokens": {
+      "in": 67277,
+      "out": 7161,
+      "byAgent": {
+        "independence-checker": { "in": 5277, "out": 690 },
+        "kpo-reader": { "in": 1681, "out": 375 },
+        "statement-reader": { "in": 3652, "out": 602 },
+        "invoice-reader": { "in": 38595, "out": 3292 },
+        "verifier": { "in": 18072, "out": 2202 }
+      }
+    }
+  },
+  "examples": {
+    "statement": "Datum,Datum valute,Opis,Nalogodavac/Primalac,Poziv na broj,Iznos,Valuta,Smer,Stanje\n2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74",
+    "book": "Redni broj,Datum,Opis knjiženja,Prihod od prodaje proizvoda,Prihod od izvršenih usluga,Svega prihodi od delatnosti\n1,2026-01-19,\"Faktura 2026-002, Heron Systems GmbH\",0.00,369704.79,369704.79"
+  }
+}

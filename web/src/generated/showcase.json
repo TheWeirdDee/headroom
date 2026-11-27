@@ -1,4 +1,241 @@
 {
+  "fault": {
+    "note": "Injected fault: the first reading of invoice 2026-006 is altered from 3500.00 to 5300.00 EUR before it reaches the InvoiceReader. The model did not make this mistake.",
+    "versions": [
+      {
+        "amount": "5300 EUR",
+        "status": "contested",
+        "reason": "excerpt \"3.500,00 EUR\" does not show the amount 5300"
+      },
+      { "amount": "3500 EUR", "status": "verified", "reason": "" }
+    ]
+  },
+  "agents": {
+    "independence-checker": {
+      "proposed": 33,
+      "verified": 30,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "criterion:heron:1",
+          "value": { "t": "tri", "value": "met" },
+          "source": "contract, workingHoursSetByClient: \"Yes: the client sets core working hours.\""
+        },
+        {
+          "key": "criterion:heron:2",
+          "value": { "t": "tri", "value": "not_met" },
+          "source": "contract, workplaceSetByClient: \"No: work is done remotely from the contractor office.\""
+        },
+        {
+          "key": "criterion:heron:3",
+          "value": { "t": "tri", "value": "not_met" },
+          "source": "contract, trainingByClient: \"No: no training by the client.\""
+        },
+        {
+          "key": "criterion:heron:5",
+          "value": { "t": "tri", "value": "not_met" },
+          "source": "contract, equipmentOrManagementByClient: \"No: the contractor uses own equipment.\""
+        }
+      ]
+    },
+    "human": {
+      "proposed": 4,
+      "verified": 4,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "draft:amount",
+          "value": { "t": "money", "amount": "8550.00", "currency": "EUR" },
+          "source": "your answer"
+        },
+        { "key": "draft:currency", "value": { "t": "text", "text": "EUR" }, "source": "your answer" },
+        { "key": "draft:issueDate", "value": { "t": "date", "iso": "2026-11-26" }, "source": "your answer" },
+        { "key": "draft:client", "value": { "t": "text", "text": "heron" }, "source": "your answer" }
+      ]
+    },
+    "statement-reader": {
+      "proposed": 65,
+      "verified": 65,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "payment:S1-1:amount",
+          "value": { "t": "money", "amount": "311034.74", "currency": "RSD" },
+          "source": "statement.csv, row 1: 2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74"
+        },
+        {
+          "key": "payment:S1-1:date",
+          "value": { "t": "date", "iso": "2026-02-09" },
+          "source": "statement.csv, row 1: 2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74"
+        },
+        {
+          "key": "payment:S1-1:counterparty",
+          "value": { "t": "text", "text": "Heron Systems GmbH" },
+          "source": "statement.csv, row 1: 2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74"
+        },
+        {
+          "key": "payment:S1-1:class",
+          "value": { "t": "text", "text": "client_payment" },
+          "source": "statement.csv, row 1: 2026-02-09,2026-02-09,Uplata po fakturi 2026-001,Heron Systems GmbH,2026-001,311034.74,RSD,PRILIV,311034.74"
+        }
+      ]
+    },
+    "invoice-reader": {
+      "proposed": 67,
+      "verified": 65,
+      "contested": 2,
+      "examples": [
+        {
+          "key": "invoice:2026-001:issueDate",
+          "value": { "t": "date", "iso": "2026-01-16" },
+          "source": "2026-001.pdf, line 3: \"2026-01-16\""
+        },
+        {
+          "key": "invoice:2026-001:currency",
+          "value": { "t": "text", "text": "EUR" },
+          "source": "2026-001.pdf, line 10: \"EUR\""
+        },
+        {
+          "key": "invoice:2026-001:client",
+          "value": { "t": "text", "text": "heron" },
+          "source": "2026-001.pdf, line 6: \"Heron Systems GmbH\""
+        },
+        {
+          "key": "invoice:2026-001:clientCountry",
+          "value": { "t": "text", "text": "DE" },
+          "source": "2026-001.pdf, line 7: \"Germany\""
+        }
+      ]
+    },
+    "rate-clerk": {
+      "proposed": 17,
+      "verified": 17,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "fx:EUR:2026-11-26",
+          "value": {
+            "t": "rate",
+            "rate": "117.6432",
+            "base": "EUR",
+            "quote": "RSD",
+            "parity": 1,
+            "requestedDate": "2026-11-26",
+            "rateDate": "2026-11-26"
+          },
+          "source": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-11-26"
+        },
+        {
+          "key": "draft:amountRSD",
+          "value": { "t": "money", "amount": "1005849.36", "currency": "RSD" },
+          "source": "computed from 2 figures"
+        },
+        {
+          "key": "fx:EUR:2026-01-19",
+          "value": {
+            "t": "rate",
+            "rate": "117.3666",
+            "base": "EUR",
+            "quote": "RSD",
+            "parity": 1,
+            "requestedDate": "2026-01-19",
+            "rateDate": "2026-01-19"
+          },
+          "source": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-01-19"
+        },
+        {
+          "key": "fx:EUR:2026-02-16",
+          "value": {
+            "t": "rate",
+            "rate": "117.3815",
+            "base": "EUR",
+            "quote": "RSD",
+            "parity": 1,
+            "requestedDate": "2026-02-16",
+            "rateDate": "2026-02-13"
+          },
+          "source": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16"
+        }
+      ]
+    },
+    "kpo-reader": {
+      "proposed": 23,
+      "verified": 21,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "invoice:2026-002:amountRSD",
+          "value": { "t": "money", "amount": "369704.79", "currency": "RSD" },
+          "source": "kpo.csv, row 1: 1,2026-01-19,\"Faktura 2026-002, Heron Systems GmbH\",0.00,369704.79,369704.79"
+        },
+        {
+          "key": "invoice:2026-001:amountRSD",
+          "value": { "t": "money", "amount": "310975.38", "currency": "RSD" },
+          "source": "kpo.csv, row 2: 2,2026-02-09,\"Faktura 2026-001, Heron Systems GmbH\",0.00,310975.38,310975.38"
+        },
+        {
+          "key": "invoice:2026-004:amountRSD",
+          "value": { "t": "money", "amount": "281729.04", "currency": "RSD" },
+          "source": "kpo.csv, row 4: 4,2026-03-09,\"Faktura 2026-004, Heron Systems GmbH\",0.00,281729.04,281729.04"
+        },
+        {
+          "key": "invoice:2026-005:issueDate",
+          "value": { "t": "date", "iso": "2026-04-27" },
+          "source": "kpo.csv, row 5: 5,2026-04-27,\"Faktura 2026-005, Heron Systems GmbH\",0.00,440350.88,440350.88"
+        }
+      ]
+    },
+    "verifier": {
+      "proposed": 2,
+      "verified": 2,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "discrepancy:E9:invoice:2026-002",
+          "value": {
+            "t": "text",
+            "text": "Client country differs between invoice and client details. Invoice 2026-002 gives the client's country as RS; the client details say DE. This decides whether the invoice counts toward the 8M VAT threshold."
+          },
+          "source": "2026-002.pdf, line 7: \"Srbija\""
+        },
+        {
+          "key": "discrepancy:E2:invoice:2026-001",
+          "value": {
+            "t": "text",
+            "text": "KPO book uses a different date than the invoice. The KPO book enters invoice 2026-001 on 2026-02-09; the invoice is dated 2026-01-16."
+          },
+          "source": "2026-001.pdf, line 3: \"2026-01-16\""
+        }
+      ]
+    },
+    "limit-keeper": {
+      "proposed": 13,
+      "verified": 13,
+      "contested": 0,
+      "examples": [
+        {
+          "key": "total:limit6m:withUnbilled",
+          "value": { "t": "money", "amount": "6035691.21", "currency": "RSD" },
+          "source": "computed from 4 figures"
+        },
+        {
+          "key": "total:limit6m:withDraft",
+          "value": { "t": "money", "amount": "5795691.21", "currency": "RSD" },
+          "source": "computed from 23 figures"
+        },
+        {
+          "key": "headroom:limit6m:withUnbilled",
+          "value": { "t": "money", "amount": "-35691.21", "currency": "RSD" },
+          "source": "computed from 1 figures"
+        },
+        {
+          "key": "headroom:limit6m:withDraft",
+          "value": { "t": "money", "amount": "204308.79", "currency": "RSD" },
+          "source": "computed from 1 figures"
+        }
+      ]
+    }
+  },
   "recording": {
     "recordedAt": "2026-11-26T20:50:08.398Z",
     "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" }
@@ -203,7 +440,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T13:28:51.644Z",
+          "fetchedAt": "2026-11-27T13:59:20.861Z",
           "httpStatus": 200,
           "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
           "jsonPath": "$.exchange_middle"
@@ -217,7 +454,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T13:28:51.649Z",
+          "fetchedAt": "2026-11-27T13:59:20.878Z",
           "httpStatus": 200,
           "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
           "jsonPath": "$.exchange_middle"

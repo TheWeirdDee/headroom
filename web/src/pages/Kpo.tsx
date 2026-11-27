@@ -68,12 +68,12 @@ export function Kpo() {
         {!data && !error && <p className="text-muted">Loading...</p>}
         {data && (
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
-            <section className="rounded border border-line bg-panel" aria-label="KPO book">
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 border-b border-line p-3 text-sm">
+            <section className="min-w-0 rounded border border-line bg-panel" aria-label="KPO book">
+              <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-0.5 border-b border-line p-3 text-sm">
                 {data.header.map(([k, v]) => (
                   <div key={k} className="contents">
                     <dt className="text-muted">{k}</dt>
-                    <dd>{v}</dd>
+                    <dd className="break-words">{v}</dd>
                   </div>
                 ))}
               </dl>

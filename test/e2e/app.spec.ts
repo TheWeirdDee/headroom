@@ -189,14 +189,87 @@ test('an unrecognised CSV opens the column mapper before the check can start', a
   await expect(page.getByText('izvod.csv')).toHaveCount(0);
 });
 
-test('about lists every rule with its status and sources; evidence says when there are no results', async ({
-  page,
-}) => {
+test('about lists every rule with its status and sources', async ({ page }) => {
   await page.goto('/about#R-VAT-8M-BASIS');
   const rule = page.locator('#R-VAT-8M-BASIS');
   await expect(rule.getByText('Assumption')).toBeVisible();
   await expect(rule.getByRole('link').first()).toHaveAttribute('href', /^https:\/\//);
-  await page.goto('/evidence');
-  await expect(page.getByText('No evaluation results yet')).toBeVisible();
   await noEmoji(page);
+});
+
+const PAGES: Array<[string, string]> = [
+  ['/', 'Every number proven'],
+  ['/agents', 'Who does what'],
+  ['/proof', 'times sooner'],
+  ['/evidence', 'What has been measured'],
+  ['/docs', 'Using Headroom'],
+  ['/about', 'About Headroom'],
+  ['/check', 'Check my invoice'],
+];
+
+test('every page opens from the navigation and fits a phone and a desktop', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/');
+  for (const [link, heading] of [
+    ['Agents', 'Who does what'],
+    ['Proof', 'times sooner'],
+    ['Evidence', 'What has been measured'],
+    ['Docs', 'Using Headroom'],
+  ] as const) {
+    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: link }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(heading);
+  }
+  for (const width of [390, 1366]) {
+    await page.setViewportSize({ width, height: 850 });
+    for (const [path, heading] of PAGES) {
+      await page.goto(path);
+      await expect(page.getByRole('heading', { level: 1 })).toContainText(heading);
+      const over = await page.evaluate<number>('document.documentElement.scrollWidth - window.innerWidth');
+      expect([path, width, over]).toEqual([path, width, 0]);
+      await noEmoji(page);
+    }
+  }
+  expect(errors).toEqual([]);
+});
+
+test('the first question answers what Headroom does, and the long pages carry their evidence', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('#faq summary').first()).toHaveText('What does Headroom do for me?');
+  await page.goto('/agents');
+  for (const name of [
+    'InvoiceReader',
+    'StatementReader',
+    'KpoReader',
+    'RateClerk',
+    'LimitKeeper',
+    'IndependenceChecker',
+    'Verifier',
+  ])
+    await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+  await page.goto('/proof');
+  await expect(page.getByRole('region', { name: 'Concurrency pays' })).toContainText(
+    'One model request at a time',
+  );
+  await expect(page.getByRole('region', { name: 'A wrong number, caught' })).toContainText('CONTESTED');
+  await page.goto('/evidence');
+  await expect(page.getByRole('region', { name: 'The sample files' }).getByRole('row')).not.toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'What has not been measured' })).toBeVisible();
+});
+
+test('an invoice amount typed on the home page is the one the agents answer for', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/');
+  const box = page.getByRole('form', { name: 'Try an invoice amount on the sample' });
+  await box.getByRole('textbox').fill('6000');
+  await box.getByRole('button', { name: 'Show my headroom' }).click();
+  await expect(page).toHaveURL(/\/runs\/run-/);
+  const card = page.getByRole('region', { name: 'Headroom', exact: true });
+  await expect(card).toContainText('6.000,00 EUR');
+  // With 6,000 EUR the total stays under the limit even once the unbilled payment is invoiced.
+  await expect(card.getByText(/left if the payment with no invoice is invoiced/)).toBeVisible({
+    timeout: 45_000,
+  });
+  expect(errors).toEqual([]);
 });

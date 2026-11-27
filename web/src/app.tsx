@@ -7,6 +7,8 @@ import { Kpo } from './pages/Kpo.tsx';
 import { Evidence } from './pages/Evidence.tsx';
 import { About } from './pages/About.tsx';
 import { Docs } from './pages/Docs.tsx';
+import { Agents } from './pages/Agents.tsx';
+import { Proof } from './pages/Proof.tsx';
 import { NotFound } from './pages/NotFound.tsx';
 
 const router = createBrowserRouter([
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
       { path: '/evidence', element: <Evidence /> },
       { path: '/about', element: <About /> },
       { path: '/docs', element: <Docs /> },
+      { path: '/agents', element: <Agents /> },
+      { path: '/proof', element: <Proof /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -32,6 +32,8 @@ import {
 } from '../components/Showcase.tsx';
 import { Reveal } from '../components/Reveal.tsx';
 import { REPO_URL } from '../components/Layout.tsx';
+import { TryAmount } from '../components/TryAmount.tsx';
+import benchmark from '../generated/benchmark.json';
 
 const SHOWCASE = 'p07';
 
@@ -190,6 +192,10 @@ const AGENTS = [
 
 const FAQ: Array<{ q: string; a: ReactNode }> = [
   {
+    q: 'What does Headroom do for me?',
+    a: 'It answers one question before you send an invoice: will this one put you over a line? Give it your bank statement, invoices and KPO book. It shows the room left under the 6M limit and the 8M VAT threshold with and without the new invoice, checks each client against the independence test, lists what in your records disagrees (money with no invoice, invoices missing from the book, wrong dates, amounts or exchange rates), and hands you a corrected KPO book. Every number opens the line it came from.',
+  },
+  {
     q: 'Is this tax advice?',
     a: 'No. Headroom shows calculations from the documents you give it, with their sources. It does not tell you what tax you owe or what to do. Rules marked as assumptions still need an accountant to confirm them.',
   },
@@ -243,22 +249,25 @@ export function Landing() {
           className="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
           aria-hidden
         />
-        <div className="relative mx-auto grid max-w-[1200px] gap-14 px-4 pt-16 pb-12 md:pt-16 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
-          <Reveal>
-            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-panel/60 px-3 py-1 font-mono text-[11px] tracking-wide text-muted uppercase">
+        <div className="relative mx-auto grid max-w-[1200px] gap-10 px-4 pt-10 pb-10 md:pt-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-stretch">
+          <Reveal className="flex min-w-0 flex-col">
+            <p className="inline-flex items-center gap-2 self-start rounded-full border border-line bg-panel/60 px-3 py-1 font-mono text-[11px] tracking-wide text-muted uppercase">
               <span className="pulse-dot size-1.5 rounded-full bg-signal" aria-hidden />
               For Serbian flat-rate entrepreneurs
             </p>
-            <h1 id="hero" className="mt-7 font-serif text-[2.6rem] leading-[1.04] md:text-[3.9rem]">
+            <h1 id="hero" className="mt-6 font-serif text-[2.4rem] leading-[1.05] md:text-[3.6rem]">
               Before you send an invoice, see how much room is left under the 6M limit.{' '}
               <em className="text-signal">Every number proven.</em>
             </h1>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
               Headroom reads your bank statement, invoices and KPO book, finds what does not match, and shows
               the room left under the <span className="num text-text">{limit}</span> paušal limit, the{' '}
               <span className="num text-text">{vat}</span> VAT threshold and the independence test.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-7 max-w-2xl">
+              <TryAmount profileId={SHOWCASE} />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
               <Link to="/check" className={btnPrimary}>
                 <FileCheck2 size={16} aria-hidden /> Check my invoice
               </Link>
@@ -273,7 +282,7 @@ export function Landing() {
                 <ScanSearch size={16} aria-hidden /> Catch a wrong number
               </button>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+            <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
               {['Runs on your computer', 'Source behind every number', 'Not financial or tax advice'].map(
                 (t) => (
                   <li key={t} className="flex items-center gap-1.5">
@@ -283,9 +292,13 @@ export function Landing() {
               )}
             </ul>
             {(offline || needsKey) && (
-              <p className="mt-4 max-w-xl text-xs text-muted">
+              <p className="mt-3 max-w-2xl text-xs text-muted">
                 The sample plays a recorded run: real agents on Mozaik, with the model&apos;s answers played
-                back.
+                back. To check your own files, run Headroom on your computer (
+                <Link to="/docs#quick-start" className="underline underline-offset-4 hover:text-text">
+                  how
+                </Link>
+                ).
               </p>
             )}
             {error && (
@@ -293,8 +306,35 @@ export function Landing() {
                 {error}
               </p>
             )}
+            <div className="mt-8 flex flex-1 flex-col justify-end">
+              <p className="font-mono text-[11px] tracking-wide text-muted uppercase">
+                Three lines it watches
+              </p>
+              <ul className="mt-3 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+                {[
+                  { t: `${limit} a year`, d: 'Above it a paušalac keeps full books.', r: 'R-LIMIT-6M' },
+                  { t: `${vat} in 365 days`, d: 'Above it VAT registration is due.', r: 'R-VAT-8M' },
+                  {
+                    t: '5 of 9 criteria',
+                    d: 'One client’s income may be taxed as other income.',
+                    r: 'R-INDEP',
+                  },
+                ].map((x) => (
+                  <li key={x.r} className="bg-ink p-4">
+                    <p className="num text-base">{x.t}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted">{x.d}</p>
+                    <Link
+                      to={`/about#${x.r}`}
+                      className="mt-2 inline-flex items-center gap-1 text-xs underline underline-offset-4 hover:text-signal"
+                    >
+                      Source <ArrowRight size={12} aria-hidden />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Reveal>
-          <Reveal delay={150}>
+          <Reveal delay={150} className="min-w-0">
             <aside aria-label="Headroom card from the recorded sample run" className="relative">
               <div
                 className="absolute -inset-px rounded-2xl bg-gradient-to-b from-line to-transparent"
@@ -433,6 +473,13 @@ export function Landing() {
                 </tbody>
               </table>
             </div>
+            <Link
+              to="/agents"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 hover:text-signal"
+            >
+              Meet the seven agents: when each wakes, what it writes, who checks it{' '}
+              <ArrowRight size={14} aria-hidden />
+            </Link>
             <p className="mt-6 max-w-3xl font-serif text-xl leading-snug text-muted">
               &ldquo;
               {health?.authorityBoundary ??
@@ -456,6 +503,35 @@ export function Landing() {
             </SectionHead>
           </Reveal>
           <Reveal className="mt-10">
+            <Link
+              to="/proof"
+              className="mb-6 grid gap-px overflow-hidden rounded-xl border border-line bg-line transition-colors hover:border-muted sm:grid-cols-3"
+            >
+              <span className="bg-ink p-5">
+                <span className="num block text-3xl">
+                  {(benchmark.concurrent.answeredMs / 1000).toFixed(1)} s
+                </span>
+                <span className="mt-1 block text-sm text-muted">
+                  to a verdict with the agents running together
+                </span>
+              </span>
+              <span className="bg-ink p-5">
+                <span className="num block text-3xl">
+                  {(benchmark.serial.answeredMs / 1000).toFixed(1)} s
+                </span>
+                <span className="mt-1 block text-sm text-muted">
+                  the same work, one model request at a time
+                </span>
+              </span>
+              <span className="flex flex-col justify-center bg-ink p-5 text-sm">
+                <span className="inline-flex items-center gap-1.5 text-text">
+                  How this was measured <ArrowRight size={14} aria-hidden />
+                </span>
+                <span className="mt-1 text-muted">
+                  {benchmark.speedup} times sooner, same totals. Recorded answers, equal request times.
+                </span>
+              </span>
+            </Link>
             <ShowcaseProof runId={showcase.runId} />
           </Reveal>
           <Reveal className="mt-12">

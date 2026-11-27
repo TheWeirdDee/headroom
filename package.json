@@ -28,9 +28,11 @@
     "build": "npm run typecheck && npm run build:web",
     "test:e2e": "npm run build:web && playwright test --trace off",
     "prove": "tsx scripts/prove.ts",
+    "benchmark": "tsx scripts/benchmark.ts",
     "demo:catch": "tsx scripts/demo-catch.ts",
     "record-demo": "tsx scripts/record-demo.ts",
     "export:showcase": "tsx scripts/export-showcase.ts",
+    "export:evidence": "tsx scripts/export-evidence.ts",
     "eval": "tsx scripts/eval.ts"
   },
   "dependencies": {

@@ -8,7 +8,7 @@
 
 ![The recorded sample running: seven agent lanes start together, figures are proposed and verified, the headline says the total is over the 6M limit if a payment with no invoice is invoiced, then the findings and the bank row behind one of them](docs/demo.gif)
 
-_The offline sample, recorded from the current app: a real model's answers replayed through real Mozaik loops._
+_The offline sample: a real model's answers replayed through real Mozaik loops. On the site: [Agents](https://headroom-umber.vercel.app/agents) · [Proof](https://headroom-umber.vercel.app/proof) · [Evidence](https://headroom-umber.vercel.app/evidence) · [Docs](https://headroom-umber.vercel.app/docs)._
 
 ## The problem
 
@@ -57,9 +57,10 @@ npm run start:offline        # then open http://localhost:4317
 
 Click **Try with sample data**, or **Catch a wrong number**. The run takes a few seconds and ends `awaiting_user`: six questions about the independence test are yours to answer. Offline mode is real Mozaik execution with recorded model answers, not a video; a request that was not recorded stops with `REPLAY_MISS` rather than inventing an answer.
 
-Three commands that check the claims below, each exiting non-zero if the claim is false:
+Four commands that check the claims below, each exiting non-zero if the claim is false:
 
 ```
+npm run benchmark      # concurrent against one model request at a time
 npm run prove          # several agents had model requests outstanding at the same time
 npm run demo:catch     # the Verifier rejects a misread amount and the total stays right
 npm test               # includes the keyless run: 65 loops, none failed, all 5 planted errors
@@ -113,6 +114,28 @@ Mozaik calls a processor without awaiting it, so each participant's processor pu
 Found in Mozaik while building this and reported upstream with a reproduction: its Gemini mapper drops `thoughtSignature`, so the request after a tool call fails ([jigjoy-ai/mozaik-network#160](https://github.com/jigjoy-ai/mozaik-network/issues/160); workaround in [gemini-signatures.ts](src/runtime/mozaik/gemini-signatures.ts)).
 
 ## Proof it is concurrent
+
+**The same agents reach the verdict 7.9 times sooner when they run together.**
+
+```
+npm run benchmark           # no key, no network, about 3 minutes
+```
+
+The sample is run twice on the same code with the same recorded model answers. Only one thing differs: in the second run a single model request may be in flight at a time. Each request takes 1.4 s, the median of the 12 recorded requests that did not wait for a rate limit. Measured 2026-11-27:
+
+|                             | Concurrent | One request at a time |
+| --------------------------- | ---------- | --------------------- |
+| Time to a complete verdict  | **14.8 s** | **117.5 s**           |
+| Model requests              | 83         | 83                    |
+| Agent loops (failed)        | 65 (0)     | 65 (0)                |
+| Peak requests at once       | 15         | 1                     |
+| Peak agents waiting at once | 5          | 1                     |
+| Figures verified            | 217        | 217                   |
+| 6M and 8M totals            | identical  | identical             |
+
+The command exits 1 if the totals differ, a loop fails or the gain falls below 2 times. A free tier that allows 15 requests a minute hides the gain: there the rate limit sets the pace.
+
+### Requests really in flight together
 
 ```
 npm run prove               # no key, no network
@@ -223,7 +246,7 @@ A client list file (`clients.json`) is optional and fills the client form. Its `
 
 ## What you will see
 
-1. The landing page: the problem with its sources (the 6M limit, unchanged since 2013; what crossing it means; the independence test), and buttons to check your invoice, try the sample or catch a wrong number.
+1. The landing page: type your next invoice amount and get the answer, or read the problem with its sources, try the sample or catch a wrong number. Agents, Proof, Evidence and Docs each have a page of their own.
 2. Intake: your files, a column mapper for CSV layouts it does not recognise, your clients and the draft invoice.
 3. Seven agent lanes start at once, each with a plain "doing now" line. What the Verifier rejects is listed above them.
 4. Figures appear on the board as proposed, then turn verified, contested or needs-you as the Verifier checks each against its source.

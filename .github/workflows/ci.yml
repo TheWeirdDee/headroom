@@ -38,6 +38,8 @@ jobs:
       - run: npm test
       # Several agents must have model requests outstanding at the same time, or this fails.
       - run: npm run prove
+      # The same agents must be at least twice as fast concurrently as one request at a time, with the same totals.
+      - run: npm run benchmark -- --latency 400
       # The Verifier must reject an injected misread and the totals must still be right.
       - run: npm run demo:catch
       - run: npm run check:licenses

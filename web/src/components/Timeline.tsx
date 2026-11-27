@@ -1,10 +1,8 @@
 // Concurrency timeline: one row per agent, one bar per loop, a live cursor while running.
 import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { AGENT_NAMES, AGENT_ORDER, type RunView } from '../state/reducer.ts';
-
-const ROW = 18;
-const LABEL = 132;
+import type { RunView } from '../state/reducer.ts';
+import { Lanes } from './Lanes.tsx';
 
 export function Timeline({ view }: { view: RunView }) {
   const [open, setOpen] = useState(true);
@@ -32,8 +30,6 @@ export function Timeline({ view }: { view: RunView }) {
     }
     return m;
   })();
-  const W = 1000;
-
   return (
     <section className="rounded border border-line bg-panel" aria-label="Concurrency timeline">
       <button
@@ -50,62 +46,19 @@ export function Timeline({ view }: { view: RunView }) {
       </button>
       {open && (
         <div className="px-3 pb-3">
-          <svg
-            viewBox={`0 0 ${W} ${AGENT_ORDER.length * ROW}`}
-            className="w-full"
-            role="img"
-            aria-label={`${loops.length} agent loops, at most ${maxConc} running at the same time`}
-            preserveAspectRatio="none"
-            style={{ height: AGENT_ORDER.length * ROW }}
-          >
-            {AGENT_ORDER.map((a, i) => (
-              <g key={a}>
-                <text x={0} y={i * ROW + 13} className="fill-muted" fontSize={11}>
-                  {AGENT_NAMES[a]}
-                </text>
-                <line
-                  x1={LABEL}
-                  x2={W}
-                  y1={i * ROW + ROW - 1}
-                  y2={i * ROW + ROW - 1}
-                  className="stroke-line"
-                  strokeWidth={1}
-                />
-              </g>
-            ))}
-            {loops.map((l) => {
-              const row = AGENT_ORDER.indexOf(l.agentId as (typeof AGENT_ORDER)[number]);
-              if (row < 0) return null;
-              const x = LABEL + ((l.startedAt - t0) / span) * (W - LABEL);
-              const w = Math.max(2, (((l.endedAt ?? now) - l.startedAt) / span) * (W - LABEL));
-              const cls =
-                l.status === 'failed' ? 'fill-danger' : l.status === 'running' ? 'fill-amber' : 'fill-accent';
-              const dur = (((l.endedAt ?? now) - l.startedAt) / 1000).toFixed(2);
-              return (
-                <rect
-                  key={l.loopId}
-                  x={x}
-                  y={row * ROW + 3}
-                  width={w}
-                  height={ROW - 7}
-                  rx={2}
-                  className={`${cls} opacity-80`}
-                >
-                  <title>{`${l.loopId} · ${dur} s · ${l.tokensIn} in / ${l.tokensOut} out tokens · ${l.status}`}</title>
-                </rect>
-              );
-            })}
-            {running && (
-              <line
-                x1={LABEL + ((now - t0) / span) * (W - LABEL)}
-                x2={LABEL + ((now - t0) / span) * (W - LABEL)}
-                y1={0}
-                y2={AGENT_ORDER.length * ROW}
-                className="stroke-text"
-                strokeWidth={1}
-              />
-            )}
-          </svg>
+          <Lanes
+            label={`${loops.length} agent loops, at most ${maxConc} running at the same time`}
+            from={t0}
+            to={t0 + span}
+            spans={loops.map((l) => ({
+              agentId: l.agentId,
+              start: l.startedAt,
+              end: l.endedAt ?? now,
+              cls:
+                l.status === 'failed' ? 'fill-danger' : l.status === 'running' ? 'fill-amber' : 'fill-accent',
+              title: `${l.loopId} · ${(((l.endedAt ?? now) - l.startedAt) / 1000).toFixed(2)} s · ${l.tokensIn} in / ${l.tokensOut} out tokens · ${l.status}`,
+            }))}
+          />
         </div>
       )}
     </section>

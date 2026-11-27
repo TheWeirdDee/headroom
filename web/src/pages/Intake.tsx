@@ -10,6 +10,7 @@ import { useStartSample } from '../state/useStartSample.ts';
 import { MappingDialog } from '../components/MappingDialog.tsx';
 import { DraftFields, cleanDraft } from '../components/DraftForm.tsx';
 import { StatusChip } from '../components/StatusChip.tsx';
+import { HostedIntake } from '../components/HostedIntake.tsx';
 
 const KIND_LABEL: Record<string, string> = {
   statement: 'Bank statement',
@@ -237,30 +238,7 @@ export function Intake() {
     .filter((_, i) => clients[i]?.name.trim());
 
   if (health?.publicDemo)
-    return (
-      <div className="mx-auto max-w-[1100px] space-y-4 px-4 py-8">
-        <h1 className="text-2xl font-semibold">Check my invoice</h1>
-        <p role="note" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
-          This public instance does not take files: it has no model key and only replays the bundled synthetic
-          samples. To check your own bank statement, invoices and KPO book, run Headroom on your computer with
-          a model key (see the README). Your files then stay on your machine, and only document text goes to
-          the model provider.
-        </p>
-        <button
-          type="button"
-          disabled={sample.busy}
-          onClick={() => sample.start('p07')}
-          className="rounded border border-line px-4 py-2 text-sm font-medium hover:border-muted disabled:opacity-60"
-        >
-          {sample.busy ? 'Starting...' : 'Try with sample data instead'}
-        </button>
-        {sample.error && (
-          <p role="alert" className="text-sm text-danger">
-            {sample.error}
-          </p>
-        )}
-      </div>
-    );
+    return <HostedIntake busy={sample.busy} error={sample.error} start={sample.start} />;
 
   return (
     <div className="mx-auto max-w-[1100px] space-y-8 px-4 py-8">

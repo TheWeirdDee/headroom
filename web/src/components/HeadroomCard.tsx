@@ -328,7 +328,24 @@ export function HeadroomCard({
         )}
       </div>
 
-      {shown.length > 0 && (
+      {compact && shown.length > 0 && (
+        <p
+          role="status"
+          className={`flex items-start gap-2 rounded border p-3 text-sm ${over ? 'border-danger/60 bg-danger/10' : 'border-amber/50 bg-amber/10'}`}
+        >
+          <TriangleAlert
+            size={14}
+            className={`mt-1 shrink-0 ${over ? 'text-danger' : 'text-amber'}`}
+            aria-hidden
+          />
+          <span>
+            {shown.length === 1 ? 'One finding changes' : `${shown.length} findings change`} the band, the
+            most severe by <span className="num font-medium">{formatRsd(shown[0]?.deltaRSD ?? '0')}</span>.
+          </span>
+        </p>
+      )}
+
+      {!compact && shown.length > 0 && (
         <div
           role="status"
           className={`rounded border p-3 text-sm ${over ? 'border-danger/60 bg-danger/10' : 'border-amber/50 bg-amber/10'}`}

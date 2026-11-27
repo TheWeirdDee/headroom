@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { RunManager } from '../src/server/run-manager.ts';
 import { loadRules } from '../src/domain/rules/loader.ts';
 import { replaySource } from '../src/engine/recordings.ts';
+import { MISREAD_AMOUNT } from '../src/engine/faults.ts';
 import type { AppEnv } from '../src/config/env.ts';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -45,7 +46,66 @@ while (snap.status === 'running') {
   snap = runs.snapshot(runId) as Snap;
 }
 const s = source.summary('p07') as Record<string, unknown> & { figures: { verified: number } };
+// What each agent put on the board in this replay: counts, and a few figures with the line they cite.
+type Fig = {
+  key: string;
+  producedBy: string;
+  status: string;
+  value: Record<string, unknown> & { t: string };
+  sources: Array<Record<string, unknown> & { type: string }>;
+  checks?: Array<{ name: string; passed: boolean; detail?: string }>;
+};
+const figures = (snap as unknown as { figures: Fig[] }).figures;
+const cite = (s: Fig['sources'][number]): string =>
+  s.type === 'document'
+    ? `${String(s['docId'])}.pdf, line ${String(s['lineStart'])}: "${String(s['excerpt'])}"`
+    : s.type === 'statement_row' || s.type === 'kpo_row'
+      ? `${String(s['file'])}, row ${String(s['rowIndex'])}: ${String(s['rawLine'])}`
+      : s.type === 'url'
+        ? String(s['url'])
+        : s.type === 'derived'
+          ? `computed from ${(s['figureIds'] as string[]).length} figures`
+          : s.type === 'contract_field'
+            ? `contract, ${String(s['field'])}: "${String(s['value'])}"`
+            : s.type === 'rule'
+              ? `rule ${String(s['ruleId'])}`
+              : 'your answer';
+const agents = Object.fromEntries(
+  [...new Set(figures.map((f) => f.producedBy))].map((id) => {
+    const mine = figures.filter((f) => f.producedBy === id);
+    const shape = (key: string): string => key.replace(/:[^:]*d[^:]*(?=:|$)/g, ':*');
+    const examples = [
+      ...new Map(mine.filter((f) => f.status === 'verified').map((f) => [shape(f.key), f])).values(),
+    ]
+      .slice(0, 4)
+      .map((f) => ({ key: f.key, value: f.value, source: cite(f.sources[0] ?? { type: 'user_answer' }) }));
+    return [
+      id,
+      {
+        proposed: mine.length,
+        verified: mine.filter((f) => f.status === 'verified').length,
+        contested: mine.filter((f) => f.status === 'contested').length,
+        examples,
+      },
+    ];
+  }),
+);
+// The injected misread, replayed: what was proposed, why it was rejected and what was verified instead.
+const faultId = await runs.start({ profileId: 'p07', mode: 'replay', fault: MISREAD_AMOUNT.id });
+const faultRun = runs.get(faultId);
+await faultRun.run.done;
+const versions = faultRun.run.rt.state.board
+  .versions(`invoice:${MISREAD_AMOUNT.invoice}:amount`)
+  .map((v) => faultRun.run.rt.state.figures.get(v.id))
+  .map((f) => ({
+    amount: f?.value.t === 'money' ? `${f.value.amount} ${f.value.currency}` : '',
+    status: f?.status ?? '',
+    reason: f?.checks?.find((c) => !c.passed)?.detail ?? '',
+  }));
+const fault = { note: MISREAD_AMOUNT.note, versions };
 const out = {
+  fault,
+  agents,
   recording: snap.recording,
   card: snap.card,
   crossings: snap.viewEvents.filter((e) => e.type === 'hr.headroom.crossing').map((e) => e.payload),
