@@ -40,8 +40,9 @@ async function main(): Promise<void> {
       ratesFile: join(ROOT, 'data', 'rates', 'kurs.json'),
       ...(speed === undefined ? {} : { speed }),
     }),
-    // A public instance keeps only the most recent runs in memory.
-    ...(env.publicDemo ? { maxRuns: 30 } : {}),
+
+    // Each sample run keeps about 15 MB; the free hosting plan allows 512 MB in all.
+    ...(env.publicDemo ? { maxRuns: 8 } : {}),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),
   });
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };
