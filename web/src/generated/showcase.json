@@ -12,7 +12,16 @@
       "headroomWithDraft": { "display": "204.308,79 RSD", "amount": "204308.79", "figureId": "f000215" },
       "limit": { "display": "6.000.000,00 RSD", "amount": "6000000.00", "ruleId": "R-LIMIT-6M" },
       "ratioWithDraft": { "display": "96,6%", "value": "0.965949", "figureId": "f000216" },
-      "band": "red"
+      "band": "red",
+      "consequenceRuleId": "R-LIMIT-6M-CONSEQUENCE",
+      "unbilled": {
+        "payments": [{ "date": "2026-08-25", "display": "240.000,00 RSD", "figureId": "f000070" }],
+        "total": { "display": "6.035.691,21 RSD", "amount": "6035691.21", "figureId": "f000222" },
+        "headroom": { "display": "-35.691,21 RSD", "amount": "-35691.21", "figureId": "f000223" },
+        "over": { "display": "35.691,21 RSD", "amount": "35691.21", "figureId": "f000223" },
+        "band": "crossed",
+        "crossed": true
+      }
     },
     "vat8m": {
       "committed": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000217" },
@@ -101,7 +110,7 @@
     {
       "bandBefore": "amber",
       "bandAfter": "red",
-      "discrepancyId": "f000222",
+      "discrepancyId": "f000224",
       "discrepancyType": "E3",
       "subjectKey": "invoice:2026-010",
       "baseline": "book",
@@ -225,7 +234,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T08:53:29.109Z",
+          "fetchedAt": "2026-11-27T09:00:51.445Z",
           "httpStatus": 200,
           "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
           "jsonPath": "$.exchange_middle"
@@ -239,7 +248,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T08:53:29.113Z",
+          "fetchedAt": "2026-11-27T09:00:51.448Z",
           "httpStatus": 200,
           "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
           "jsonPath": "$.exchange_middle"
@@ -257,7 +266,7 @@
       "baseline": "book"
     },
     {
-      "id": "f000222",
+      "id": "f000224",
       "type": "E3",
       "title": "Issued invoice missing from the KPO book",
       "detail": "Invoice 2026-010 (510574.73 RSD) is not in the KPO book.",

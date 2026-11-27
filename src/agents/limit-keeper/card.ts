@@ -2,13 +2,14 @@
 // the figure it comes from (or the rule, for the fixed limits), so the UI can open its source.
 import { keys } from '../../domain/keys.ts';
 import { band, type Band, type BandThresholds } from '../../domain/limits.ts';
-import { formatPercentSr, formatRsd, formatSr } from '../../domain/money.ts';
+import { cmp, formatPercentSr, formatRsd, formatSr, neg } from '../../domain/money.ts';
 import { DISCLAIMER, DISCLAIMER_USER_FILES } from '../../domain/copy.ts';
 import type { RuleBook } from '../../domain/rules/engine.ts';
 import type { RunInputs } from '../../engine/inputs.ts';
 import type { HeadroomState } from '../../runtime/state.ts';
 import type { Figure } from '../../domain/types.ts';
 import { assessCompleteness, currentDraftRsd, type Completeness } from './completeness.ts';
+import { unbilledPayments } from './unbilled.ts';
 
 /** The band shown: none until every input is verified. */
 export type CardBand = Band | 'incomplete';
@@ -31,6 +32,17 @@ export interface CardVM {
     ratioWithDraft: { display: string; value: string; figureId: string };
     band: CardBand;
     consequenceRuleId?: string;
+    /** Present when client payments of the year have no invoice: where they would put the total. */
+    unbilled?: {
+      payments: Array<{ date: string; display: string; figureId: string }>;
+      total: MoneyVM;
+      headroom: MoneyVM;
+      /** The amount over the limit, when the total with these payments is above it. */
+      over?: MoneyVM;
+      band: CardBand;
+      /** True once the verified figures alone are at or over the limit: more files cannot undo it. */
+      crossed: boolean;
+    };
   };
   vat8m: {
     committed: MoneyVM;
@@ -128,6 +140,29 @@ export function buildCard(
     };
   });
 
+  const u6 = moneyVM(v(keys.total('limit6m', 'withUnbilled')));
+  const uh = moneyVM(v(keys.headroom('limit6m', 'withUnbilled')));
+  const found = unbilledPayments(state).payments;
+  let unbilled: CardVM['limit6m']['unbilled'];
+  if (u6 && uh && found.length > 0) {
+    const raw = band(u6.amount, limit, thresholds);
+    unbilled = {
+      payments: found.map((p) => ({
+        date: p.date.value.t === 'date' ? p.date.value.iso : '',
+        display:
+          p.amount.value.t === 'money' ? `${formatSr(p.amount.value.amount)} ${p.amount.value.currency}` : '',
+        figureId: p.amount.id,
+      })),
+      total: u6,
+      headroom: uh,
+      ...(cmp(uh.amount, '0') < 0
+        ? { over: { ...uh, amount: neg(uh.amount), display: formatRsd(neg(uh.amount)) } }
+        : {}),
+      band: shown(raw),
+      crossed: raw === 'crossed',
+    };
+  }
+
   const draftAmountFig = state
     .figuresWhere((f) => f.key === keys.draft('amount') && f.status === 'verified')
     .pop();
@@ -142,7 +177,10 @@ export function buildCard(
       limit: { display: formatRsd(limit), amount: limit, ruleId: 'R-LIMIT-6M' },
       ratioWithDraft: { display: formatPercentSr(r6.value.value), value: r6.value.value, figureId: r6.id },
       band: band6,
-      ...(band6 === 'crossed' ? { consequenceRuleId: 'R-LIMIT-6M-CONSEQUENCE' } : {}),
+      ...(band6 === 'crossed' || unbilled?.band === 'crossed'
+        ? { consequenceRuleId: 'R-LIMIT-6M-CONSEQUENCE' }
+        : {}),
+      ...(unbilled ? { unbilled } : {}),
     },
     vat8m: {
       committed: c8,

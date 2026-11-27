@@ -6,6 +6,7 @@ import { AGENTS, setStatus, type AgentDeps } from '../common.ts';
 import { computeTotals, type DraftFact } from './compute.ts';
 import { invoiceRecords, sixMFacts, eightMFacts, verifiedInvoiceFigures } from '../facts.ts';
 import { buildCard } from './card.ts';
+import { totalWithUnbilled, unbilledInputs, unbilledPayments } from './unbilled.ts';
 import { keys, parseKey } from '../../domain/keys.ts';
 import { add } from '../../domain/money.ts';
 import { convertToRsd } from '../../domain/fx.ts';
@@ -63,7 +64,7 @@ export function registerLimitKeeper(deps: AgentDeps): void {
       derivation: { ruleId, inputs, formula },
       producedBy: ID,
       idempotencyKey: `${ID}/${key}/${valueText}/${inputs.join(',')}`,
-      scope: key.endsWith('withDraft') ? 'draft' : 'committed',
+      scope: /:with(Draft|Unbilled)$/.test(key) ? 'draft' : 'committed',
     }).figure;
   }
 
@@ -175,6 +176,29 @@ export function registerLimitKeeper(deps: AgentDeps): void {
       [w8.id],
       `total with draft / ${t.vat8m.threshold}`,
     );
+
+    const unbilled = unbilledPayments(state);
+    for (const r of unbilled.rates) rt.publish('hr.rate.needed', ID, r);
+    if (unbilled.payments.length > 0 && unbilled.waiting === 0) {
+      const total = totalWithUnbilled(t.limit6m.withDraft.total, unbilled.payments);
+      const u6 = post(
+        keys.total('limit6m', 'withUnbilled'),
+        'total',
+        money(total),
+        'R-LIMIT-6M',
+        unbilledInputs(w6.id, unbilled.payments),
+        `total with draft + ${unbilled.payments.length} client payment(s) of ${cfg.year} that no invoice accounts for, in RSD`,
+        ['R-LIMIT-6M-BASIS', 'R-PAYMENT-NO-INVOICE'],
+      );
+      post(
+        keys.headroom('limit6m', 'withUnbilled'),
+        'headroom',
+        money(headroom(t.limit6m.limit, total)),
+        'R-LIMIT-6M',
+        [u6.id],
+        `${t.limit6m.limit} - total with draft and unbilled payments`,
+      );
+    }
 
     checkBookCoverage(
       facts6m.map((f) => f.invNo),
@@ -306,9 +330,14 @@ export function registerLimitKeeper(deps: AgentDeps): void {
 
   function schedule(): void {
     if (timer) clearTimeout(timer);
+    state.debouncing.add(ID);
     timer = setTimeout(() => {
       timer = undefined;
-      recompute();
+      try {
+        recompute();
+      } finally {
+        state.debouncing.delete(ID);
+      }
     }, DEBOUNCE_MS);
   }
 
@@ -320,6 +349,7 @@ export function registerLimitKeeper(deps: AgentDeps): void {
     )
       schedule();
     else if (p?.kind === 'draft' && p.field === 'amountRSD') schedule();
+    else if (p?.kind === 'fx' || (p?.kind === 'discrepancy' && p.type === 'E1')) schedule();
     scheduleCard();
   });
 
@@ -334,6 +364,7 @@ export function registerLimitKeeper(deps: AgentDeps): void {
         'hr.loop.failed',
         'hr.participant.error',
         'hr.reader.done',
+        'hr.payments.matched',
         'hr.question.asked',
         'hr.question.answered',
         'hr.draft.changed',
@@ -358,5 +389,6 @@ export function registerLimitKeeper(deps: AgentDeps): void {
 
   rt.on(ID, { types: ['hr.run.stopping'] }, () => {
     if (timer) clearTimeout(timer);
+    state.debouncing.delete(ID);
   });
 }

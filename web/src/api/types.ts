@@ -139,6 +139,15 @@ export interface CardVM {
     ratioWithDraft: { display: string; value: string; figureId: string };
     band: CardBand;
     consequenceRuleId?: string;
+    /** Present when client payments of the year have no invoice: where they would put the total. */
+    unbilled?: {
+      payments: Array<{ date: string; display: string; figureId: string }>;
+      total: MoneyVM;
+      headroom: MoneyVM;
+      over?: MoneyVM;
+      band: CardBand;
+      crossed: boolean;
+    };
   };
   vat8m: {
     committed: MoneyVM;

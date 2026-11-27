@@ -302,6 +302,8 @@ export function registerStatementReader(deps: AgentDeps): void {
         payment: { currency: c.row.currency, amount: c.row.amount, date: c.row.date },
       });
     }
+    rt.state.progress.paymentsMatched = true;
+    rt.publish('hr.payments.matched', ID, { unmatched: e1Posted.size });
     setStatus(rt, ID, {
       kind: 'done',
       summary: `Classified ${classified.length} incoming rows; ${e1Posted.size} without an invoice`,

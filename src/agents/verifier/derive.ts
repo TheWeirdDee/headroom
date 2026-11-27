@@ -14,6 +14,8 @@ import {
 } from '../../domain/independence.ts';
 import { invoiceRecords, sixMFacts, eightMFacts } from '../facts.ts';
 import { computeTotals } from '../limit-keeper/compute.ts';
+import { yearOf } from '../../domain/dates.ts';
+import { add } from '../../domain/money.ts';
 import { figureValueEquals } from '../../runtime/state.ts';
 import type { Figure, FigureValue } from '../../domain/types.ts';
 import type { SourceContext } from './sources.ts';
@@ -90,6 +92,32 @@ function expectedValue(f: Figure, ins: Figure[], ctx: SourceContext): FigureValu
       return p.kind === 'headroom'
         ? rsd(headroom(limit, total.value.amount))
         : { t: 'ratio', value: ratio(total.value.amount, limit) };
+    }
+    if (p.scope === 'withUnbilled') {
+      // The draft total plus, for each cited E1 finding, that payment in RSD at the rate of its date.
+      const base = ins.find((x) => x.key === 'total:limit6m:withDraft');
+      if (p.limit !== 'limit6m' || base?.value.t !== 'money') return undefined;
+      const findings = ins.filter((x) => x.key.startsWith('discrepancy:E1:payment:'));
+      const amounts: string[] = [];
+      for (const finding of findings) {
+        const ref = finding.key.slice('discrepancy:E1:payment:'.length);
+        const amount = ins.find((x) => x.key === `payment:${ref}:amount`);
+        const date = ins.find((x) => x.key === `payment:${ref}:date`);
+        if (amount?.value.t !== 'money' || date?.value.t !== 'date') return undefined;
+        if (yearOf(date.value.iso) !== cfg.year) return undefined;
+        if (amount.value.currency === 'RSD') {
+          amounts.push(amount.value.amount);
+          continue;
+        }
+        const { currency } = amount.value;
+        const day = date.value.iso;
+        const rate = ins.find(
+          (x) => x.value.t === 'rate' && x.value.base === currency && x.value.requestedDate === day,
+        );
+        if (rate?.value.t !== 'rate') return undefined;
+        amounts.push(convertToRsd(amount.value.amount, rate.value.rate, rate.value.parity, cfg.rsdRounding));
+      }
+      return findings.length === 0 ? undefined : rsd(add(base.value.amount, ...amounts));
     }
     if (p.scope === 'withDraft' && p.limit === 'limit6m') {
       // committed total (by its own inputs) + draft

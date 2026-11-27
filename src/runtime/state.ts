@@ -101,12 +101,15 @@ export class HeadroomState {
   readonly vetoedWrites: Array<{ agentId: string; reason: string }> = [];
   readonly failedLoops: Array<{ agentId: string; loopId: string; error: string }> = [];
   readonly handlerErrors: string[] = [];
+  /** Agents waiting on a debounce timer before they recompute: the run is not quiet until none is. */
+  readonly debouncing = new Set<string>();
   /** What the readers have finished, for the card's completeness check. */
   readonly progress: {
     invoicesRead: boolean;
     statementsRead: boolean;
+    paymentsMatched: boolean;
     kpo: { complete: boolean } | undefined;
-  } = { invoicesRead: false, statementsRead: false, kpo: undefined };
+  } = { invoicesRead: false, statementsRead: false, paymentsMatched: false, kpo: undefined };
   private pending: Omit<Figure, 'id' | 'version' | 'status' | 'createdAt'> | undefined;
 
   constructor(

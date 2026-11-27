@@ -41,6 +41,11 @@ const v = (key: string): unknown => {
 };
 
 describe('end-to-end run (t01, fake model)', () => {
+  it('waits for debounced recomputations before it calls the run quiet', () => {
+    expect(run.rt.state.debouncing.size).toBe(0);
+    expect(summary.headroom).not.toBeNull();
+  });
+
   it('completes without participant errors, failed loops or false rejections', () => {
     expect(summary.rejections).toEqual({
       UNSOURCED: 0,

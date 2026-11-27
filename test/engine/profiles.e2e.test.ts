@@ -96,6 +96,13 @@ for (const id of PROFILES) {
       expect(cmp(money(r.run, 'total:vat8m:withDraft') ?? '-1', r.truth.totals.vat8m.withDraft)).toBe(0);
     });
 
+    it('puts every payment without an invoice into the headline total', () => {
+      const unmatched = r.truth.plantedErrors.filter((e) => e.type === 'E1').length;
+      const shown = r.summary.headroom?.limit6m.unbilled;
+      expect(shown?.payments.length ?? 0).toBe(unmatched);
+      if (shown) expect(cmp(shown.total.amount, r.summary.headroom?.limit6m.withDraft.amount ?? '0')).toBe(1);
+    });
+
     it('finds exactly the planted discrepancies', () => {
       const found = [...r.run.rt.state.discrepancies.values()]
         .filter((d) => d.status === 'verified')

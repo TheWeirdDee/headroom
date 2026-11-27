@@ -90,6 +90,42 @@ const INDEP: Record<string, { label: string; cls: string; Icon: typeof CircleChe
   incomplete: { label: 'Incomplete', cls: 'text-muted', Icon: CircleDashed },
 };
 
+/** The headline when client payments have no invoice: the answer with them, then without. */
+function Unbilled({ limit, onOpen }: { limit: CardVM['limit6m']; onOpen: (id: string) => void }) {
+  const u = limit.unbilled;
+  if (!u) return null;
+  const many = u.payments.length > 1;
+  return (
+    <>
+      <p className="mt-1 text-3xl font-semibold tracking-tight">
+        <Num m={u.over ?? u.headroom} onOpen={onOpen} className={BAND[u.band].cls} />
+        {u.over && <span className={`ml-2 text-xl ${BAND[u.band].cls}`}>over</span>}
+      </p>
+      <p className="text-sm">
+        {u.over ? 'over the limit' : 'left'} if the {many ? `${u.payments.length} payments` : 'payment'} with
+        no invoice {many ? 'are' : 'is'} invoiced:{' '}
+        {u.payments.map((p, i) => (
+          <span key={p.figureId}>
+            {i > 0 && ', '}
+            <button
+              type="button"
+              onClick={() => onOpen(p.figureId)}
+              className="num underline decoration-dotted underline-offset-4"
+            >
+              {p.display}
+            </button>{' '}
+            on {formatDateSr(p.date)}
+          </span>
+        ))}
+        .
+      </p>
+      <p className="mt-1 text-xs text-muted">
+        On your invoices alone, after this one: <Num m={limit.headroomWithDraft} onOpen={onOpen} /> left.
+      </p>
+    </>
+  );
+}
+
 /** Why there is no verdict yet, worst first. */
 function Gaps({ card }: { card: CardVM }) {
   const order = ['failed', 'missing', 'needs_you', 'pending'];
@@ -207,15 +243,23 @@ export function HeadroomCard({
       <div>
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-sm text-muted">6M flat-rate limit, {card.asOf.slice(0, 4)}</h3>
-          <BandChip band={l.band} />
+          <BandChip band={l.unbilled?.band ?? l.band} />
         </div>
-        {l.band === 'incomplete' ? (
+        {l.band !== 'incomplete' && l.unbilled ? (
+          <Unbilled limit={l} onOpen={onOpen} />
+        ) : l.band === 'incomplete' ? (
           <>
             <p className="mt-1 text-3xl font-semibold tracking-tight text-muted">Incomplete</p>
             <p className="text-xs text-muted">
               From the figures verified so far: <Num m={l.headroomWithDraft} onOpen={onOpen} /> left. This is
               not the answer yet.
             </p>
+            {l.unbilled?.crossed && (
+              <p role="alert" className="mt-2 rounded border border-danger/60 bg-danger/10 p-2 text-sm">
+                Already known: with the payment(s) that have no invoice, the verified figures reach{' '}
+                <Num m={l.unbilled.total} onOpen={onOpen} />, at or over the limit.
+              </p>
+            )}
           </>
         ) : (
           <>
@@ -229,7 +273,7 @@ export function HeadroomCard({
           committed={l.committed.amount}
           withDraft={l.withDraft.amount}
           limit={l.limit.amount}
-          band={l.band}
+          band={l.unbilled?.band ?? l.band}
         />
         <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
           <dt className="text-muted">Invoiced so far</dt>
@@ -246,7 +290,7 @@ export function HeadroomCard({
             <Num m={l.limit} onOpen={onOpen} />
           </dd>
         </dl>
-        {(l.band === 'red' || l.band === 'crossed') && l.consequenceRuleId && (
+        {l.consequenceRuleId && (
           <p className="mt-2 text-xs text-muted">
             What crossing means:{' '}
             <Link to={`/about#${l.consequenceRuleId}`} className="text-accent hover:underline">

@@ -11,6 +11,7 @@ interface Snap {
   questions: Array<{ id: string; answer?: string }>;
   discrepancies: Array<{ type: string; status: string }>;
   summary: { loops: number; failedLoops: number; participantErrors: number; unsourcedFigures: number } | null;
+  card: { limit6m: Record<string, unknown> } | null;
 }
 
 const freePort = (): Promise<number> =>
@@ -87,6 +88,17 @@ describe('npm run start:offline', () => {
     ).toEqual(['E1', 'E2', 'E3', 'E5', 'E9']);
     // The sample asks six independence questions only the user can answer.
     expect(first.status).toBe('awaiting_user');
+    // The headline: invoices alone leave room, but with the payment that has no invoice the line is crossed.
+    expect(first.card?.limit6m).toMatchObject({
+      band: 'red',
+      headroomWithDraft: { amount: '204308.79' },
+      unbilled: {
+        band: 'crossed',
+        total: { amount: '6035691.21' },
+        over: { amount: '35691.21' },
+        payments: [{ date: expect.any(String) }],
+      },
+    });
     const open = first.questions.filter((q) => q.answer === undefined);
     expect(open).toHaveLength(6);
 

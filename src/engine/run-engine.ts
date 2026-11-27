@@ -170,6 +170,8 @@ export function startRun(o: RunOptions): Run {
       {
         probe: () => ({
           ...rt.activity(),
+          // A recomputation still waiting on its debounce timer is queued work.
+          queuedEvents: rt.activity().queuedEvents + state.debouncing.size,
           proposedFigures: state.figuresWhere((f) => f.status === 'proposed').length,
           pendingHttp: o.kurs.pending(),
         }),

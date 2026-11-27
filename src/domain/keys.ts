@@ -7,7 +7,8 @@ export type InvoiceField =
   'issueDate' | 'supplyDate' | 'amount' | 'currency' | 'client' | 'clientCountry' | 'kind' | 'amountRSD';
 
 export type PaymentField = 'amount' | 'date' | 'currency' | 'counterparty' | 'class';
-export type Scope = 'committed' | 'withDraft';
+/** withUnbilled (6M only): the draft total plus client payments that have no invoice yet. */
+export type Scope = 'committed' | 'withDraft' | 'withUnbilled';
 export type LimitId = 'limit6m' | 'vat8m';
 
 /** Trim, upper-case and remove internal whitespace: " inv 2026-041 " -> "INV2026-041". */
@@ -78,7 +79,7 @@ export function parseKey(key: string): ParsedKey | undefined {
   const parts = key.split(':');
   const [head = '', a = '', b = '', c = ''] = parts;
   const n = parts.length;
-  const isScope = (x: string): x is Scope => x === 'committed' || x === 'withDraft';
+  const isScope = (x: string): x is Scope => x === 'committed' || x === 'withDraft' || x === 'withUnbilled';
   const isLimit = (x: string): x is LimitId => x === 'limit6m' || x === 'vat8m';
   switch (head) {
     case 'invoice':

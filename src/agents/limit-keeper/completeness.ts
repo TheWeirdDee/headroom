@@ -6,6 +6,7 @@ import { cmp } from '../../domain/money.ts';
 import { statementRowRef, type RunInputs } from '../../engine/inputs.ts';
 import { invoiceRecords, sixMFacts, eightMFacts, verifiedInvoiceFigures } from '../facts.ts';
 import { computeTotals } from './compute.ts';
+import { totalWithUnbilled, unbilledPayments } from './unbilled.ts';
 import type { HeadroomState } from '../../runtime/state.ts';
 import type { RuleBook } from '../../domain/rules/engine.ts';
 import type { Figure } from '../../domain/types.ts';
@@ -177,6 +178,24 @@ export function assessCompleteness(
     !matches(keys.total('vat8m', 'withDraft'), expected.vat8m.withDraft.total)
   )
     add('pending', 'The totals are being recalculated.');
+
+  // Payments with no invoice are found and added up before any verdict: they can move the answer.
+  if (inputs.statements.length > 0 && !state.progress.paymentsMatched)
+    add('pending', 'Payments are not yet matched to invoices.');
+  const unbilled = unbilledPayments(state);
+  if (unbilled.waiting > 0)
+    add(
+      unbilled.rates.length > 0 ? 'needs_you' : 'pending',
+      `${unbilled.waiting} payment(s) with no invoice are not yet added up.`,
+    );
+  else if (
+    unbilled.payments.length > 0 &&
+    !matches(
+      keys.total('limit6m', 'withUnbilled'),
+      totalWithUnbilled(expected.limit6m.withDraft.total, unbilled.payments),
+    )
+  )
+    add('pending', 'The total with unbilled payments is being recalculated.');
 
   return { complete: gaps.length === 0, gaps };
 }

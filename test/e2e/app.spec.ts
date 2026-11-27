@@ -48,9 +48,13 @@ test('sample run: lanes, verified board, headroom card, findings, drawer, questi
   await expect(page.getByRole('list', { name: 'Agents' }).getByRole('listitem')).toHaveCount(7);
   await expect(page.getByRole('note', { name: 'Status of this run' })).toContainText('SAMPLE (SYNTHETIC)');
 
-  // The card appears only once totals are verified, and shows the crossing attribution.
+  // The card gives a verdict only once every input is verified, and its headline counts the payment
+  // that has no invoice; the crossing is attributed below it.
   const card = page.getByRole('region', { name: 'Headroom' });
-  await expect(card.getByText('left after this invoice')).toBeVisible({ timeout: 30_000 });
+  await expect(card.getByText(/over the limit if the payment with no invoice is invoiced/)).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(card.getByText('Incomplete: no verdict')).toHaveCount(0);
   await expect(card.getByText('A correction changes the band')).toBeVisible();
   // A reload rebuilds the view from the snapshot: the crossing, which is not on the board, is kept.
   await page.reload();

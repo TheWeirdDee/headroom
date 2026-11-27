@@ -324,7 +324,14 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
       (p?.kind === 'draft' && p.field === 'amountRSD')
     ) {
       if (timer) clearTimeout(timer);
-      timer = setTimeout(computeShares, 150);
+      state.debouncing.add(ID);
+      timer = setTimeout(() => {
+        try {
+          computeShares();
+        } finally {
+          state.debouncing.delete(ID);
+        }
+      }, 150);
     }
     if (p?.kind === 'criterion') updateStatus(p.clientId);
   });
