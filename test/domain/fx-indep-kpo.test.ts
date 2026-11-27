@@ -23,6 +23,7 @@ import {
   duplicateMatches,
   missingFromBook,
   numberingGaps,
+  rowNames,
   unmatchedPayments,
 } from '../../src/domain/discrepancies.ts';
 import {
@@ -324,6 +325,14 @@ describe('discrepancy checks', () => {
       { series: '2026-#', missing: ['2026-10'], after: '2026-9', before: '2026-11' },
     ]);
     expect(numberingGaps(['2026-099', '2026-100', '2026-102'])[0]?.missing).toEqual(['2026-101']);
+  });
+
+  it('E3: a row names an invoice only by its whole number', () => {
+    expect(rowNames('Faktura 2026-001, Acme', '2026-001')).toBe(true);
+    expect(rowNames('faktura br. 41/2026', '41/2026')).toBe(true);
+    expect(rowNames('Faktura 2026-0010', '2026-001')).toBe(false);
+    expect(rowNames('Faktura 141/2026', '41/2026')).toBe(false);
+    expect(rowNames('Usluge za mart', '2026-001')).toBe(false);
   });
 
   it('E3: invoices in the year that the book does not claim', () => {

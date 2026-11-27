@@ -126,6 +126,16 @@ export function unmatchedPayments(payments: Payment[], invoices: Payable[]): str
   return unmatched;
 }
 
+/** Whether a book row's description states this invoice number as a whole (not inside a longer one). */
+export function rowNames(description: string, invNo: string): boolean {
+  const number = invNo
+    .normalize('NFKC')
+    .trim()
+    .toUpperCase()
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?<![A-Z0-9])${number}(?![0-9])`).test(description.normalize('NFKC').toUpperCase());
+}
+
 /** E3: verified invoices dated in the year that no KPO row claims. */
 export function missingFromBook(invoicesInYear: string[], claimedByBook: Set<string>): string[] {
   return invoicesInYear.filter((n) => !claimedByBook.has(n)).sort();

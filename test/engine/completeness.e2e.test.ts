@@ -134,6 +134,50 @@ describe('incomplete cards and degraded runs', () => {
     await run.dispose();
   }, 40_000);
 
+  it('does not call an invoice missing from the book when a row names it but was not matched', async () => {
+    // A weak model that links no row to any invoice, as a small backup model did in a live run.
+    const model = fakeModel({ delayMs: 10 });
+    const { inputs, year, asOf } = await loadInputSet(await writeTempProfile(smallProfile()));
+    const started = Date.now();
+    const clock = (): number => NOW + (Date.now() - started);
+    const run = startRun({
+      runId: 'run-unmatched',
+      inputs,
+      rules: loadRules(),
+      config: defaultRunConfig(year, asOf),
+      mode: 'live',
+      kurs: fixtureKurs(clock),
+      backend: {
+        async infer(r) {
+          const res = await model.infer(r);
+          if (r.agentId !== 'kpo-reader') return res;
+          return {
+            ...res,
+            items: res.items.map((i) =>
+              i.type === 'function_call'
+                ? { ...i, args: i.args.replace(/"invoiceNumber":"[^"]*"/g, '"invoiceNumber":null') }
+                : i,
+            ),
+          };
+        },
+      },
+      now: clock,
+      quietMs: 400,
+      runTimeoutMs: 30_000,
+    });
+    await run.done;
+    const found = [...run.rt.state.discrepancies.values()].filter((d) => d.status === 'verified');
+    // Only the invoice no row names is missing; the two the book states are flagged to be checked.
+    expect(found.filter((d) => d.type === 'E3').map((d) => d.subjectKey)).toEqual(['invoice:2026-003']);
+    expect(
+      found
+        .filter((d) => d.subjectKey?.startsWith('kpo-unmatched:'))
+        .map((d) => d.subjectKey)
+        .sort(),
+    ).toEqual(['kpo-unmatched:2026-001', 'kpo-unmatched:2026-002']);
+    await run.dispose();
+  }, 40_000);
+
   it('says that an invoice only the KPO book states has no document behind it', async () => {
     const run = await start((r) => r.agentId === 'invoice-reader' && r.user.includes('2026-001'));
     const s = await run.done;

@@ -14,7 +14,8 @@ import { add } from '../../domain/money.ts';
 import { convertToRsd } from '../../domain/fx.ts';
 import { band, headroom, ratio, type Band, type BandThresholds } from '../../domain/limits.ts';
 import { yearOf } from '../../domain/dates.ts';
-import { missingFromBook, numberingGaps } from '../../domain/discrepancies.ts';
+import { missingFromBook, numberingGaps, rowNames } from '../../domain/discrepancies.ts';
+import { kpoSource } from '../kpo-reader/agent.ts';
 import { postDiscrepancy } from '../discrepancy.ts';
 import type { Figure, FigureValue, SourceRef } from '../../domain/types.ts';
 import type { HrEvent } from '../../runtime/types.ts';
@@ -220,6 +221,20 @@ export function registerLimitKeeper(deps: AgentDeps): void {
     for (const invNo of missingFromBook(inYear, kpoClaims)) {
       const rec = records.get(invNo);
       if (!rec?.issueDate || !rec.amountRSD || rec.amountRSD.value.t !== 'money') continue;
+      // A row that states the number is in the book, even if the KpoReader failed to match it: say that
+      // instead of calling the invoice missing.
+      const named = inputs.kpo.rows.find((r) => rowNames(r.description, invNo));
+      if (named) {
+        postDiscrepancy(deps, {
+          type: 'E-DOC-UNREADABLE',
+          subjectKey: `kpo-unmatched:${invNo}`,
+          producedBy: ID,
+          detail: `KPO book row ${named.rowIndex} names invoice ${invNo} but was not matched to it. Check that row; the invoice is not reported as missing.`,
+          sources: [kpoSource(inputs.kpo.file, named)],
+          figureIds: [],
+        });
+        continue;
+      }
       postDiscrepancy(deps, {
         type: 'E3',
         subjectKey: `invoice:${invNo}`,
