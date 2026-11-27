@@ -14,7 +14,7 @@ import { yearOf } from '../../domain/dates.ts';
 import { sub } from '../../domain/money.ts';
 import { postDiscrepancy } from '../discrepancy.ts';
 import { sha256 } from '../../util/hash.ts';
-import type { RejectionReason } from '../../runtime/state.ts';
+import { figureValueEquals, type RejectionReason } from '../../runtime/state.ts';
 import type { Figure, Question, SourceRef, VerificationCheck } from '../../domain/types.ts';
 import type { HrEvent } from '../../runtime/types.ts';
 
@@ -253,10 +253,22 @@ export function registerVerifier(deps: AgentDeps): void {
           );
           return;
         }
-        if (o.pass) {
-          state.setFigureStatus(f.id, 'verified', ID, o.checks);
-          afterVerified(f);
-        } else contest(f, o.reason, o.detail, o.checks);
+        if (!o.pass) return contest(f, o.reason, o.detail, o.checks);
+        // Verifying a version retires the one verified before it, so a weaker source that passes must never
+        // do that to a stronger one: it waits for a stronger claim still being checked, and yields to a
+        // verified one.
+        const over = strongerClaim(f);
+        if (over?.status === 'proposed') {
+          again = park(f, [over.id]);
+          return;
+        }
+        if (over) {
+          state.setFigureStatus(f.id, 'superseded', ID, o.checks, outrankedBy(over));
+          raiseSourceDisagreement(over, f);
+          return;
+        }
+        state.setFigureStatus(f.id, 'verified', ID, o.checks);
+        afterVerified(f);
       });
     } finally {
       inFlight.delete(id);
@@ -265,6 +277,31 @@ export function registerVerifier(deps: AgentDeps): void {
     }
     if (again) await verify(id);
   }
+
+  /** Another agent's different value for the same fact from a stronger source, still standing. */
+  function strongerClaim(f: Figure): Figure | undefined {
+    const kind = authorityKind(f.key);
+    if (kind === 'other') return undefined;
+    const mine = authority(f, kind);
+    return state.board
+      .versions(f.key)
+      .map((r) => state.figures.get(r.id))
+      .find(
+        (x): x is Figure =>
+          x !== undefined &&
+          x.id !== f.id &&
+          x.producedBy !== f.producedBy &&
+          (x.status === 'proposed' || x.status === 'verified') &&
+          authority(x, kind) > mine &&
+          !figureValueEquals(x.value, f.value),
+      );
+  }
+
+  const authorityKind = (key: string): 'invoice' | 'payment' | 'other' => {
+    const kind = parseKey(key)?.kind;
+    return kind === 'invoice' ? 'invoice' : kind === 'payment' || kind === 'link' ? 'payment' : 'other';
+  };
+  const outrankedBy = (win: Figure): string => `outranked by ${win.sources[0]?.type ?? 'a stronger'} source`;
 
   /** Follow-ups once a figure is verified: E9 country check, discrepancy records, waiting derivations. */
   function afterVerified(f: Figure): void {
@@ -360,8 +397,7 @@ export function registerVerifier(deps: AgentDeps): void {
       return;
     }
     // Both pass: source authority decides.
-    const keyKind =
-      p?.kind === 'invoice' ? 'invoice' : p?.kind === 'payment' || p?.kind === 'link' ? 'payment' : 'other';
+    const keyKind = authorityKind(b.key);
     const ra = authority(a, keyKind);
     const rb = authority(b, keyKind);
     if (ra === rb) {
@@ -408,13 +444,7 @@ export function registerVerifier(deps: AgentDeps): void {
       afterVerified(win);
     }
     if (state.figures.get(lose.id)?.status !== 'superseded') {
-      state.setFigureStatus(
-        lose.id,
-        'superseded',
-        ID,
-        undefined,
-        `outranked by ${win.sources[0]?.type ?? 'a stronger'} source`,
-      );
+      state.setFigureStatus(lose.id, 'superseded', ID, undefined, outrankedBy(win));
     }
     raiseSourceDisagreement(win, lose);
   }
