@@ -22,7 +22,7 @@
     "generate:data": "tsx scripts/generate-profiles.ts",
     "start": "tsx src/server/main.ts",
     "start:offline": "tsx src/server/main.ts --offline",
-    "start:public": "node --max-old-space-size=320 --import tsx src/server/main.ts --offline",
+    "start:public": "node --max-old-space-size=320 --experimental-transform-types --no-enable-source-maps src/server/main.ts --offline",
     "dev": "node scripts/dev.mjs",
     "build:web": "npm --prefix web run build",
     "build": "npm run typecheck && npm run build:web",

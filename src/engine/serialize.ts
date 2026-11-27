@@ -5,9 +5,22 @@ import type { HrEvent } from '../runtime/types.ts';
 
 const EVENT_FIELDS = ['eventId', 'runId', 'type', 'producerId', 'occurredAt', 'payload'] as const;
 
-// Anthropic/OpenAI style (sk-...), Google API keys (AIza...), and key-looking assignments or headers.
-export const SECRET_PATTERN =
-  /sk-[A-Za-z0-9_-]{8,}|AIza[0-9A-Za-z_-]{30,}|api[_-]?key\s*[:=]|authorization\s*:|x-(goog-)?api-key/i;
+// Shapes of real credentials, not the words around them: user documents say things like "risk-assessment"
+// or "Payment authorization:" and must pass. Anthropic/OpenAI (sk-...), Google (AIza...) and Groq
+// (gsk_...) keys, environment assignments, long values assigned to an api key, and HTTP auth headers.
+export const SECRET_PATTERN = new RegExp(
+  [
+    '(?<![A-Za-z0-9])sk-(?:ant-|proj-)[A-Za-z0-9_-]{8,}',
+    '(?<![A-Za-z0-9])sk-(?=[A-Za-z_-]*[0-9])[A-Za-z0-9_-]{20,}',
+    'AIza[0-9A-Za-z_-]{30,}',
+    'gsk_[A-Za-z0-9]{20,}',
+    '_api_key\\s*=\\s*\\S',
+    'api[_-]?key["\']?\\s*[:=]\\s*["\']?(?=[A-Za-z_-]*[0-9])[A-Za-z0-9_-]{16,}',
+    'authorization\\s*:\\s*(?:bearer|basic)\\s',
+    'x-(?:goog-)?api-key',
+  ].join('|'),
+  'i',
+);
 
 export class SecretLeakError extends Error {
   constructor(where: string) {

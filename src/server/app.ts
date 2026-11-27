@@ -120,6 +120,8 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
   app.get('/api/health', async () => ({
     ok: true,
     publicDemo: d.env.publicDemo === true,
+    // The hosted instance reports its memory use, so its 512 MB plan can be checked from outside.
+    ...(d.env.publicDemo ? { memoryMB: Math.round(process.memoryUsage().rss / 1048576) } : {}),
     version: d.version,
     mozaikVersion: MOZAIK_PACKAGE.version,
     mode: d.env.offline ? 'offline' : 'live',

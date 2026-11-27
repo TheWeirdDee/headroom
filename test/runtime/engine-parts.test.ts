@@ -75,6 +75,19 @@ describe('allowlist serializer', () => {
     expect(() => serializeValue({ h: 'x-goog-api-key: abc' })).toThrow(SecretLeakError);
     expect(serializeValue({ text: 'Faktura 2026-041' })).toBe('{"text":"Faktura 2026-041"}');
   });
+
+  it('lets ordinary invoice and contract wording through', () => {
+    for (const text of [
+      'IT risk-assessment services',
+      'Desk-research and task-automation',
+      'Payment authorization: John Smith',
+      'API key: integration and rotation',
+    ])
+      expect(serializeValue({ text })).toBe(JSON.stringify({ text }));
+    expect(() => serializeValue({ h: 'Authorization: Bearer abc.def' })).toThrow(SecretLeakError);
+    expect(() => serializeValue({ text: `gsk_${'a1'.repeat(20)}` })).toThrow(SecretLeakError);
+    expect(() => serializeValue({ text: `apiKey: "${'a1'.repeat(10)}"` })).toThrow(SecretLeakError);
+  });
 });
 
 describe('requestHash', () => {

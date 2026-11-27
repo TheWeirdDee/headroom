@@ -41,8 +41,8 @@ async function main(): Promise<void> {
       ...(speed === undefined ? {} : { speed }),
     }),
 
-    // Each sample run keeps about 15 MB; the free hosting plan allows 512 MB in all.
-    ...(env.publicDemo ? { maxRuns: 8 } : {}),
+    // The free hosting plan allows 512 MB in all: keep few finished runs and limit those in progress.
+    ...(env.publicDemo ? { maxRuns: 8, maxActive: 12 } : {}),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),
   });
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };

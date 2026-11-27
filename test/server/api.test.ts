@@ -196,6 +196,24 @@ describe('public sample instance', () => {
   });
 });
 
+describe('public instance under load', () => {
+  it('refuses a run while too many are still working, and the shared showcase does not count', async () => {
+    const runs = new RunManager({
+      env: env(),
+      rules,
+      profilesDir: 'data/profiles',
+      liveFetcher: async (u) => rates[u] ?? { status: 503, body: '' },
+      modelBackend: () => fakeModel(),
+      now: () => NOW,
+      maxActive: 2,
+    });
+    const start = () => runs.start({ profileId: 'p07', mode: 'live' });
+    const burst = await Promise.allSettled([start(), start(), start(), start()]);
+    expect(burst.map((r) => r.status)).toEqual(['fulfilled', 'fulfilled', 'rejected', 'rejected']);
+    await expect(start()).rejects.toMatchObject({ code: 'BUSY', status: 503 });
+  });
+});
+
 describe('NO_MODEL_KEY and offline', () => {
   it('a live run without a key is refused with a message that fits sample or upload', async () => {
     const { app: a } = await app({ hasModelKey: false });

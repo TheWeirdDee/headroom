@@ -33,6 +33,7 @@ export class RunError extends Error {
       | 'BAD_DRAFT'
       | 'READ_ONLY'
       | 'BAD_FAULT'
+      | 'BUSY'
       | 'INPUTS_INVALID',
     message: string,
     readonly status = 400,
@@ -117,7 +118,12 @@ export interface RunManagerOptions {
   quietMs?: number;
   /** Keep at most this many runs in memory, dropping the oldest finished ones (public instance). */
   maxRuns?: number;
+  /** Refuse a new run while this many are still working (public instance). */
+  maxActive?: number;
 }
+
+/** A run still unfinished after this long no longer counts against maxActive. */
+const ACTIVE_FOR_MS = 120_000;
 
 function csvHeader(dir: string, file: string): string[] {
   try {
@@ -133,6 +139,8 @@ export class RunManager {
   private readonly runs = new Map<string, RunRecord>();
   private showcaseRun: Promise<string> | undefined;
   private showcaseId: string | undefined;
+  /** Runs that are loading their inputs and are not in the map yet. */
+  private starting = 0;
 
   constructor(private readonly o: RunManagerOptions) {}
 
@@ -178,6 +186,13 @@ export class RunManager {
 
   recordedLoops(profileId: string): unknown[] {
     return this.o.replay?.loops?.(profileId) ?? [];
+  }
+
+  private activeRuns(now: number): number {
+    const working = [...this.runs.values()].filter(
+      (r) => !r.summary && now - Date.parse(r.startedAt) < ACTIVE_FOR_MS,
+    );
+    return working.length + this.starting;
   }
 
   private evictOldRuns(): void {
@@ -249,11 +264,21 @@ export class RunManager {
         );
       dir = req.uploadDir ?? '';
     }
+    const max = this.o.maxActive;
+    if (max && !req.shared && this.activeRuns((this.o.now ?? Date.now)()) >= max)
+      throw new RunError(
+        'BUSY',
+        'The sample server is busy with other visitors. Try again in a few seconds.',
+        503,
+      );
     let loaded: Awaited<ReturnType<typeof loadInputSet>>;
+    this.starting += 1;
     try {
       loaded = await loadInputSet(dir);
     } catch (e) {
       throw new RunError('INPUTS_INVALID', e instanceof Error ? e.message : String(e));
+    } finally {
+      this.starting -= 1;
     }
     const { inputs, year, asOf } = loaded;
     if (isSample && !inputs.synthetic)
