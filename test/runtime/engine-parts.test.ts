@@ -76,6 +76,16 @@ describe('allowlist serializer', () => {
     expect(serializeValue({ text: 'Faktura 2026-041' })).toBe('{"text":"Faktura 2026-041"}');
   });
 
+  it('treats a dropped connection as transient, however fetch reports it', () => {
+    const dropped = new TypeError('fetch failed', { cause: { code: 'ECONNRESET' } });
+    expect(isTransient(dropped)).toBe(true);
+    expect(isTransient(new TypeError('fetch failed'))).toBe(true);
+    expect(isTransient(new Error('request failed', { cause: { code: 'UND_ERR_CONNECT_TIMEOUT' } }))).toBe(
+      true,
+    );
+    expect(isTransient(new TypeError('x is not a function'))).toBe(false);
+  });
+
   it('lets ordinary invoice and contract wording through', () => {
     for (const text of [
       'IT risk-assessment services',

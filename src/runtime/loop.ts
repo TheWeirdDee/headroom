@@ -23,17 +23,26 @@ export class TimeoutError extends TransientError {
   }
 }
 
-/** HTTP 429 and 5xx, timeouts and connection resets are transient; everything else is not. */
+const NETWORK_CODES = new Set([
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'ECONNREFUSED',
+  'EAI_AGAIN',
+  'ENOTFOUND',
+  'UND_ERR_SOCKET',
+  'UND_ERR_CONNECT_TIMEOUT',
+]);
+
+/** HTTP 429 and 5xx, timeouts and dropped connections are transient; everything else is not. */
 export function isTransient(error: unknown): boolean {
   if (error instanceof TransientError) return true;
   if (typeof error !== 'object' || error === null) return false;
   const status = (error as { status?: unknown }).status;
   if (typeof status === 'number' && (status === 429 || status >= 500)) return true;
-  const code = (error as { code?: unknown }).code;
-  return (
-    typeof code === 'string' &&
-    ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 'EAI_AGAIN', 'UND_ERR_SOCKET'].includes(code)
-  );
+  // Node's fetch throws "fetch failed" and keeps the network error in `cause`.
+  if ((error as { message?: unknown }).message === 'fetch failed') return true;
+  const code = (error as { code?: unknown }).code ?? (error as { cause?: { code?: unknown } }).cause?.code;
+  return typeof code === 'string' && NETWORK_CODES.has(code);
 }
 
 export function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
