@@ -31,6 +31,7 @@ import {
 import { Mailbox } from '../mailbox.ts';
 import { unsourcedVeto } from '../veto.ts';
 import { patchGeminiSignatures } from './gemini-signatures.ts';
+import { groqInfer, isGroqModel } from './groq.ts';
 import { installBoardMirror } from '../board-mirror.ts';
 import { DEFAULT_RETRY, withRetry } from '../loop.ts';
 import { acquire as paceRequest, pacerRpm } from '../pacer.ts';
@@ -201,6 +202,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
   }
 
   async function providerInfer(input: InferenceInput): Promise<InferenceOutput> {
+    if (isGroqModel(input.model)) return groqInfer(input);
     const model = supportedModels.find((m) => m.specification.name === input.model);
     if (!model)
       throw new Error(

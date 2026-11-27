@@ -92,7 +92,7 @@ export function retryAfterMs(error: unknown): number | undefined {
     error instanceof Error ? error.message : typeof error === 'string' ? error : JSON.stringify(error);
   const m =
     /retryDelay"?\s*:\s*"?(\d+(?:\.\d+)?)s/i.exec(text ?? '') ??
-    /retry in (\d+(?:\.\d+)?)\s*s/i.exec(text ?? '');
+    /(?:retry|try again) in (\d+(?:\.\d+)?)\s*s/i.exec(text ?? '');
   if (!m?.[1]) return undefined;
   const [whole = '0', frac = ''] = m[1].split('.');
   const ms = Number.parseInt(whole, 10) * 1000 + Number.parseInt((frac + '000').slice(0, 3), 10);

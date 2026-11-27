@@ -239,7 +239,9 @@ const pct = (a: number, b: number): string => (b === 0 ? 'n/a' : `${((a / b) * 1
 
 // Live runs are saved one by one in eval/raw/, so batches run on different days (free-tier quota) add up
 // and a quota cut-off loses nothing. --append reports over every saved run with the same models.
-const rawDir = join(ROOT, 'eval', 'raw');
+// --out keeps each model's live results in its own folder, so one table never mixes models.
+const outDir = mode === 'live' ? join(ROOT, arg('out') ?? 'eval') : join(ROOT, 'eval', 'fake');
+const rawDir = join(outDir, 'raw');
 const append = mode === 'live' && process.argv.includes('--append');
 const results: RunResult[] = [];
 if (append && existsSync(rawDir)) {
@@ -449,7 +451,6 @@ const evidence = {
   misses,
 };
 
-const outDir = mode === 'live' ? join(ROOT, 'eval') : join(ROOT, 'eval', 'fake');
 mkdirSync(join(outDir, 'raw'), { recursive: true });
 writeFileSync(join(outDir, 'results.json'), `${JSON.stringify(evidence, null, 2)}\n`);
 writeFileSync(join(outDir, 'raw', 'runs.json'), `${JSON.stringify(results, null, 2)}\n`);
