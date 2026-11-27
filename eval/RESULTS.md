@@ -3,6 +3,8 @@
 Measured 2026-11-27 on 2 synthetic profiles we designed, runs per profile: c01 1, p07 1; mode live, models gemini-3.5-flash-lite / gemini-3.5-flash-lite, Mozaik 6.0.0, profile seed headroom-2026-11-26.
 
 
+Incomplete: c02 run 1 hit the daily quota and was not counted.
+
 | Metric | Value | Target | Note |
 |---|---|---|---|
 | Planted errors detected | 5 / 5 (100.0%) |  | on 2 synthetic profiles we designed |

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-27T01:43:36.175Z",
+  "generatedAt": "2026-11-27T01:51:40.872Z",
   "conditions": {
     "date": "2026-11-27",
     "mode": "live",
@@ -16,6 +16,7 @@
       "c01",
       "p07"
     ],
+    "stopped": "c02 run 1 hit the daily quota and was not counted",
     "seed": "headroom-2026-11-26"
   },
   "metrics": [
