@@ -7,13 +7,32 @@ import { useRun, useRunConnection } from '../state/store.ts';
 import { HeadroomCard } from './HeadroomCard.tsx';
 import { DiscrepancyList } from './DiscrepancyList.tsx';
 import { SourceDrawer } from './SourceDrawer.tsx';
+import { Timeline } from './Timeline.tsx';
+import { emptyView } from '../state/reducer.ts';
+import type { LoopMetric } from '../api/types.ts';
 
-export function useShowcaseRun(): { runId?: string; error?: string } {
-  const [state, setState] = useState<{ runId?: string; error?: string }>({});
+/** Figures of the recorded live run itself (not the delay-free replay shown on the landing page). */
+export interface RecordedRun {
+  models: { reader: string; verifier: string };
+  wallTimeMs: number;
+  sumLoopTimeMs: number;
+  maxConcurrentLoops: number;
+  loops: number;
+  failedLoops: number;
+  verified: number;
+  unsourcedFigures: number;
+  conflicts: { raised: number; resolved: number; escalated: number };
+  /** Every loop of the recorded run with its real start and end. */
+  loopTimes: LoopMetric[];
+}
+
+export function useShowcaseRun(): { runId?: string; recorded?: RecordedRun; error?: string } {
+  const [state, setState] = useState<{ runId?: string; recorded?: RecordedRun; error?: string }>({});
   useEffect(() => {
     let live = true;
-    getJson<{ runId: string | null }>('/api/showcase').then(
-      (r) => live && setState(r.runId ? { runId: r.runId } : {}),
+    getJson<{ runId: string | null; recorded: RecordedRun | null }>('/api/showcase').then(
+      (r) =>
+        live && setState(r.runId ? { runId: r.runId, ...(r.recorded ? { recorded: r.recorded } : {}) } : {}),
       () => live && setState({ error: 'Could not load the sample run.' }),
     );
     return () => {
@@ -79,4 +98,18 @@ export function ShowcaseProof({ runId }: { runId: string }) {
       {open && <SourceDrawer runId={runId} figureId={open} onClose={() => setOpen(undefined)} />}
     </div>
   );
+}
+
+/** The run screen's timeline component, drawn from the recorded live run's own loop times. */
+export function ShowcaseTimeline({ recorded }: { recorded: RecordedRun }) {
+  const view = useMemo(
+    () => ({
+      ...emptyView('recorded'),
+      loaded: true,
+      status: 'completed' as const,
+      loops: Object.fromEntries(recorded.loopTimes.map((l) => [l.loopId, l])),
+    }),
+    [recorded],
+  );
+  return recorded.loopTimes.length > 0 ? <Timeline view={view} /> : null;
 }

@@ -1,4 +1,5 @@
 // HTTP API (PRD 14.2). Errors are {error:{code,message,details?}} with the right status code.
+import type { RunSummary } from '../engine/run-engine.ts';
 import Fastify, { type FastifyInstance, type FastifyReply } from 'fastify';
 import multipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
@@ -263,7 +264,24 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
   // The landing page's hero card and proof excerpt come from a replay of the committed demo recording.
   app.get('/api/showcase', async () => {
     // No recording yet is a normal state (null), not an error: the landing page then leaves the sections out.
-    return { runId: (await d.runs.showcase('p07')) ?? null };
+    const runId = (await d.runs.showcase('p07')) ?? null;
+    const s = runId ? (d.runs.recordedSummary('p07') as Partial<RunSummary> | undefined) : undefined;
+    // The figures of the recorded live run itself (the showcase replays it without its delays).
+    const recorded = s
+      ? {
+          models: s.models,
+          wallTimeMs: s.wallTimeMs,
+          sumLoopTimeMs: s.sumLoopTimeMs,
+          maxConcurrentLoops: s.maxConcurrentLoops,
+          loops: s.loops,
+          failedLoops: s.failedLoops,
+          verified: s.figures?.verified,
+          unsourcedFigures: s.unsourcedFigures,
+          conflicts: s.conflicts,
+          loopTimes: d.runs.recordedLoops('p07'),
+        }
+      : null;
+    return { runId, recorded };
   });
 
   app.get('/api/evidence', async (_req, reply) => {

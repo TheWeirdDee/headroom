@@ -146,8 +146,27 @@ export function replaySource(
   opts: { speed?: number; preserveTiming?: boolean } = {},
 ): {
   backend(profileId: string, override?: { preserveTiming?: boolean }): LoadedRecording | undefined;
+  summary(profileId: string): unknown;
+  loops(profileId: string): unknown[];
 } {
   return {
+    /** The recorded run's loops with their real start and end times (from hr.loop.finished/failed). */
+    loops(profileId) {
+      const file = join(runsDir, `demo-${profileId}`, 'events.jsonl');
+      if (!existsSync(file)) return [];
+      const out: unknown[] = [];
+      for (const line of readFileSync(file, 'utf8').split('\n')) {
+        if (!line.includes('"hr.loop.finished"') && !line.includes('"hr.loop.failed"')) continue;
+        const e = JSON.parse(line) as { type: string; payload: unknown };
+        if (e.type === 'hr.loop.finished' || e.type === 'hr.loop.failed') out.push(e.payload);
+      }
+      return out;
+    },
+    /** The recorded run's own summary (its real timing and counts), if the recording has one. */
+    summary(profileId) {
+      const file = join(runsDir, `demo-${profileId}`, 'summary.json');
+      return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as unknown) : undefined;
+    },
     backend(profileId, override) {
       const dir = join(runsDir, `demo-${profileId}`);
       if (!existsSync(join(dir, 'meta.json')) || !existsSync(join(dir, 'responses.jsonl'))) return undefined;

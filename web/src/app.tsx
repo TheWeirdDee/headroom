@@ -6,6 +6,7 @@ import { Run } from './pages/Run.tsx';
 import { Kpo } from './pages/Kpo.tsx';
 import { Evidence } from './pages/Evidence.tsx';
 import { About } from './pages/About.tsx';
+import { Docs } from './pages/Docs.tsx';
 import { NotFound } from './pages/NotFound.tsx';
 
 const router = createBrowserRouter([
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: '/runs/:runId/kpo', element: <Kpo /> },
       { path: '/evidence', element: <Evidence /> },
       { path: '/about', element: <About /> },
+      { path: '/docs', element: <Docs /> },
       { path: '*', element: <NotFound /> },
     ],
   },

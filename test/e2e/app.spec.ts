@@ -24,8 +24,14 @@ test('landing states the problem with a source and routes to intake', async ({ p
   await expect(page.getByText('nije se menjao još od 2013')).toBeVisible();
   await expect(page.getByRole('link', { name: /Biznis\.rs/ }).first()).toHaveAttribute('href', /biznis\.rs/);
   await expect(page.getByText('Not financial or tax advice').first()).toBeVisible();
+  // In-page navigation scrolls to its section; the docs page and FAQ are reachable.
+  await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'FAQ' }).click();
+  await expect(page.getByRole('heading', { name: 'Questions people ask first' })).toBeInViewport();
+  await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Docs' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Using Headroom' })).toBeVisible();
+  await page.goto('/');
   await noEmoji(page);
-  await page.getByRole('main').getByRole('link', { name: 'Check my invoice' }).click();
+  await page.getByRole('main').getByRole('link', { name: 'Check my invoice' }).first().click();
   await expect(page).toHaveURL(/\/check$/);
   expect(errors).toEqual([]);
 });

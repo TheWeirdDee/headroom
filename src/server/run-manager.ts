@@ -80,6 +80,9 @@ export interface ReplaySource {
         models: { reader: string; verifier: string };
       }
     | undefined;
+  /** The recorded run's own summary.json (real timing), when there is one. */
+  summary?(profileId: string): unknown;
+  loops?(profileId: string): unknown[];
 }
 
 export interface RunManagerOptions {
@@ -155,6 +158,14 @@ export class RunManager {
           hasRecording: this.o.replay?.backend(id) !== undefined,
         };
       });
+  }
+
+  recordedSummary(profileId: string): unknown {
+    return this.o.replay?.summary?.(profileId);
+  }
+
+  recordedLoops(profileId: string): unknown[] {
+    return this.o.replay?.loops?.(profileId) ?? [];
   }
 
   private evictOldRuns(): void {
