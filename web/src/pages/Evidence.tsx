@@ -271,6 +271,9 @@ export function Evidence() {
         <Block id="not-measured" title="What has not been measured">
           <ul className="list-disc space-y-2 pl-5">
             <li>The 14 sample profiles have not all been run with a real model on the current code.</li>
+            <li>
+              The two faults found by the latest real-model runs are fixed but have not been re-run live.
+            </li>
             <li>No profile was run three times with a real model.</li>
             <li>Only Gemini and Groq models have been run, all small free-tier ones.</li>
             <li>No real taxpayer’s files have been used; the bank and book layouts are synthetic.</li>

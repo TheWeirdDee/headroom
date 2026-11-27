@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-27T15:02:15.696Z",
+  "generatedAt": "2026-11-27T16:17:04.827Z",
   "conditions": {
     "date": "2026-11-27",
     "mode": "fake",
@@ -99,12 +99,12 @@
     },
     {
       "name": "Median loop time / wall time",
-      "value": "0.64",
+      "value": "0.62",
       "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
     },
     {
       "name": "Median wall time per run",
-      "value": "2.3 s"
+      "value": "2.2 s"
     },
     {
       "name": "Median tokens per run (in / out)",

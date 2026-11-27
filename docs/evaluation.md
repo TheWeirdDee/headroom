@@ -14,6 +14,26 @@ The ten-replay claim is a test (`test/engine/replay.e2e.test.ts`).
 
 ## Results
 
+### Latest runs: Gemini `gemini-3.1-flash-lite`
+
+Measured 27 Nov 2026 with `gemini-3.1-flash-lite` as reader and verifier model (free tier), **on 4 synthetic profiles we designed, one run each**: `c01` (clean), `p01`, `p02`, `p03`. A fifth profile hit the daily quota and was not counted. Results: `eval/live-gemini-3.1/`.
+
+| Metric (4 runs)                                | Value     |
+| ---------------------------------------------- | --------- |
+| Planted errors found                           | 8 / 9     |
+| Findings that were not planted                 | 0         |
+| Verified invoice facts equal to the truth      | 131 / 132 |
+| **Wrong figures that got verified**            | **1**     |
+| Figures shown without a source                 | 0         |
+| Runs with 6M and 8M totals equal to the truth  | 2 / 4     |
+| Runs with a failed loop                        | 1 / 4     |
+| Planted book errors that surfaced as conflicts | 4 / 4     |
+
+Both misses came from Headroom, not the model.
+
+- **`p03`: a wrong figure verified.** The KPO book claimed an invoice's RSD amount while the converted amount was still waiting for its rate to be verified. The book's claim was checked alone, and verifying it retired the conversion, so the card showed a complete but wrong total (300.383,16 instead of 301.139,25 RSD for that invoice). Reproduced afterwards in 1 of 40 randomized runs, then fixed: a claim now waits for a stronger one that is still being checked ([test](../test/agents/verifier-race.test.ts)); 34 further randomized runs gave no wrong figure.
+- **`p01`: E3 missed.** Two invoice reads failed on a dropped connection, which was not retried. The card stayed incomplete and the run said so. Dropped connections are now retried.
+
 ### With a real model: Gemini `gemini-3.5-flash-lite`
 
 Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model (free tier), Mozaik 6.0.0, profile seed `headroom-2026-11-26`, **on 5 of our 14 synthetic profiles, 7 runs**: `c01` (clean) and `p07` (showcase) twice each, `p02`, `p05` and `p06` once. Together they contain every planted error type, E1 to E9. The other 9 profiles were not run with a real model: the free tier allows 500 requests a day for this model and a run needs about 85. Full table: `eval/RESULTS.md`; per-run files with the commit each ran on: `eval/raw/`.
@@ -94,7 +114,7 @@ The table below is from **fake mode** (14 synthetic profiles we designed, two ru
 
 ## What has not been measured
 
-- The current code has run against a real model once, on a small profile. The 14 sample profiles have not been re-run live since the pipeline changed.
+- Only five of the 14 sample profiles have been run live on the late code of 27 November (`p07`, `c01`, `p01`, `p02`, `p03`), and none since the two fixes those runs led to.
 - The Groq re-run of `c02` and `p01` after the false-finding fix stopped at Groq's daily quota and was not counted. The fix has a unit test (`packages/claims/test/claims.test.ts`).
 - No profile was run three times live.
 - Only Gemini and Groq models have been run.

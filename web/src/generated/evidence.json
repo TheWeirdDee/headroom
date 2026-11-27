@@ -3,6 +3,94 @@
   "asOf": "2026-11-26",
   "sets": [
     {
+      "id": "gemini31",
+      "folder": "eval/live-gemini-3.1",
+      "title": "Real model: Gemini 3.1, latest runs",
+      "note": "The free backup model, one run per profile, on 27 November. These runs found two faults, both fixed afterwards and not yet re-run: the wrong figure in p03 was a race in the Verifier (a weaker source overtook a conversion still being checked), and the two failed loops in p01, which cost its E3, were dropped connections that are now retried. The fifth profile hit the daily quota and was not counted.",
+      "conditions": {
+        "date": "2026-11-27",
+        "mode": "live",
+        "models": { "reader": "gemini-3.1-flash-lite", "verifier": "gemini-3.1-flash-lite" },
+        "mozaikVersion": "6.0.0",
+        "runsPerProfile": { "c01": 1, "p01": 1, "p02": 1, "p03": 1 },
+        "profiles": ["c01", "p01", "p02", "p03"],
+        "stopped": "p05 run 1 hit the daily quota and was not counted",
+        "seed": "headroom-2026-11-26"
+      },
+      "metrics": [
+        {
+          "name": "Planted errors detected",
+          "value": "8 / 9 (88.9%)",
+          "note": "on 4 synthetic profiles we designed"
+        },
+        {
+          "name": "False discrepancies on clean profiles",
+          "value": "0 in 1 runs",
+          "target": "0",
+          "passed": true
+        },
+        { "name": "Findings that were not planted (all profiles)", "value": "0" },
+        {
+          "name": "Verified invoice facts equal to the truth",
+          "value": "131 / 132 (99.2%)",
+          "note": "issue date, amount in RSD and kind of every invoice"
+        },
+        {
+          "name": "Wrong figures that got verified",
+          "value": "1",
+          "target": "0",
+          "passed": false,
+          "note": "the most important miss: listed below with figure ids"
+        },
+        { "name": "Contested figures that were in fact wrong", "value": "0 / 0" },
+        { "name": "Figures shown without a source", "value": "0", "target": "0", "passed": true },
+        { "name": "Runs with 6M and 8M totals (with the draft) equal to the truth", "value": "2 / 4" },
+        {
+          "name": "Profiles with identical headroom across runs",
+          "value": "n/a",
+          "note": "every profile ran once"
+        },
+        { "name": "Runs with a failed loop", "value": "1 / 4" },
+        { "name": "Median loops running at once (peak)", "value": "15" },
+        { "name": "Median loop time / wall time", "value": "8.93", "note": "above 1 means loops overlapped" },
+        { "name": "Median wall time per run", "value": "451.6 s" },
+        { "name": "Median tokens per run (in / out)", "value": "66175.5 / 7176" },
+        {
+          "name": "Verifier contests by reason (all runs)",
+          "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 7, IMPLAUSIBLE 0"
+        },
+        {
+          "name": "Planted book errors that surfaced as real agent conflicts",
+          "value": "4 / 4",
+          "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+        },
+        {
+          "name": "Messy CSV layouts parsed without errors",
+          "value": "7 / 7",
+          "note": "02-windows-1250.csv: account currency asked from the user"
+        }
+      ],
+      "perType": [
+        { "type": "E1", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E2", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E3", "planted": 1, "found": 0, "missed": 1, "extra": 0 },
+        { "type": "E4", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E5", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E6", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E7", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E8", "planted": 1, "found": 1, "missed": 0, "extra": 0 },
+        { "type": "E9", "planted": 1, "found": 1, "missed": 0, "extra": 0 }
+      ],
+      "misses": [
+        { "profileId": "p01", "type": "E3", "detail": "run 1: not found (E3:invoice:2026-005)" },
+        {
+          "profileId": "p03",
+          "type": "wrong figure verified",
+          "detail": "run 1: f000144 invoice:2026-001:amountRSD = 300383.16, truth 301139.25"
+        }
+      ]
+    },
+    {
       "id": "gemini",
       "folder": "eval",
       "title": "Real model: Gemini, free tier",
@@ -246,10 +334,10 @@
         { "name": "Median loops running at once (peak)", "value": "15" },
         {
           "name": "Median loop time / wall time",
-          "value": "0.64",
+          "value": "0.62",
           "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
         },
-        { "name": "Median wall time per run", "value": "2.3 s" },
+        { "name": "Median wall time per run", "value": "2.2 s" },
         { "name": "Median tokens per run (in / out)", "value": "19000 / 4582" },
         {
           "name": "Verifier contests by reason (all runs)",

@@ -200,13 +200,16 @@ The model never re-reads an amount or a date: those are checked by code against 
 
 Measured on synthetic profiles we designed, with planted errors. Conditions, every table and what has **not** been measured: [docs/evaluation.md](docs/evaluation.md).
 
-| Run                                                                     | Planted errors found  | Findings not planted            | Totals equal to the truth |
-| ----------------------------------------------------------------------- | --------------------- | ------------------------------- | ------------------------- |
-| Current code, live, the showcase sample, `gemini-3.1-flash-lite`, 1 run | 6 / 6                 | 0                               | 1 / 1                     |
-| Gemini `gemini-3.5-flash-lite`, 5 profiles, 7 runs                      | 19 / 19 (all 9 types) | 0                               | 7 / 7                     |
-| Groq `gpt-oss-120b`, 2 profiles, 2 runs                                 | 3 / 3                 | 2 (a Headroom bug, fixed since) | 2 / 2                     |
-| Gemini `gemini-3.5-flash-lite`, 1 small profile, 1 run                  | 3 / 3                 | 0                               | not measured              |
-| Current code, deterministic test model, 14 profiles, 2 runs each        | 82 / 82               | 0                               | 28 / 28                   |
+| Run                                                                 | Planted errors found  | Findings not planted            | Totals equal to the truth |
+| ------------------------------------------------------------------- | --------------------- | ------------------------------- | ------------------------- |
+| Gemini `gemini-3.1-flash-lite`, the recorded showcase sample, 1 run | 6 / 6                 | 0                               | 1 / 1                     |
+| Gemini `gemini-3.1-flash-lite`, 4 other profiles, 4 runs            | 8 / 9                 | 0                               | 2 / 4                     |
+| Gemini `gemini-3.5-flash-lite`, 5 profiles, 7 runs                  | 19 / 19 (all 9 types) | 0                               | 7 / 7                     |
+| Groq `gpt-oss-120b`, 2 profiles, 2 runs                             | 3 / 3                 | 2 (a Headroom bug, fixed since) | 2 / 2                     |
+| Gemini `gemini-3.5-flash-lite`, 1 small profile, 1 run              | 3 / 3                 | 0                               | not measured              |
+| Current code, deterministic test model, 14 profiles, 2 runs each    | 82 / 82               | 0                               | 28 / 28                   |
+
+**The four `gemini-3.1-flash-lite` runs found two faults, and they count as measured.** In one, a wrong figure was verified: the KPO book's amount overtook the converted invoice amount while that conversion was still being checked, and the card showed a wrong total as complete ([fixed](test/agents/verifier-race.test.ts)). In another, two dropped connections failed two invoice reads, so that run ended incomplete and missed one error (dropped connections are now retried). Neither profile has been run live again.
 
 The real-model runs on the 14-profile set were made before later changes to the pipeline and have not been repeated. The last row measures the pipeline (rules, checks, conflicts, totals), not how well a model reads.
 

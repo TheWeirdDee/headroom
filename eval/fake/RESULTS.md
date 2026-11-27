@@ -18,8 +18,8 @@ Fake mode uses the deterministic test model: it measures the pipeline, not model
 | Profiles with identical headroom across runs | 14 / 14 |  | measured only on profiles with more than one run: c01 (2 runs), c02 (2 runs), p01 (2 runs), p02 (2 runs), p03 (2 runs), p04 (2 runs), p05 (2 runs), p06 (2 runs), p07 (2 runs), p08 (2 runs), p09 (2 runs), p10 (2 runs), p11 (2 runs), p12 (2 runs) |
 | Runs with a failed loop | 0 / 28 |  |  |
 | Median loops running at once (peak) | 15 |  |  |
-| Median loop time / wall time | 0.64 |  | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
-| Median wall time per run | 2.3 s |  |  |
+| Median loop time / wall time | 0.62 |  | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
+| Median wall time per run | 2.2 s |  |  |
 | Median tokens per run (in / out) | 19000 / 4582 |  |  |
 | Verifier contests by reason (all runs) | UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0 |  |  |
 | Planted book errors that surfaced as real agent conflicts | 36 / 36 |  | E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk |

@@ -266,7 +266,8 @@ test('an invoice amount typed on the home page is the one the agents answer for'
   await box.getByRole('button', { name: 'Show my headroom' }).click();
   await expect(page).toHaveURL(/\/runs\/run-/);
   const card = page.getByRole('region', { name: 'Headroom', exact: true });
-  await expect(card).toContainText('6.000,00 EUR');
+  // The card appears once the totals are verified; only then does it show the amount.
+  await expect(card).toContainText('6.000,00 EUR', { timeout: 45_000 });
   // With 6,000 EUR the total stays under the limit even once the unbilled payment is invoiced.
   await expect(card.getByText(/left if the payment with no invoice is invoiced/)).toBeVisible({
     timeout: 45_000,

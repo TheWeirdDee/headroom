@@ -10,8 +10,8 @@ const SETS = [
   {
     id: 'gemini31',
     folder: 'eval/live-gemini-3.1',
-    title: 'Real model: Gemini 3.1, current code',
-    note: 'The free backup model, on the code of the afternoon of 27 November, one run per profile.',
+    title: 'Real model: Gemini 3.1, latest runs',
+    note: 'The free backup model, one run per profile, on 27 November. These runs found two faults, both fixed afterwards and not yet re-run: the wrong figure in p03 was a race in the Verifier (a weaker source overtook a conversion still being checked), and the two failed loops in p01, which cost its E3, were dropped connections that are now retried. The fifth profile hit the daily quota and was not counted.',
   },
   {
     id: 'gemini',
