@@ -156,8 +156,8 @@ export function startRun(o: RunOptions): Run {
         quietMs: o.quietMs ?? 1500,
         now,
       },
-      // A paced provider (free tier) is slow by design: allow an hour instead of five minutes.
-      o.runTimeoutMs ?? (o.backend || pacerRpm() === 0 ? 300_000 : 3_600_000),
+      // A paced provider (free tier) and a replay of recorded latencies are slow by design: allow an hour.
+      o.runTimeoutMs ?? (o.backend?.recorded || (!o.backend && pacerRpm() > 0) ? 3_600_000 : 300_000),
     );
     const summary = summarize(result);
     latest = summary;

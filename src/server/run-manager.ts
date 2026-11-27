@@ -71,7 +71,7 @@ export interface ReplaySource {
   /** Recorded model responses and Kurs bodies for a sample profile, if a recording exists. */
   backend(
     profileId: string,
-    override?: { preserveTiming?: boolean },
+    override?: { instant?: boolean },
   ):
     | {
         backend: ModelBackend;
@@ -252,7 +252,7 @@ export class RunManager {
     const runId = `run-${randomUUID().replace(/-/g, '').slice(0, 12)}`;
     const replay =
       req.mode === 'replay' && req.profileId
-        ? this.o.replay?.backend(req.profileId, req.fast ? { preserveTiming: false } : undefined)
+        ? this.o.replay?.backend(req.profileId, req.fast ? { instant: true } : undefined)
         : undefined;
     if (req.mode === 'replay' && !replay)
       throw new RunError('REPLAY_NOT_AVAILABLE', 'This sample profile has no recording.');
