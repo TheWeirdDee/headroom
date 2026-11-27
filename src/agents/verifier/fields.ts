@@ -10,7 +10,7 @@ import type { SourceRef } from '../../domain/types.ts';
 type DocumentRef = Extract<SourceRef, { type: 'document' }>;
 
 const DATE_TOKEN = /\d{1,4}[./-]\s?\d{1,2}[./-]\s?\d{1,4}\.?/g;
-const AMOUNT_TOKEN = /\d[\d.,'  ]*\d|\d/g;
+const AMOUNT_TOKEN = /\d[\d.,' \u00a0]*\d|\d/g;
 
 const DUE = /\brok\b|valuta pla|dosp|\bdue\b|pay(ment)? by|platiti do|plativo do/i;
 const SUPPLY = /datum prometa|promet(a)? dobara|date of supply|supply date|delivery|isporuk/i;
