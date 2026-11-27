@@ -63,7 +63,13 @@ const money = (run: Awaited<ReturnType<typeof runProfile>>['run'], key: string):
   return f?.value.t === 'money' ? f.value.amount : undefined;
 };
 
-for (const id of ['c01', 'p07', 'p11']) {
+const PROFILES = [
+  'c01',
+  'c02',
+  ...Array.from({ length: 12 }, (_, i) => `p${String(i + 1).padStart(2, '0')}`),
+];
+
+for (const id of PROFILES) {
   describe(`profile ${id} against its ground truth`, () => {
     let r: Awaited<ReturnType<typeof runProfile>>;
     it('runs to completion with no errors and no false rejections', async () => {
@@ -72,6 +78,7 @@ for (const id of ['c01', 'p07', 'p11']) {
       expect(r.summary.failedLoops).toBe(0);
       expect(r.summary.figures.proposed).toBe(0);
       expect(r.summary.unsourcedFigures).toBe(0);
+      expect(r.summary.headroom?.completeness).toEqual({ complete: true, gaps: [] });
       expect(Object.values(r.summary.rejections).reduce((a, b) => a + b, 0)).toBe(0);
       expect(r.summary.maxConcurrentLoops).toBeGreaterThanOrEqual(4);
     }, 90_000);
@@ -101,6 +108,8 @@ for (const id of ['c01', 'p07', 'p11']) {
     });
 
     it('criterion 6 matches the truth for every client', () => {
+      // An activity exempt from the independence test (p10) gets no criteria at all.
+      if (r.summary.headroom?.independence.every((c) => c.status === 'not_applicable')) return;
       for (const [clientId, c] of Object.entries(r.truth.criterion6)) {
         if (!c) continue;
         const f = r.run.rt.state.verified(`criterion:${clientId}:6`);

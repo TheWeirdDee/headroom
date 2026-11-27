@@ -56,7 +56,7 @@ function manager(runsDir: string, mode: 'record' | 'replay', runEnv: AppEnv = en
     modelBackend: () => fakeModel(),
     ...(mode === 'record'
       ? { recorder: sampleRecorder(runsDir) }
-      : { replay: replaySource(runsDir, { preserveTiming: false }) }),
+      : { replay: replaySource(runsDir, { instant: true }) }),
     now: () => NOW + Date.now() - t0,
     quietMs: 300,
   });

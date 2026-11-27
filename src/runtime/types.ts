@@ -110,6 +110,8 @@ export interface HrInferenceResponse {
 
 /** A model backend that is not a live provider: scripted fakes in tests, recordings in replay. */
 export interface ModelBackend {
+  /** Recorded answers cannot hang or be rate limited: no timeout or retry applies to them. */
+  readonly recorded?: boolean;
   infer(request: HrInferenceRequest): Promise<HrInferenceResponse>;
 }
 

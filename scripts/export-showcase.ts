@@ -20,7 +20,7 @@ const env: AppEnv = {
   models: { reader: 'gemini-3.5-flash-lite', verifier: 'gemini-3.5-flash-lite' },
   root: ROOT,
 };
-const source = replaySource(join(ROOT, 'runs'), { preserveTiming: false });
+const source = replaySource(join(ROOT, 'runs'), { instant: true });
 const runs = new RunManager({
   env,
   rules: loadRules(),

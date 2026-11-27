@@ -12,9 +12,9 @@ import { replaySource, sampleRecorder } from '../engine/recordings.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..');
 
-function replaySpeed(argv: string[]): number {
+function replaySpeed(argv: string[]): number | undefined {
   const i = argv.indexOf('--speed');
-  if (i < 0) return 1;
+  if (i < 0) return undefined;
   const raw = argv[i + 1] ?? '';
   if (!/^\d+(\.\d+)?$/.test(raw) || Number.parseFloat(raw) <= 0)
     throw new Error('--speed needs a positive number, for example --speed 2');
@@ -29,13 +29,17 @@ async function main(): Promise<void> {
   const offlineFetcher: Fetcher = async (url) => {
     throw new Error(`Offline mode makes no network requests (${url})`);
   };
+  const speed = replaySpeed(process.argv);
   const runs = new RunManager({
     env,
     rules,
     profilesDir: join(ROOT, 'data', 'profiles'),
     liveFetcher: env.offline ? offlineFetcher : liveFetcher,
-    // --speed N plays recorded runs N times faster (PRD 14.6); the default keeps the recorded timing.
-    replay: replaySource(join(ROOT, 'runs'), { speed: replaySpeed(process.argv) }),
+    // By default a replay answers after a short fixed pause; --speed N plays the recorded latencies N times faster.
+    replay: replaySource(join(ROOT, 'runs'), {
+      ratesFile: join(ROOT, 'data', 'rates', 'kurs.json'),
+      ...(speed === undefined ? {} : { speed }),
+    }),
     // A public instance keeps only the most recent runs in memory.
     ...(env.publicDemo ? { maxRuns: 30 } : {}),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),

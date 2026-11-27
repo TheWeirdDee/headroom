@@ -31,13 +31,13 @@ Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns
 
 ## Try it without your files or a key
 
-A hosted read-only copy can run the same offline mode (`render.yaml`, `npm run start:public`): no model key on the server, uploads refused, a band on every page saying so, and recorded runs played 4 times faster.
+A hosted read-only copy can run the same offline mode (`render.yaml`, `npm run start:public`): no model key on the server, uploads refused, a band on every page saying so, and recorded runs that finish in seconds.
 
 ```
 npm run start:offline        # bundled sample, recorded model outputs, no key, no network
 ```
 
-Or click **Try with sample data** on the landing page. Offline mode is real Mozaik execution with recorded model outputs, not a video. If a recorded run asks for anything that was not recorded, it stops with `REPLAY_MISS` instead of inventing an answer. `npm run start:offline -- --speed 4` plays it four times faster.
+Or click **Try with sample data** on the landing page. Offline mode is real Mozaik execution with recorded model outputs, not a video. If a recorded run asks for anything that was not recorded, it stops with `REPLAY_MISS` instead of inventing an answer. A replay answers each request after a short fixed pause, so it finishes in seconds; `npm run start:offline -- --speed 4` instead replays the recorded model latencies four times faster.
 
 The recording in `runs/demo-p07` was made on 26 Nov 2026 with `gemini-3.5-flash-lite` as both reader and verifier model, on Mozaik 6.0.0 (`runs/demo-p07/meta.json`, `summary.json`). In that run: 65 loops, none failed; 83 model requests; 215 figures verified and 0 shown without a source; 2 conflicts between two agents (the KpoReader against the InvoiceReader, and against the RateClerk), both settled by the source document (the run summary says 23: the other 21 were the LimitKeeper and IndependenceChecker revising their own figures, which the claims helper then logged as conflicts; it now treats an agent's own revision as a revision); all five errors planted in the sample (E1, E2, E3, E5, E9) found; the 6M and 8M totals equal to the sample's ground truth. Two figures were contested by code checks (an invoice amount cited without its currency) and verified after the reader read the invoice again. Replaying it ten times in a row gives the same board each time (figures, values, sources, findings and card; ids and timestamps aside). All live results in this README come from that lite model; a stronger model may read better.
 

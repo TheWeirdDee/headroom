@@ -233,38 +233,38 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
       const request = toRequest(rec, input);
       try {
         const t0 = now();
-        const out = await withRetry(
-          async () => {
-            if (opts.backend) return toMozaikOutput(await opts.backend.infer(request), request.step);
-            return providerInfer(input);
-          },
-          {
-            ...DEFAULT_RETRY,
-            retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
-            timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
-            ...(opts.sleep ? { sleep: opts.sleep } : {}),
-            // Live waits are reported on stderr (agent, attempt, the provider's reason), never with keys.
-            ...(!opts.backend
-              ? {
-                  onRetry: (attempt: number, error: unknown) =>
-                    process.stderr.write(
-                      `Model request retry ${attempt} for ${rec.input.agentId}: ${retryReason(error)}\n`,
-                    ),
-                }
-              : {}),
-            // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
-            // waiting in the quota queue is never mistaken for a hung loop.
-            ...(!opts.backend && pacerRpm() > 0
-              ? {
-                  before: async () => {
-                    await paceRequest(now);
-                    rec.timer?.refresh();
-                  },
-                  rateLimitRetries: 6,
-                }
-              : {}),
-          },
-        );
+        const answer = async (): Promise<InferenceOutput> => {
+          if (opts.backend) return toMozaikOutput(await opts.backend.infer(request), request.step);
+          return providerInfer(input);
+        };
+        const out = opts.backend?.recorded
+          ? await answer()
+          : await withRetry(answer, {
+              ...DEFAULT_RETRY,
+              retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
+              timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
+              ...(opts.sleep ? { sleep: opts.sleep } : {}),
+              // Live waits are reported on stderr (agent, attempt, the provider's reason), never with keys.
+              ...(!opts.backend
+                ? {
+                    onRetry: (attempt: number, error: unknown) =>
+                      process.stderr.write(
+                        `Model request retry ${attempt} for ${rec.input.agentId}: ${retryReason(error)}\n`,
+                      ),
+                  }
+                : {}),
+              // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
+              // waiting in the quota queue is never mistaken for a hung loop.
+              ...(!opts.backend && pacerRpm() > 0
+                ? {
+                    before: async () => {
+                      await paceRequest(now);
+                      rec.timer?.refresh();
+                    },
+                    rateLimitRetries: 6,
+                  }
+                : {}),
+            });
         const neutral = fromMozaikOutput(out);
         rec.metric.tokensIn += neutral.tokensIn;
         rec.metric.tokensOut += neutral.tokensOut;
@@ -325,6 +325,12 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     if (error !== undefined) rec.metric.error = error;
     if (rec.timer) clearTimeout(rec.timer);
     rec.cancelled = true;
+    if (status === 'failed')
+      hrState.failedLoops.push({
+        agentId: rec.input.agentId,
+        loopId: rec.metric.loopId,
+        error: error ?? 'failed',
+      });
     const result: LoopResult = {
       loopId: rec.metric.loopId,
       status,
@@ -387,6 +393,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
 
   function reportHandlerError(participantId: string, event: HrEvent, error: unknown): void {
     const err = error instanceof Error ? error : new Error(String(error));
+    hrState.handlerErrors.push(`${participantId}: ${err.message}`);
     publish('hr.participant.error', 'runtime', {
       participantId,
       eventId: event.eventId,
@@ -484,10 +491,11 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     }));
     const overall =
       (input.timeoutMs ?? opts.defaultLoopTimeoutMs) * ((opts.maxRetries ?? DEFAULT_RETRY.retries) + 1) * 3;
-    rec.timer = setTimeout(
-      () => finishLoop(rec, 'failed', undefined, `Loop timed out after ${overall} ms`),
-      overall,
-    );
+    if (!opts.backend?.recorded)
+      rec.timer = setTimeout(
+        () => finishLoop(rec, 'failed', undefined, `Loop timed out after ${overall} ms`),
+        overall,
+      );
     publish('hr.loop.started', input.agentId, {
       loopId,
       agentId: input.agentId,

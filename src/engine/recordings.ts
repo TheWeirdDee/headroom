@@ -96,6 +96,21 @@ export function sampleRecorder(runsDir: string): (runId: string, profileId: stri
   };
 }
 
+/**
+ * Pause before each recorded answer, so the run screen shows the agents working. The recorded latency is
+ * not replayed: it holds the time requests waited for the free-tier quota (up to two minutes each).
+ */
+export const REPLAY_PAUSE_MS = 250;
+
+export interface ReplayTiming {
+  /** Recorded NBS responses shipped with the samples, used for a date the recording did not ask for. */
+  ratesFile?: string;
+  /** Play the recorded latencies this many times faster, instead of the short fixed pause. */
+  speed?: number;
+  /** Answer at once (tests and the landing page's showcase). */
+  instant?: boolean;
+}
+
 export interface LoadedRecording {
   backend: ModelBackend;
   kurs: Fetcher;
@@ -105,35 +120,45 @@ export interface LoadedRecording {
 }
 
 /** Load a recording folder into a replay backend and a Kurs fetcher. */
-export function loadRecording(
-  dir: string,
-  opts: { speed?: number; preserveTiming?: boolean } = {},
-): LoadedRecording {
+export function loadRecording(dir: string, opts: ReplayTiming = {}): LoadedRecording {
   const meta = JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8')) as {
     recordedAt: string;
     models: { reader: string; verifier: string };
   };
   const models = new Map<string, ResponseRecord>();
-  const kurs = new Map<string, { status: number; body: string }>();
+  const kurs = new Map<string, { status: number; body: string }>(
+    opts.ratesFile
+      ? Object.entries(
+          JSON.parse(readFileSync(opts.ratesFile, 'utf8')) as Record<
+            string,
+            { status: number; body: string }
+          >,
+        )
+      : [],
+  );
   for (const line of readFileSync(join(dir, 'responses.jsonl'), 'utf8').split('\n')) {
     if (!line.trim()) continue;
     const rec = JSON.parse(line) as ResponseRecord | KursRecord;
     if (rec.kind === 'model') models.set(rec.requestHash, rec);
     else kurs.set(rec.url, { status: rec.httpStatus, body: rec.body });
   }
-  const speed = opts.speed ?? 1;
-  const preserve = opts.preserveTiming ?? true;
+  const waitFor = (latencyMs: number): number => {
+    if (opts.instant) return 0;
+    return opts.speed === undefined ? REPLAY_PAUSE_MS : latencyMs / opts.speed;
+  };
   return {
     recordedAt: meta.recordedAt,
     models: meta.models,
     responses: models.size,
     kurs: replayFetcher(kurs),
     backend: {
+      recorded: true,
       async infer(req) {
         const hash = requestHash(req);
         const rec = models.get(hash);
         if (!rec) throw new ReplayMissError(hash, req.agentId);
-        if (preserve && rec.latencyMs > 0) await new Promise((r) => setTimeout(r, rec.latencyMs / speed));
+        const wait = waitFor(rec.latencyMs);
+        if (wait > 0) await new Promise((r) => setTimeout(r, wait));
         return rec.response;
       },
     },
@@ -143,9 +168,9 @@ export function loadRecording(
 /** Recordings committed for bundled samples live in runs/demo-<profileId>/. */
 export function replaySource(
   runsDir: string,
-  opts: { speed?: number; preserveTiming?: boolean } = {},
+  opts: ReplayTiming = {},
 ): {
-  backend(profileId: string, override?: { preserveTiming?: boolean }): LoadedRecording | undefined;
+  backend(profileId: string, override?: ReplayTiming): LoadedRecording | undefined;
   summary(profileId: string): unknown;
   loops(profileId: string): unknown[];
   agentConflicts(profileId: string): number | undefined;

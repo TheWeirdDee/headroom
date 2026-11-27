@@ -221,6 +221,7 @@ export function registerRateClerk(deps: AgentDeps): void {
     });
   }
 
+  let conversions = 0; // each conversion is a new proposal; the board ignores one that changes nothing
   async function convertDraft(): Promise<void> {
     const draft = deps.inputs.draft;
     const amountFig = state
@@ -236,7 +237,7 @@ export function registerRateClerk(deps: AgentDeps): void {
         sources: [{ type: 'derived', figureIds: [amountFig.id] }, ruleSrc('R-FX')],
         derivation: { ruleId: 'R-FX', inputs: [amountFig.id], formula: 'amount already in RSD' },
         producedBy: ID,
-        idempotencyKey: `${ID}/${key}/${draft.amount}/${draft.currency}/${draft.issueDate}`,
+        idempotencyKey: `${ID}/${key}/${++conversions}`,
         scope: 'draft',
       });
       return;
@@ -263,7 +264,7 @@ export function registerRateClerk(deps: AgentDeps): void {
         formula: `${draft.amount} ${draft.currency} x ${fx.value.rate} / ${fx.value.parity}${date !== draft.issueDate ? ` (latest published rate, ${fx.value.rateDate}; the rate for ${draft.issueDate} is not published yet)` : ''}`,
       },
       producedBy: ID,
-      idempotencyKey: `${ID}/${key}/${draft.amount}/${draft.currency}/${draft.issueDate}`,
+      idempotencyKey: `${ID}/${key}/${++conversions}`,
       scope: 'draft',
     });
   }
@@ -276,6 +277,16 @@ export function registerRateClerk(deps: AgentDeps): void {
       await checkBookRate(p.invNo);
     }
     if (p?.kind === 'draft' && p.field === 'amount') await convertDraft();
+    // A rate the user typed in: convert what was waiting for it.
+    if (p?.kind === 'fx' && state.verified(key)?.sources.some((s) => s.type === 'user_answer')) {
+      const numbers = new Set<string>();
+      for (const f of state.figuresWhere((x) => x.key.startsWith('invoice:'))) {
+        const k = parseKey(f.key);
+        if (k?.kind === 'invoice') numbers.add(k.invNo);
+      }
+      for (const invNo of numbers) await convertInvoice(invNo);
+      await convertDraft();
+    }
   });
 
   rt.on(ID, { types: ['hr.figure.conflict', 'hr.figure.proposed'] }, async (e: HrEvent) => {

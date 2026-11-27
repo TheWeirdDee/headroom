@@ -5,18 +5,19 @@
   },
   "card": {
     "asOf": "2026-11-26",
+    "completeness": { "complete": true, "gaps": [] },
     "limit6m": {
-      "committed": { "display": "4.789.841,85 RSD", "amount": "4789841.85", "figureId": "f000201" },
-      "withDraft": { "display": "5.795.691,21 RSD", "amount": "5795691.21", "figureId": "f000202" },
-      "headroomWithDraft": { "display": "204.308,79 RSD", "amount": "204308.79", "figureId": "f000204" },
+      "committed": { "display": "4.789.841,85 RSD", "amount": "4789841.85", "figureId": "f000212" },
+      "withDraft": { "display": "5.795.691,21 RSD", "amount": "5795691.21", "figureId": "f000213" },
+      "headroomWithDraft": { "display": "204.308,79 RSD", "amount": "204308.79", "figureId": "f000215" },
       "limit": { "display": "6.000.000,00 RSD", "amount": "6000000.00", "ruleId": "R-LIMIT-6M" },
-      "ratioWithDraft": { "display": "96,6%", "value": "0.965949", "figureId": "f000205" },
+      "ratioWithDraft": { "display": "96,6%", "value": "0.965949", "figureId": "f000216" },
       "band": "red"
     },
     "vat8m": {
-      "committed": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000206" },
-      "withDraft": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000207" },
-      "headroomWithDraft": { "display": "7.630.295,21 RSD", "amount": "7630295.21", "figureId": "f000209" },
+      "committed": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000217" },
+      "withDraft": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000218" },
+      "headroomWithDraft": { "display": "7.630.295,21 RSD", "amount": "7630295.21", "figureId": "f000220" },
       "threshold": { "display": "8.000.000,00 RSD", "amount": "8000000.00", "ruleId": "R-VAT-8M" },
       "band": "green",
       "assumptionRuleIds": ["R-VAT-8M-BASIS"]
@@ -33,7 +34,7 @@
         "share12mWithDraft": {
           "display": "100,0%",
           "value": "1.000000",
-          "figureId": "f000213",
+          "figureId": "f000202",
           "window": { "from": "2025-12-01", "to": "2026-11-30" }
         }
       },
@@ -44,11 +45,11 @@
         "notMet": 5,
         "unknown": 2,
         "status": "passes",
-        "statusFigureId": "f000221",
+        "statusFigureId": "f000210",
         "share12mWithDraft": {
           "display": "0,0%",
           "value": "0.000000",
-          "figureId": "f000216",
+          "figureId": "f000205",
           "window": { "from": "2025-12-01", "to": "2026-11-30" }
         }
       },
@@ -59,11 +60,11 @@
         "notMet": 5,
         "unknown": 2,
         "status": "passes",
-        "statusFigureId": "f000222",
+        "statusFigureId": "f000211",
         "share12mWithDraft": {
           "display": "0,0%",
           "value": "0.000000",
-          "figureId": "f000219",
+          "figureId": "f000208",
           "window": { "from": "2025-12-01", "to": "2026-11-30" }
         }
       }
@@ -100,7 +101,7 @@
     {
       "bandBefore": "amber",
       "bandAfter": "red",
-      "discrepancyId": "f000211",
+      "discrepancyId": "f000222",
       "discrepancyType": "E3",
       "subjectKey": "invoice:2026-010",
       "baseline": "book",
@@ -224,7 +225,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T07:12:14.781Z",
+          "fetchedAt": "2026-11-27T08:33:51.491Z",
           "httpStatus": 200,
           "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
           "jsonPath": "$.exchange_middle"
@@ -238,7 +239,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T07:12:14.781Z",
+          "fetchedAt": "2026-11-27T08:33:51.495Z",
           "httpStatus": 200,
           "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
           "jsonPath": "$.exchange_middle"
@@ -256,7 +257,7 @@
       "baseline": "book"
     },
     {
-      "id": "f000211",
+      "id": "f000222",
       "type": "E3",
       "title": "Issued invoice missing from the KPO book",
       "detail": "Invoice 2026-010 (510574.73 RSD) is not in the KPO book.",

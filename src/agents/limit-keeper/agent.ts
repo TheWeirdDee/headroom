@@ -259,7 +259,22 @@ export function registerLimitKeeper(deps: AgentDeps): void {
     return convertToRsd(d.payment.amount, fx.value.rate, fx.value.parity, cfg.rsdRounding);
   }
 
+  let cardDue = false;
+  /** Publish the card once per burst of changes; crossings are only meaningful on a complete card. */
+  function scheduleCard(): void {
+    if (cardDue) return;
+    cardDue = true;
+    queueMicrotask(() => {
+      cardDue = false;
+      const card = buildCard(state, rules, inputs, deps.today());
+      if (!card) return;
+      rt.publish('hr.headroom.updated', ID, card);
+      if (card.completeness.complete) checkCrossings();
+    });
+  }
+
   function checkCrossings(): void {
+    if (!buildCard(state, rules, inputs, deps.today())?.completeness.complete) return;
     const corrected = state.verified(keys.total('limit6m', 'withDraft'));
     if (corrected?.value.t !== 'money') return;
     const limit = rules.decimalParam('R-LIMIT-6M', 'limitRSD');
@@ -305,15 +320,27 @@ export function registerLimitKeeper(deps: AgentDeps): void {
     )
       schedule();
     else if (p?.kind === 'draft' && p.field === 'amountRSD') schedule();
-    else if (p?.kind === 'discrepancy' || p?.kind === 'fx' || p?.kind === 'total') checkCrossings();
-    if (
-      p &&
-      ['total', 'headroom', 'ratio', 'share12m', 'criterion', 'indep', 'discrepancy'].includes(p.kind)
-    ) {
-      const card = buildCard(state, rules, inputs);
-      if (card) rt.publish('hr.headroom.updated', ID, card);
-    }
+    scheduleCard();
   });
+
+  // Anything that can make the card complete or incomplete publishes it again.
+  rt.on(
+    ID,
+    {
+      types: [
+        'hr.figure.proposed',
+        'hr.figure.contested',
+        'hr.figure.needs_user',
+        'hr.loop.failed',
+        'hr.participant.error',
+        'hr.reader.done',
+        'hr.question.asked',
+        'hr.question.answered',
+        'hr.draft.changed',
+      ],
+    },
+    () => scheduleCard(),
+  );
 
   rt.on(ID, { types: ['hr.reader.done'], producerId: AGENTS.invoiceReader }, () => {
     invoicesDone = true;

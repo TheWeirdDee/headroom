@@ -101,8 +101,8 @@ npm start                 # then open http://localhost:4317`}</Code>
             with the recorded model answers, not a video. If anything was not recorded, it stops with
             REPLAY_MISS rather than invent an answer.
           </p>
-          <Code>{`npm run start:offline              # recorded timing
-npm run start:offline -- --speed 4 # four times faster`}</Code>
+          <Code>{`npm run start:offline              # finishes in seconds
+npm run start:offline -- --speed 4 # recorded model latencies, four times faster`}</Code>
         </Section>
 
         <Section id="files" title="Your files">

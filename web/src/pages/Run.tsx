@@ -21,6 +21,7 @@ const RUN_STATUS: Record<string, { status: string; label: string }> = {
   running: { status: 'working', label: 'Running' },
   completed: { status: 'verified', label: 'Done' },
   awaiting_user: { status: 'needs_user', label: 'Waiting for your answers' },
+  degraded: { status: 'failed', label: 'Incomplete: something failed or is missing' },
   failed: { status: 'failed', label: 'Failed' },
 };
 

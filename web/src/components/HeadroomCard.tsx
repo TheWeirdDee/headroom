@@ -1,13 +1,14 @@
 // Headroom card (PRD 16.2). Every number is the server's display string for a verified figure and opens its
 // sources. The bar width is display only; the band comes from the server, computed with exact decimals.
 import { Link } from 'react-router';
-import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
-import type { Band, CardVM, Crossing, Discrepancy, MoneyVM } from '../api/types.ts';
+import { CircleAlert, CircleCheck, CircleDashed, Info, TriangleAlert } from 'lucide-react';
+import type { Band, CardBand, CardVM, Crossing, Discrepancy, MoneyVM } from '../api/types.ts';
 import { formatRsd, formatDateSr } from '../format/money.ts';
 
 const SEVERITY: Band[] = ['green', 'amber', 'red', 'crossed'];
 
-const BAND: Record<Band, { label: string; cls: string; bar: string; Icon: typeof CircleCheck }> = {
+const BAND: Record<CardBand, { label: string; cls: string; bar: string; Icon: typeof CircleCheck }> = {
+  incomplete: { label: 'Incomplete', cls: 'text-muted', bar: 'bg-muted', Icon: CircleDashed },
   green: { label: 'Room left', cls: 'text-accent', bar: 'bg-accent', Icon: CircleCheck },
   amber: { label: 'Getting close', cls: 'text-amber', bar: 'bg-amber', Icon: Info },
   red: { label: 'Very close', cls: 'text-danger', bar: 'bg-danger', Icon: TriangleAlert },
@@ -52,7 +53,7 @@ function Bar({
   committed: string;
   withDraft: string;
   limit: string;
-  band: Band;
+  band: CardBand;
 }) {
   const a = pct(committed, limit);
   const b = pct(withDraft, limit);
@@ -71,7 +72,7 @@ function Bar({
   );
 }
 
-function BandChip({ band }: { band: Band }) {
+function BandChip({ band }: { band: CardBand }) {
   const { label, cls, Icon } = BAND[band];
   return (
     <span className={`inline-flex items-center gap-1 text-sm font-medium ${cls}`}>
@@ -86,7 +87,31 @@ const INDEP: Record<string, { label: string; cls: string; Icon: typeof CircleChe
   fails: { label: 'Fails', cls: 'text-danger', Icon: CircleAlert },
   not_applicable: { label: 'Not applicable', cls: 'text-muted', Icon: Info },
   pending: { label: 'Pending', cls: 'text-muted', Icon: Info },
+  incomplete: { label: 'Incomplete', cls: 'text-muted', Icon: CircleDashed },
 };
+
+/** Why there is no verdict yet, worst first. */
+function Gaps({ card }: { card: CardVM }) {
+  const order = ['failed', 'missing', 'needs_you', 'pending'];
+  const gaps = [...card.completeness.gaps].sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
+  const failed = gaps.some((g) => g.kind === 'failed' || g.kind === 'missing');
+  return (
+    <div
+      role="status"
+      className={`rounded border p-3 text-sm ${failed ? 'border-danger/60 bg-danger/10' : 'border-line bg-panel-2'}`}
+    >
+      <p className={`flex items-center gap-1 font-medium ${failed ? 'text-danger' : ''}`}>
+        <CircleDashed size={14} aria-hidden /> Incomplete: no verdict until every input is verified
+      </p>
+      <ul className="mt-1 space-y-0.5 text-muted">
+        {gaps.slice(0, 5).map((g) => (
+          <li key={g.text}>{g.text}</li>
+        ))}
+        {gaps.length > 5 && <li>And {gaps.length - 5} more.</li>}
+      </ul>
+    </div>
+  );
+}
 
 function IndepStatus({
   status,
@@ -177,15 +202,29 @@ export function HeadroomCard({
         )}
       </div>
 
+      {!card.completeness.complete && <Gaps card={card} />}
+
       <div>
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-sm text-muted">6M flat-rate limit, {card.asOf.slice(0, 4)}</h3>
           <BandChip band={l.band} />
         </div>
-        <p className="mt-1 text-3xl font-semibold tracking-tight">
-          <Num m={l.headroomWithDraft} onOpen={onOpen} className={BAND[l.band].cls} />
-        </p>
-        <p className="text-xs text-muted">left after this invoice</p>
+        {l.band === 'incomplete' ? (
+          <>
+            <p className="mt-1 text-3xl font-semibold tracking-tight text-muted">Incomplete</p>
+            <p className="text-xs text-muted">
+              From the figures verified so far: <Num m={l.headroomWithDraft} onOpen={onOpen} /> left. This is
+              not the answer yet.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="mt-1 text-3xl font-semibold tracking-tight">
+              <Num m={l.headroomWithDraft} onOpen={onOpen} className={BAND[l.band].cls} />
+            </p>
+            <p className="text-xs text-muted">left after this invoice</p>
+          </>
+        )}
         <Bar
           committed={l.committed.amount}
           withDraft={l.withDraft.amount}
@@ -246,7 +285,11 @@ export function HeadroomCard({
           <BandChip band={v.band} />
         </div>
         <p className="mt-1 text-xl font-semibold">
-          <Num m={v.headroomWithDraft} onOpen={onOpen} className={BAND[v.band].cls} />
+          {v.band === 'incomplete' ? (
+            <span className="text-muted">Incomplete</span>
+          ) : (
+            <Num m={v.headroomWithDraft} onOpen={onOpen} className={BAND[v.band].cls} />
+          )}
         </p>
         <Bar
           committed={v.committed.amount}

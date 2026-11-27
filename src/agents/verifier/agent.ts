@@ -207,12 +207,20 @@ export function registerVerifier(deps: AgentDeps): void {
     rt.publish('hr.question.asked', ID, { question: q });
   }
 
-  function park(f: Figure, inputIds: string[]): void {
-    for (const id of inputIds) {
+  /**
+   * Wait for the inputs of a derived figure. An input can settle between the derivation check and this call
+   * (the check is awaited); its event has then already passed, so the figure must be checked again now.
+   * Returns true in that case.
+   */
+  function park(f: Figure, inputIds: string[]): boolean {
+    const pending = inputIds.filter((id) => state.figures.get(id)?.status === 'proposed');
+    if (pending.length < inputIds.length) return true;
+    for (const id of pending) {
       const set = waiting.get(id) ?? new Set<string>();
       set.add(f.id);
       waiting.set(id, set);
     }
+    return false;
   }
 
   function wake(inputId: string): void {
@@ -227,12 +235,16 @@ export function registerVerifier(deps: AgentDeps): void {
     const f = current(id);
     if (!f) return;
     inFlight.add(id);
+    let again = false;
     try {
       await limit.run(async () => {
         setStatus(rt, ID, { kind: 'verifying', key: f.key, check: 'sources, hashes and arithmetic' });
         const o = await evaluate(f);
         if (!current(id)) return; // superseded meanwhile
-        if ('wait' in o) return park(f, o.inputs);
+        if ('wait' in o) {
+          again = park(f, o.inputs);
+          return;
+        }
         if ('stale' in o) {
           state.setFigureStatus(
             f.id,
@@ -253,6 +265,7 @@ export function registerVerifier(deps: AgentDeps): void {
       if (state.figuresWhere((x) => x.status === 'proposed').length === 0)
         setStatus(rt, ID, { kind: 'idle' });
     }
+    if (again) await verify(id);
   }
 
   /** Follow-ups once a figure is verified: E9 country check, discrepancy records, waiting derivations. */
@@ -314,7 +327,10 @@ export function registerVerifier(deps: AgentDeps): void {
         : evaluate(a),
       evaluate(b),
     ]);
-    if ('wait' in ob) return park(b, ob.inputs);
+    if ('wait' in ob) {
+      if (park(b, ob.inputs)) await resolve(existingId, proposedId);
+      return;
+    }
     if ('stale' in ob) {
       if (state.figures.get(b.id)?.status === 'proposed') {
         state.setFigureStatus(

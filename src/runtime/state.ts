@@ -99,6 +99,14 @@ export class HeadroomState {
   readonly discrepancies = new Map<string, Discrepancy>();
   readonly rejections = new Map<RejectionReason, number>(REJECTION_REASONS.map((r) => [r, 0]));
   readonly vetoedWrites: Array<{ agentId: string; reason: string }> = [];
+  readonly failedLoops: Array<{ agentId: string; loopId: string; error: string }> = [];
+  readonly handlerErrors: string[] = [];
+  /** What the readers have finished, for the card's completeness check. */
+  readonly progress: {
+    invoicesRead: boolean;
+    statementsRead: boolean;
+    kpo: { complete: boolean } | undefined;
+  } = { invoicesRead: false, statementsRead: false, kpo: undefined };
   private pending: Omit<Figure, 'id' | 'version' | 'status' | 'createdAt'> | undefined;
 
   constructor(
