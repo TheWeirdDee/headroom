@@ -84,8 +84,21 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     return r.data;
   };
 
+  // A public sample instance takes no files: only the bundled synthetic samples run there.
+  if (d.env.publicDemo)
+    app.addHook('onRequest', async (req, reply) => {
+      if (req.url.startsWith('/api/uploads'))
+        return sendError(
+          reply,
+          403,
+          'UPLOADS_DISABLED',
+          'This public instance runs the recorded synthetic samples only. To check your own files, run Headroom on your computer (see the README).',
+        );
+    });
+
   app.get('/api/health', async () => ({
     ok: true,
+    publicDemo: d.env.publicDemo === true,
     version: d.version,
     mozaikVersion: MOZAIK_PACKAGE.version,
     mode: d.env.offline ? 'offline' : 'live',

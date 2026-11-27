@@ -154,6 +154,30 @@ describe('API basics and errors', () => {
   });
 });
 
+describe('public sample instance', () => {
+  it('refuses every upload route and says so in health', async () => {
+    const { app: a } = await app({ offline: true, hasModelKey: false, publicDemo: true });
+    const h = (await a.inject({ url: '/api/health' })).json() as { publicDemo: boolean; mode: string };
+    expect(h).toMatchObject({ publicDemo: true });
+    for (const [method, url] of [
+      ['POST', '/api/uploads'],
+      ['GET', '/api/uploads/u1'],
+      ['DELETE', '/api/uploads/u1'],
+    ] as const) {
+      const r = await a.inject({ method, url });
+      expect(r.statusCode).toBe(403);
+      expect((r.json() as { error: { code: string } }).error.code).toBe('UPLOADS_DISABLED');
+    }
+    const live = await a.inject({
+      method: 'POST',
+      url: '/api/runs',
+      payload: { profileId: 'p07', mode: 'live' },
+    });
+    expect(live.statusCode).toBeGreaterThanOrEqual(400);
+    await a.close();
+  });
+});
+
 describe('NO_MODEL_KEY and offline', () => {
   it('a live run without a key is refused with a message that fits sample or upload', async () => {
     const { app: a } = await app({ hasModelKey: false });

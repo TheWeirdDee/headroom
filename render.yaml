@@ -1,0 +1,17 @@
+# Render blueprint for the hosted read-only sample instance (no model key, uploads off, recorded runs only).
+# Live mode and uploads are local-only: run Headroom on your own computer for your own files.
+services:
+  - type: web
+    name: headroom-sample
+    runtime: node
+    plan: free
+    buildCommand: npm run setup
+    startCommand: npm run start:public
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: HEADROOM_PUBLIC_DEMO
+        value: '1'

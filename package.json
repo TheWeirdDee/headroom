@@ -22,6 +22,7 @@
     "generate:data": "tsx scripts/generate-profiles.ts",
     "start": "tsx src/server/main.ts",
     "start:offline": "tsx src/server/main.ts --offline",
+    "start:public": "tsx src/server/main.ts --offline --speed 4",
     "dev": "node scripts/dev.mjs",
     "build:web": "npm --prefix web run build",
     "build": "npm run typecheck && npm run build:web",

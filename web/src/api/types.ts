@@ -295,6 +295,8 @@ export interface Rule {
 
 export interface Health {
   ok: boolean;
+  /** A hosted read-only sample instance: recorded samples only, uploads refused. */
+  publicDemo?: boolean;
   version: string;
   mozaikVersion: string;
   mode: 'live' | 'offline';

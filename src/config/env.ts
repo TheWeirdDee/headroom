@@ -16,6 +16,10 @@ export interface AppEnv {
   maxRpm: number;
   models: { reader: string; verifier: string };
   root: string;
+  /** A hosted read-only sample instance (HEADROOM_PUBLIC_DEMO=1): offline only, uploads refused. */
+  publicDemo?: boolean;
+  /** Address to listen on (HOST); 127.0.0.1 unless a host platform needs 0.0.0.0. */
+  host?: string;
 }
 
 export class EnvError extends Error {
@@ -48,6 +52,9 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
     return Number.parseInt(raw, 10);
   };
   const offline = argv.includes('--offline');
+  const publicDemo = (process.env['HEADROOM_PUBLIC_DEMO'] ?? '').trim() === '1';
+  if (publicDemo && !offline)
+    throw new EnvError('HEADROOM_PUBLIC_DEMO=1 runs only with --offline (recorded samples, no model key).');
   const models = {
     reader: process.env['HEADROOM_MODEL_READER']?.trim() || DEFAULT_MODELS.reader,
     verifier: process.env['HEADROOM_MODEL_VERIFIER']?.trim() || DEFAULT_MODELS.verifier,
@@ -71,5 +78,7 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
     maxRpm: int('HEADROOM_MAX_RPM', Math.max(...providers.map((p) => (p ? DEFAULT_RPM[p] : 0)))),
     models,
     root,
+    publicDemo,
+    host: (process.env['HOST'] ?? '').trim() || '127.0.0.1',
   };
 }

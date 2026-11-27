@@ -104,6 +104,8 @@ export interface RunManagerOptions {
     | undefined;
   now?: () => number;
   quietMs?: number;
+  /** Keep at most this many runs in memory, dropping the oldest finished ones (public instance). */
+  maxRuns?: number;
 }
 
 function csvHeader(dir: string, file: string): string[] {
@@ -119,6 +121,7 @@ function csvHeader(dir: string, file: string): string[] {
 export class RunManager {
   private readonly runs = new Map<string, RunRecord>();
   private showcaseRun: Promise<string> | undefined;
+  private showcaseId: string | undefined;
 
   constructor(private readonly o: RunManagerOptions) {}
 
@@ -154,6 +157,18 @@ export class RunManager {
       });
   }
 
+  private evictOldRuns(): void {
+    const max = this.o.maxRuns;
+    if (!max) return;
+    for (const [id, r] of this.runs) {
+      if (this.runs.size <= max) break;
+      // The shared showcase run and runs still working are kept.
+      if (!r.summary || r.runId === this.showcaseId) continue;
+      void r.run.dispose();
+      this.runs.delete(id);
+    }
+  }
+
   /**
    * The landing page's showcase: one replay of the committed recording of `profileId`, without delays,
    * started on first request and shared by every visitor. Undefined when there is no recording.
@@ -162,7 +177,8 @@ export class RunManager {
     if (!this.o.replay?.backend(profileId)) return undefined;
     this.showcaseRun ??= this.start({ profileId, mode: 'replay', fast: true });
     try {
-      return await this.showcaseRun;
+      this.showcaseId = await this.showcaseRun;
+      return this.showcaseId;
     } catch (e) {
       this.showcaseRun = undefined;
       throw e;
@@ -284,6 +300,7 @@ export class RunManager {
     });
     record.run = run;
     this.runs.set(runId, record);
+    this.evictOldRuns();
     void run.done.then(
       (s) => recorder?.finish(s),
       () => undefined,

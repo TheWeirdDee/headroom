@@ -39,6 +39,13 @@ export function Layout() {
           </nav>
         </div>
       </header>
+      {health?.publicDemo && (
+        <div role="note" className="border-b border-amber/40 bg-amber/10 px-4 py-2 text-sm">
+          <span className="font-medium">Public sample instance.</span> Recorded runs of the synthetic samples
+          only: no model key on this server, and file uploads are off. To check your own files, run Headroom
+          on your computer (see the README).
+        </div>
+      )}
       {error && (
         <div role="alert" className="border-b border-danger/40 bg-danger/10 px-4 py-2 text-sm text-danger">
           {error}

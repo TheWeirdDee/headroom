@@ -209,6 +209,32 @@ export function Intake() {
     .map((c, i) => ({ id: String(i), name: c.name.trim() || `Client ${i + 1}` }))
     .filter((_, i) => clients[i]?.name.trim());
 
+  if (health?.publicDemo)
+    return (
+      <div className="mx-auto max-w-[1100px] space-y-4 px-4 py-8">
+        <h1 className="text-2xl font-semibold">Check my invoice</h1>
+        <p role="note" className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">
+          This public instance does not take files: it has no model key and only replays the bundled synthetic
+          samples. To check your own bank statement, invoices and KPO book, run Headroom on your computer with
+          a model key (see the README). Your files then stay on your machine, and only document text goes to
+          the model provider.
+        </p>
+        <button
+          type="button"
+          disabled={sample.busy}
+          onClick={() => sample.start('p07')}
+          className="rounded border border-line px-4 py-2 text-sm font-medium hover:border-muted disabled:opacity-60"
+        >
+          {sample.busy ? 'Starting...' : 'Try with sample data instead'}
+        </button>
+        {sample.error && (
+          <p role="alert" className="text-sm text-danger">
+            {sample.error}
+          </p>
+        )}
+      </div>
+    );
+
   return (
     <div className="mx-auto max-w-[1100px] space-y-8 px-4 py-8">
       <div>

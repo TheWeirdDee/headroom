@@ -36,6 +36,8 @@ async function main(): Promise<void> {
     liveFetcher: env.offline ? offlineFetcher : liveFetcher,
     // --speed N plays recorded runs N times faster (PRD 14.6); the default keeps the recorded timing.
     replay: replaySource(join(ROOT, 'runs'), { speed: replaySpeed(process.argv) }),
+    // A public instance keeps only the most recent runs in memory.
+    ...(env.publicDemo ? { maxRuns: 30 } : {}),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),
   });
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };
@@ -54,9 +56,9 @@ async function main(): Promise<void> {
       `Unhandled rejection: ${reason instanceof Error ? reason.message : String(reason)}\n`,
     );
   });
-  await app.listen({ port: env.port, host: '127.0.0.1' });
+  await app.listen({ port: env.port, host: env.host ?? '127.0.0.1' });
   process.stdout.write(
-    `Headroom ${env.offline ? 'OFFLINE (recorded sample runs only)' : env.hasModelKey ? `LIVE (${env.models.reader}${env.maxRpm ? `, at most ${env.maxRpm} requests a minute` : ''})` : `LIVE (no ${env.keyEnv}: sample runs offer the recorded version)`} on http://localhost:${env.port}\n`,
+    `Headroom ${env.publicDemo ? 'PUBLIC SAMPLE INSTANCE, ' : ''}${env.offline ? 'OFFLINE (recorded sample runs only)' : env.hasModelKey ? `LIVE (${env.models.reader}${env.maxRpm ? `, at most ${env.maxRpm} requests a minute` : ''})` : `LIVE (no ${env.keyEnv}: sample runs offer the recorded version)`} on http://localhost:${env.port}\n`,
   );
 }
 
