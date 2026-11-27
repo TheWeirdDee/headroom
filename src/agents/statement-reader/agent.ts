@@ -14,12 +14,12 @@ import {
 } from '../common.ts';
 import { fenceSafe } from '../common.ts';
 import { keys, normalizeInvoiceNumber, isValidInvoiceNumber, parseKey } from '../../domain/keys.ts';
-import { cmp } from '../../domain/money.ts';
 import { sha256 } from '../../util/hash.ts';
 import { statementRowRef } from '../../engine/inputs.ts';
 import { postDiscrepancy } from '../discrepancy.ts';
+import { unmatchedPayments, type Payable, type Payment } from '../../domain/discrepancies.ts';
 import type { StatementRow } from '../../inputs/tables.ts';
-import type { SourceRef } from '../../domain/types.ts';
+import type { Figure, SourceRef } from '../../domain/types.ts';
 import type { HrEvent } from '../../runtime/types.ts';
 
 const ID = AGENTS.statementReader;
@@ -223,71 +223,97 @@ export function registerStatementReader(deps: AgentDeps): void {
     });
   }
 
-  /** E1: client payments with no invoice link and no invoice of the same amount and currency on the board. */
   /**
-   * E1: incoming rows whose verified class is client_payment and whose verified invoice link is "none",
-   * with no invoice of the same amount and currency on the board. Built from verified figures only, and
-   * re-checked as more of them are verified.
+   * E1: client payments that no invoice accounts for, one payment to one invoice. Built from verified
+   * figures only, and only once every row's judgement and every invoice amount is settled: matching a
+   * partial picture could give one payment another payment's invoice.
    */
   const e1Posted = new Set<string>();
+
+  /** The verified figure of a key; null if the Verifier gave it to the user; undefined while open. */
+  function settled(key: string): Figure | null | undefined {
+    const verified = rt.state.verified(key);
+    if (verified) return verified;
+    return rt.state.board.get(key)?.status === 'needs_user' ? null : undefined;
+  }
+
+  function payables(): Payable[] | undefined {
+    const out: Payable[] = [];
+    const numbers = new Set<string>();
+    for (const f of rt.state.figuresWhere((x) => x.status !== 'superseded')) {
+      const p = parseKey(f.key);
+      if (p?.kind === 'invoice' && p.field === 'amount') numbers.add(p.invNo);
+    }
+    for (const invNo of numbers) {
+      const amount = settled(keys.invoice(invNo, 'amount'));
+      const date = settled(keys.invoice(invNo, 'issueDate'));
+      if (amount === undefined || date === undefined) return undefined;
+      if (amount?.value.t === 'money' && date?.value.t === 'date')
+        out.push({
+          invNo,
+          issueDate: date.value.iso,
+          amount: amount.value.amount,
+          currency: amount.value.currency,
+        });
+    }
+    return out;
+  }
+
   function checkUnmatched(): void {
     if (!ownDone || !invoicesDone) return;
-    const invoiceAmounts = rt.state
-      .figuresWhere(
-        (f) =>
-          f.status !== 'contested' &&
-          f.status !== 'superseded' &&
-          parseKey(f.key)?.kind === 'invoice' &&
-          f.key.endsWith(':amount'),
-      )
-      .map((f) => f.value);
-    let candidates = 0;
+    const invoices = payables();
+    if (!invoices) return;
+    const payments: Payment[] = [];
+    const evidence = new Map<string, { c: Classified; figureIds: [string, string] }>();
     for (const c of classified) {
       const ref = statementRowRef(c.row, inputs.statements);
-      if (e1Posted.has(ref)) continue;
-      const cls = rt.state.verified(keys.payment(ref, 'class'));
-      const link = rt.state.verified(keys.paymentLink(ref));
-      if (
-        cls?.value.t !== 'text' ||
-        cls.value.text !== 'client_payment' ||
-        link?.value.t !== 'text' ||
-        link.value.text !== 'none'
-      )
-        continue;
-      candidates += 1;
-      const matched = invoiceAmounts.some(
-        (v) => v.t === 'money' && v.currency === c.row.currency && cmp(v.amount, c.row.amount) === 0,
-      );
-      if (matched) continue;
+      const cls = settled(keys.payment(ref, 'class'));
+      if (cls === undefined) return;
+      if (cls?.value.t !== 'text' || cls.value.text !== 'client_payment') continue;
+      const link = settled(keys.paymentLink(ref));
+      if (link === undefined) return;
+      if (link?.value.t !== 'text') continue;
+      payments.push({
+        ref,
+        date: c.row.date,
+        amount: c.row.amount,
+        currency: c.row.currency,
+        invoiceNumber: link.value.text === 'none' ? null : link.value.text,
+      });
+      evidence.set(ref, { c, figureIds: [cls.id, link.id] });
+    }
+    for (const ref of unmatchedPayments(payments, invoices)) {
+      const found = evidence.get(ref);
+      if (!found || e1Posted.has(ref)) continue;
+      const { c, figureIds } = found;
       e1Posted.add(ref);
       postDiscrepancy(deps, {
         type: 'E1',
         subjectKey: `payment:${ref}`,
         producedBy: ID,
-        detail: `${c.row.date}: ${c.row.amount} ${c.row.currency} from ${c.row.counterparty || 'an unnamed payer'}. No invoice names it and none has the same amount and currency.`,
+        detail: `${c.row.date}: ${c.row.amount} ${c.row.currency} from ${c.row.counterparty || 'an unnamed payer'}. No invoice names it, and no unpaid invoice has the same amount and currency.`,
         sources: [
           rowSource(c.row),
-          { type: 'derived', figureIds: [cls.id, link.id] },
+          { type: 'derived', figureIds },
           { type: 'rule', ruleId: 'R-PAYMENT-NO-INVOICE', url: deps.rules.url('R-PAYMENT-NO-INVOICE') },
         ],
-        figureIds: [cls.id, link.id],
+        figureIds,
         ...(c.row.currency === 'RSD' ? { deltaRSD: c.row.amount } : {}),
         payment: { currency: c.row.currency, amount: c.row.amount, date: c.row.date },
       });
     }
-    if (candidates > 0) setStatus(rt, ID, { kind: 'searching_unmatched_payments', count: candidates });
     setStatus(rt, ID, {
       kind: 'done',
       summary: `Classified ${classified.length} incoming rows; ${e1Posted.size} without an invoice`,
     });
   }
 
-  rt.on(ID, { types: ['hr.figure.verified'] }, (e: HrEvent) => {
+  rt.on(ID, { types: ['hr.figure.verified', 'hr.figure.needs_user'] }, (e: HrEvent) => {
     const key = (e.payload as { key: string }).key;
     if (
       key.startsWith('payment:') ||
       key.startsWith('link:payment:') ||
-      (key.startsWith('invoice:') && key.endsWith(':amount'))
+      (key.startsWith('invoice:') && (key.endsWith(':amount') || key.endsWith(':issueDate')))
     )
       checkUnmatched();
   });

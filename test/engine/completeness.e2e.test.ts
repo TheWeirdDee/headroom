@@ -12,8 +12,11 @@ import type { HrInferenceRequest, ModelBackend } from '../../src/runtime/types.t
 
 const NOW = Date.parse('2026-11-26T09:00:00Z');
 
-async function start(fail: (r: HrInferenceRequest) => boolean = () => false): Promise<Run> {
-  const { inputs, year, asOf } = await loadInputSet(await writeTempProfile(smallProfile()));
+async function start(
+  fail: (r: HrInferenceRequest) => boolean = () => false,
+  spec = smallProfile(),
+): Promise<Run> {
+  const { inputs, year, asOf } = await loadInputSet(await writeTempProfile(spec));
   const started = Date.now();
   const clock = (): number => NOW + (Date.now() - started);
   const model = fakeModel({ delayMs: 10 });
@@ -59,6 +62,29 @@ describe('incomplete cards and degraded runs', () => {
       expect(c.completeness.complete).toBe(true);
       expect(c.limit6m.withDraft.amount).toBe(s.headroom?.limit6m.withDraft.amount);
     }
+    await run.dispose();
+  }, 40_000);
+
+  it('flags a second payment of an invoiced amount: one invoice accounts for one payment', async () => {
+    const spec = smallProfile();
+    spec.statement.push({
+      date: '2026-10-05',
+      valueDate: '2026-10-05',
+      description: 'Uplata za konsultacije',
+      counterparty: 'Lipa Studio',
+      reference: '',
+      amount: '300000.00', // the amount of invoice 2026-003, already paid by the row that names it
+      currency: 'RSD',
+      direction: 'PRILIV',
+      balance: '2519064.80',
+    });
+    const run = await start(undefined, spec);
+    await run.done;
+    const unmatched = [...run.rt.state.discrepancies.values()]
+      .filter((d) => d.type === 'E1' && d.status === 'verified')
+      .map((d) => d.subjectKey)
+      .sort();
+    expect(unmatched).toEqual(['payment:S1-3', 'payment:S1-6']);
     await run.dispose();
   }, 40_000);
 

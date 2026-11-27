@@ -19,7 +19,12 @@ import {
   type IncomeFact,
 } from '../../src/domain/independence.ts';
 import { buildKpoBook, checkExistingRow, existingRowKind, KpoRowError } from '../../src/domain/kpo.ts';
-import { duplicateMatches, missingFromBook, numberingGaps } from '../../src/domain/discrepancies.ts';
+import {
+  duplicateMatches,
+  missingFromBook,
+  numberingGaps,
+  unmatchedPayments,
+} from '../../src/domain/discrepancies.ts';
 import {
   InvalidInvoiceNumberError,
   isValidInvoiceNumber,
@@ -240,6 +245,57 @@ describe('KPO book (R-KPO, R-KPO-LAYOUT)', () => {
     expect(existingRowKind(row)).toBe('service');
     expect(() => checkExistingRow({ ...row, totalRSD: '90' })).toThrow(KpoRowError);
     expect(() => checkExistingRow({ ...row, servicesRSD: '1.000,00' })).toThrow(/not a number/);
+  });
+});
+
+describe('E1: one payment to one invoice', () => {
+  const invoice = (
+    invNo: string,
+    issueDate: string,
+    amount = '1000',
+  ): Parameters<typeof unmatchedPayments>[1][number] => ({ invNo, issueDate, amount, currency: 'EUR' });
+  const payment = (ref: string, date: string, invoiceNumber: string | null = null, amount = '1000.00') => ({
+    ref,
+    date,
+    amount,
+    currency: 'EUR',
+    invoiceNumber,
+  });
+
+  it('flags the extra payment of a monthly retainer', () => {
+    const invoices = [invoice('1', '2026-01-05'), invoice('2', '2026-02-05')];
+    const payments = [payment('a', '2026-01-20'), payment('b', '2026-02-20'), payment('c', '2026-03-20')];
+    expect(unmatchedPayments(payments, invoices)).toEqual(['c']);
+  });
+
+  it('does not let an unnamed payment take an invoice another payment names', () => {
+    expect(
+      unmatchedPayments(
+        [payment('a', '2026-01-10'), payment('b', '2026-01-20', '1')],
+        [invoice('1', '2026-01-05')],
+      ),
+    ).toEqual(['a']);
+  });
+
+  it('accepts instalments that name their invoice, and a payment made before the invoice', () => {
+    expect(
+      unmatchedPayments(
+        [payment('a', '2026-01-10', '1', '400'), payment('b', '2026-02-10', '1', '600')],
+        [invoice('1', '2026-01-05')],
+      ),
+    ).toEqual([]);
+    expect(unmatchedPayments([payment('a', '2026-01-02')], [invoice('1', '2026-01-05')])).toEqual([]);
+  });
+
+  it('takes the latest invoice issued by the payment date, leaving later ones for later payments', () => {
+    const invoices = [invoice('1', '2026-01-05'), invoice('2', '2026-03-05')];
+    expect(unmatchedPayments([payment('a', '2026-01-10'), payment('b', '2026-03-10')], invoices)).toEqual([]);
+  });
+
+  it('keeps currencies apart', () => {
+    expect(
+      unmatchedPayments([{ ...payment('a', '2026-01-10'), currency: 'RSD' }], [invoice('1', '2026-01-05')]),
+    ).toEqual(['a']);
   });
 });
 

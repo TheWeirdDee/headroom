@@ -91,7 +91,7 @@
     {
       "bandBefore": "red",
       "bandAfter": "crossed",
-      "discrepancyId": "f000181",
+      "discrepancyId": "f000189",
       "discrepancyType": "E1",
       "subjectKey": "payment:S1-12",
       "baseline": "corrected",
@@ -111,35 +111,7 @@
   ],
   "discrepancies": [
     {
-      "id": "f000181",
-      "type": "E1",
-      "title": "Payment received with no matching invoice",
-      "detail": "2026-08-25: 240000 RSD from Lipa Studio. No invoice names it and none has the same amount and currency.",
-      "figureIds": ["f000073", "f000074"],
-      "sources": [
-        {
-          "type": "statement_row",
-          "file": "statement.csv",
-          "rowIndex": 12,
-          "rawLine": "2026-08-25,2026-08-25,Uplata za konsultacije,Lipa Studio,,240000.00,RSD,PRILIV,3508164.34",
-          "rawLineSha256": "d9e602d5d15318150ccf79ad880dcc02fc322823dbf9bedcdf15c7cc663e2c60"
-        },
-        { "type": "derived", "figureIds": ["f000073", "f000074"] },
-        {
-          "type": "rule",
-          "ruleId": "R-PAYMENT-NO-INVOICE",
-          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html"
-        }
-      ],
-      "status": "verified",
-      "subjectKey": "payment:S1-12",
-      "producedBy": "statement-reader",
-      "deltaRSD": "240000",
-      "baseline": "corrected",
-      "payment": { "currency": "RSD", "amount": "240000", "date": "2026-08-25" }
-    },
-    {
-      "id": "f000183",
+      "id": "f000182",
       "type": "E9",
       "title": "Client country differs between invoice and client details",
       "detail": "Invoice 2026-002 gives the client's country as RS; the client details say DE. This decides whether the invoice counts toward the 8M VAT threshold.",
@@ -171,7 +143,7 @@
       "baseline": "book"
     },
     {
-      "id": "f000184",
+      "id": "f000183",
       "type": "E2",
       "title": "KPO book uses a different date than the invoice",
       "detail": "The KPO book enters invoice 2026-001 on 2026-02-09; the invoice is dated 2026-01-16.",
@@ -209,11 +181,39 @@
       "baseline": "book"
     },
     {
+      "id": "f000189",
+      "type": "E1",
+      "title": "Payment received with no matching invoice",
+      "detail": "2026-08-25: 240000 RSD from Lipa Studio. No invoice names it, and no unpaid invoice has the same amount and currency.",
+      "figureIds": ["f000073", "f000074"],
+      "sources": [
+        {
+          "type": "statement_row",
+          "file": "statement.csv",
+          "rowIndex": 12,
+          "rawLine": "2026-08-25,2026-08-25,Uplata za konsultacije,Lipa Studio,,240000.00,RSD,PRILIV,3508164.34",
+          "rawLineSha256": "d9e602d5d15318150ccf79ad880dcc02fc322823dbf9bedcdf15c7cc663e2c60"
+        },
+        { "type": "derived", "figureIds": ["f000073", "f000074"] },
+        {
+          "type": "rule",
+          "ruleId": "R-PAYMENT-NO-INVOICE",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "payment:S1-12",
+      "producedBy": "statement-reader",
+      "deltaRSD": "240000",
+      "baseline": "corrected",
+      "payment": { "currency": "RSD", "amount": "240000", "date": "2026-08-25" }
+    },
+    {
       "id": "f000191",
       "type": "E5",
       "title": "KPO amount uses a rate other than the NBS middle rate",
       "detail": "The KPO book records 493032.96 RSD for 4200 EUR, an implied rate of 117.3888: the NBS rate of the payment date 2026-03-02. Converted at 117.3815 (NBS, 2026-02-13) it is 493002.30 RSD.",
-      "figureIds": ["f000123", "f000189", "f000188", "f000190"],
+      "figureIds": ["f000123", "f000188", "f000187", "f000190"],
       "sources": [
         {
           "type": "kpo_row",
@@ -225,7 +225,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T08:33:51.491Z",
+          "fetchedAt": "2026-11-27T08:53:29.109Z",
           "httpStatus": 200,
           "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
           "jsonPath": "$.exchange_middle"
@@ -239,7 +239,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T08:33:51.495Z",
+          "fetchedAt": "2026-11-27T08:53:29.113Z",
           "httpStatus": 200,
           "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
           "jsonPath": "$.exchange_middle"

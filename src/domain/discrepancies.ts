@@ -1,6 +1,7 @@
 // Discrepancy catalogue (PRD 12.4) and the code-only checks: E6 duplicate KPO rows, E8 numbering
 // gaps, E3 invoices missing from the book. Wording is neutral and never states a legal obligation.
 import { parseDigits } from './int.ts';
+import { cmp } from './money.ts';
 import type { DiscrepancyType } from './types.ts';
 
 export const DISCREPANCY_INFO: Record<DiscrepancyType, { title: string; severity: 'error' | 'check' }> = {
@@ -82,6 +83,47 @@ export function numberingGaps(invoiceNumbers: string[]): NumberingGap[] {
     }
   }
   return gaps;
+}
+
+export interface Payment {
+  ref: string;
+  date: string;
+  amount: string;
+  currency: string;
+  /** The invoice the bank row names, if it names one. */
+  invoiceNumber: string | null;
+}
+
+export interface Payable {
+  invNo: string;
+  issueDate: string;
+  amount: string;
+  currency: string;
+}
+
+/**
+ * E1, one payment to one invoice. A payment that names an invoice settles it (several payments may name
+ * the same one: instalments). Each other payment, oldest first, takes one still-unpaid invoice of the same
+ * amount and currency: the latest issued on or before the payment date, otherwise the earliest issued
+ * after it. What is left over has no invoice. Returns those payments' refs, oldest first.
+ */
+export function unmatchedPayments(payments: Payment[], invoices: Payable[]): string[] {
+  const named = new Set(payments.map((p) => p.invoiceNumber).filter((n) => n !== null));
+  const open = invoices
+    .filter((i) => !named.has(i.invNo))
+    .sort((a, b) => a.issueDate.localeCompare(b.issueDate) || a.invNo.localeCompare(b.invNo));
+  const unmatched: string[] = [];
+  const unnamed = payments
+    .filter((p) => p.invoiceNumber === null)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.ref.localeCompare(b.ref));
+  for (const p of unnamed) {
+    const fits = (i: Payable): boolean => i.currency === p.currency && cmp(i.amount, p.amount) === 0;
+    const before = open.findLastIndex((i) => fits(i) && i.issueDate <= p.date);
+    const at = before >= 0 ? before : open.findIndex(fits);
+    if (at >= 0) open.splice(at, 1);
+    else unmatched.push(p.ref);
+  }
+  return unmatched;
 }
 
 /** E3: verified invoices dated in the year that no KPO row claims. */
