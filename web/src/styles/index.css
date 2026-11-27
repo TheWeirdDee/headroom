@@ -14,9 +14,9 @@
   --color-signal: #ff6b4a;
   --color-amber: #f5a524;
   --color-danger: #f2555a;
-  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
-  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 
 html,
@@ -40,7 +40,8 @@ body {
   letter-spacing: -0.02em;
 }
 .font-serif {
-  letter-spacing: -0.01em;
+  font-weight: 500;
+  letter-spacing: -0.025em;
 }
 
 :focus-visible {
@@ -130,7 +131,10 @@ details[open] .faq-chevron {
 
 /* Page titles use the display serif everywhere. */
 main h1 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+em {
+  font-style: normal;
 }

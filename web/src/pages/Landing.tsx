@@ -243,16 +243,13 @@ export function Landing() {
           className="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
           aria-hidden
         />
-        <div className="relative mx-auto grid max-w-[1200px] gap-14 px-4 pt-16 pb-12 md:pt-24 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
+        <div className="relative mx-auto grid max-w-[1200px] gap-14 px-4 pt-16 pb-12 md:pt-16 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
           <Reveal>
             <p className="inline-flex items-center gap-2 rounded-full border border-line bg-panel/60 px-3 py-1 font-mono text-[11px] tracking-wide text-muted uppercase">
               <span className="pulse-dot size-1.5 rounded-full bg-signal" aria-hidden />
               For Serbian flat-rate entrepreneurs
             </p>
-            <h1
-              id="hero"
-              className="mt-7 font-serif text-[3.25rem] leading-[0.98] tracking-tight md:text-[5rem]"
-            >
+            <h1 id="hero" className="mt-7 font-serif text-[2.6rem] leading-[1.04] md:text-[3.9rem]">
               Before you send an invoice, see how much room is left under the 6M limit.{' '}
               <em className="text-signal">Every number proven.</em>
             </h1>
@@ -309,7 +306,7 @@ export function Landing() {
 
       <div className="mx-auto max-w-[1200px] px-4">
         {/* Problem */}
-        <section className="py-24" aria-labelledby="problem">
+        <section className="py-16" aria-labelledby="problem">
           <Reveal>
             <SectionHead
               id="problem"
@@ -325,7 +322,7 @@ export function Landing() {
               invoice, or a euro invoice converted at the wrong rate, stays invisible until the year is over.
             </SectionHead>
           </Reveal>
-          <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
             <Reveal className="bg-ink p-8">
               <p className="mb-5 font-mono text-[11px] tracking-wide text-muted uppercase">
                 The limit has not moved
@@ -346,7 +343,7 @@ export function Landing() {
         </section>
 
         {/* How it works */}
-        <section id="how" className="border-t border-line py-24" aria-labelledby="how-title">
+        <section id="how" className="border-t border-line py-16" aria-labelledby="how-title">
           <Reveal>
             <SectionHead
               id="how-title"
@@ -355,7 +352,7 @@ export function Landing() {
               title="From your files to a checked answer."
             />
           </Reveal>
-          <ol className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
+          <ol className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
             {STEPS.map((s, i) => (
               <li key={s.title} className="bg-ink">
                 <Reveal delay={i * 100} className="h-full p-8">
@@ -369,7 +366,7 @@ export function Landing() {
         </section>
 
         {/* Agents */}
-        <section id="agents" className="border-t border-line py-24" aria-labelledby="agents-title">
+        <section id="agents" className="border-t border-line py-16" aria-labelledby="agents-title">
           <Reveal>
             <SectionHead
               id="agents-title"
@@ -385,7 +382,7 @@ export function Landing() {
               Figure Board; the Verifier decides what counts.
             </SectionHead>
           </Reveal>
-          <Reveal className="mt-14">
+          <Reveal className="mt-10">
             <div className="overflow-x-auto rounded-xl border border-line">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
@@ -428,7 +425,7 @@ export function Landing() {
         </section>
 
         {/* Proof */}
-        <section id="proof" className="border-t border-line py-24" aria-labelledby="proof-title">
+        <section id="proof" className="border-t border-line py-16" aria-labelledby="proof-title">
           <Reveal>
             <SectionHead
               id="proof-title"
@@ -440,7 +437,7 @@ export function Landing() {
               invoice, which takes the year over the line.
             </SectionHead>
           </Reveal>
-          <Reveal className="mt-14">
+          <Reveal className="mt-10">
             <ShowcaseProof runId={showcase.runId} />
           </Reveal>
           <Reveal className="mt-12">
@@ -452,7 +449,7 @@ export function Landing() {
         </section>
 
         {/* Data */}
-        <section id="data" className="border-t border-line py-24" aria-labelledby="data-title">
+        <section id="data" className="border-t border-line py-16" aria-labelledby="data-title">
           <Reveal>
             <SectionHead
               id="data-title"
@@ -461,7 +458,7 @@ export function Landing() {
               title="Your files stay on your computer."
             />
           </Reveal>
-          <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
             {[
               {
                 t: 'Stays local',
@@ -485,7 +482,7 @@ export function Landing() {
         </section>
 
         {/* Limits */}
-        <section id="limits" className="border-t border-line py-24" aria-labelledby="limits-title">
+        <section id="limits" className="border-t border-line py-16" aria-labelledby="limits-title">
           <div className="grid gap-12 md:grid-cols-[1fr_1.1fr]">
             <Reveal>
               <SectionHead id="limits-title" n="06" kicker="Honest limits" title="What Headroom does not do.">
@@ -512,10 +509,19 @@ export function Landing() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="border-t border-line py-24" aria-labelledby="faq-title">
+        <section id="faq" className="border-t border-line py-16" aria-labelledby="faq-title">
           <div className="grid gap-12 md:grid-cols-[1fr_1.6fr]">
-            <Reveal>
-              <SectionHead id="faq-title" n="07" kicker="FAQ" title="Questions people ask first." />
+            <Reveal className="md:sticky md:top-24 md:self-start">
+              <SectionHead id="faq-title" n="07" kicker="FAQ" title="Questions people ask first.">
+                Anything else is in the docs: setup, file formats, models and keys, and how every number is
+                checked.
+              </SectionHead>
+              <Link
+                to="/docs"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 hover:text-signal"
+              >
+                Read the docs <ArrowRight size={14} aria-hidden />
+              </Link>
             </Reveal>
             <Reveal>
               <div className="divide-y divide-line border-y border-line">
@@ -538,7 +544,7 @@ export function Landing() {
         </section>
 
         {/* Closing call to action */}
-        <section className="pb-24" aria-labelledby="cta-title">
+        <section className="pb-16" aria-labelledby="cta-title">
           <Reveal className="relative overflow-hidden rounded-2xl border border-line px-6 py-16 text-center md:px-12">
             <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
             <div className="relative">

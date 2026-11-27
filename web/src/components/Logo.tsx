@@ -1,14 +1,13 @@
-// The Headroom mark: turnover bars rising toward a limit line, with the gap between them, the headroom,
-// left open. The same drawing is the favicon (public/favicon.svg).
-export function LogoMark({ size = 28 }: { size?: number }) {
+// The Headroom mark: an H standing under a limit line, with the gap between them, the headroom, left open.
+// The same drawing is the favicon (public/favicon.svg).
+export function LogoMark({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden focusable="false">
-      <rect width="64" height="64" rx="14" className="fill-panel-2" />
-      <rect x="2" y="2" width="60" height="60" rx="12" fill="none" className="stroke-line" strokeWidth="2" />
-      <rect x="14" y="14" width="36" height="4" rx="2" className="fill-signal" />
-      <rect x="18" y="30" width="8" height="20" rx="2" className="fill-text" opacity="0.55" />
-      <rect x="28" y="26" width="8" height="24" rx="2" className="fill-text" opacity="0.8" />
-      <rect x="38" y="22" width="8" height="28" rx="2" className="fill-text" />
+      <rect width="64" height="64" rx="12" className="fill-text" />
+      <rect x="12" y="11" width="40" height="5" rx="1" className="fill-signal" />
+      <rect x="16" y="24" width="9" height="29" rx="1" className="fill-ink" />
+      <rect x="39" y="24" width="9" height="29" rx="1" className="fill-ink" />
+      <rect x="25" y="35" width="14" height="7" className="fill-ink" />
     </svg>
   );
 }
@@ -17,7 +16,7 @@ export function Wordmark() {
   return (
     <span className="flex items-center gap-2.5">
       <LogoMark />
-      <span className="font-serif text-[1.35rem] leading-none tracking-tight">Headroom</span>
+      <span className="text-[1.05rem] font-semibold tracking-[-0.02em]">Headroom</span>
     </span>
   );
 }

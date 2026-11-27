@@ -133,11 +133,14 @@ export function HeadroomCard({
   crossings,
   discrepancies,
   onOpen,
+  compact = false,
 }: {
   card: CardVM | null;
   crossings: Crossing[];
   discrepancies: Record<string, Discrepancy>;
   onOpen: (figureId: string) => void;
+  /** Landing-page size: per-client details and assumption chips are summarised in one line each. */
+  compact?: boolean;
 }) {
   if (!card)
     return (
@@ -261,7 +264,7 @@ export function HeadroomCard({
             <Num m={v.withDraft} onOpen={onOpen} />
           </dd>
         </dl>
-        {v.assumptionRuleIds.length > 0 && (
+        {!compact && v.assumptionRuleIds.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {v.assumptionRuleIds.map((id) => (
               <RuleChip key={id} id={id} />
@@ -270,48 +273,65 @@ export function HeadroomCard({
         )}
       </div>
 
-      <div className="border-t border-line pt-4">
-        <h3 className="text-sm text-muted">Independence test, per client</h3>
-        <ul className="mt-2 space-y-2">
-          {card.independence.map((c) => (
-            <li key={c.clientId} className="rounded border border-line p-2 text-sm">
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-medium">{c.clientName}</span>
-                <IndepStatus
-                  status={c.status}
-                  {...(c.statusFigureId ? { figureId: c.statusFigureId } : {})}
-                  onOpen={onOpen}
-                />
-              </div>
-              <p className="num mt-1 text-xs text-muted">
-                {c.met} of 9 criteria met · {c.notMet} not met · {c.unknown} unknown
-                {c.share12mWithDraft && (
-                  <>
-                    {' '}
-                    · share of income{' '}
-                    <button
-                      type="button"
-                      className="underline decoration-dotted underline-offset-4"
-                      onClick={() => c.share12mWithDraft && onOpen(c.share12mWithDraft.figureId)}
-                    >
-                      {c.share12mWithDraft.display}
-                    </button>
-                  </>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {card.assumptionRuleIds.length > 0 && (
-        <div className="flex flex-wrap gap-1 border-t border-line pt-3">
-          {card.assumptionRuleIds.map((id) => (
-            <RuleChip key={id} id={id} />
-          ))}
+      {compact ? (
+        <div className="flex items-center justify-between gap-2 border-t border-line pt-4 text-sm">
+          <span className="text-muted">Independence test</span>
+          <span>
+            {card.independence.filter((c) => c.status === 'passes').length} of {card.independence.length}{' '}
+            clients pass
+          </span>
+        </div>
+      ) : (
+        <div className="border-t border-line pt-4">
+          <h3 className="text-sm text-muted">Independence test, per client</h3>
+          <ul className="mt-2 space-y-2">
+            {card.independence.map((c) => (
+              <li key={c.clientId} className="rounded border border-line p-2 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{c.clientName}</span>
+                  <IndepStatus
+                    status={c.status}
+                    {...(c.statusFigureId ? { figureId: c.statusFigureId } : {})}
+                    onOpen={onOpen}
+                  />
+                </div>
+                <p className="num mt-1 text-xs text-muted">
+                  {c.met} of 9 criteria met · {c.notMet} not met · {c.unknown} unknown
+                  {c.share12mWithDraft && (
+                    <>
+                      {' '}
+                      · share of income{' '}
+                      <button
+                        type="button"
+                        className="underline decoration-dotted underline-offset-4"
+                        onClick={() => c.share12mWithDraft && onOpen(c.share12mWithDraft.figureId)}
+                      >
+                        {c.share12mWithDraft.display}
+                      </button>
+                    </>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
-      <p className="text-xs text-muted">{card.disclaimer}</p>
+
+      {compact
+        ? card.assumptionRuleIds.length > 0 && (
+            <p className="border-t border-line pt-3 text-xs text-muted">
+              {card.assumptionRuleIds.length} rules used here are assumptions still to be confirmed by an
+              accountant. Not financial or tax advice.
+            </p>
+          )
+        : card.assumptionRuleIds.length > 0 && (
+            <div className="flex flex-wrap gap-1 border-t border-line pt-3">
+              {card.assumptionRuleIds.map((id) => (
+                <RuleChip key={id} id={id} />
+              ))}
+            </div>
+          )}
+      {!compact && <p className="text-xs text-muted">{card.disclaimer}</p>}
     </section>
   );
 }

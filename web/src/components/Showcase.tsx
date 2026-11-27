@@ -99,6 +99,7 @@ function LiveCard({ runId }: { runId: string }) {
         crossings={live ? view.crossings : STATIC.crossings}
         discrepancies={live ? view.discrepancies : byId(STATIC.discrepancies)}
         onOpen={setOpen}
+        compact
       />
       <Provenance recording={recording} />
       {open && <SourceDrawer runId={runId} figureId={open} onClose={() => setOpen(undefined)} />}
@@ -115,6 +116,7 @@ export function ShowcaseCard({ runId }: { runId?: string }) {
         crossings={STATIC.crossings}
         discrepancies={byId(STATIC.discrepancies)}
         onOpen={() => undefined}
+        compact
       />
       <Provenance recording={STATIC.recording} />
     </div>
