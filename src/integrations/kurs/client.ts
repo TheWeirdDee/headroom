@@ -115,10 +115,11 @@ export function createKursClient(opts: KursClientOptions): KursClient {
       if (!p) {
         inFlight += 1;
         p = fetchOnce(currency, date)
-          .catch((e: unknown): KursResult => {
-            if (e instanceof ReplayMissError) throw e;
-            return { ok: false, reason: 'unavailable', detail: e instanceof Error ? e.message : String(e) };
-          })
+          .catch((e: unknown): KursResult => ({
+            ok: false,
+            reason: 'unavailable',
+            detail: e instanceof Error ? e.message : String(e),
+          }))
           .finally(() => {
             inFlight -= 1;
           });

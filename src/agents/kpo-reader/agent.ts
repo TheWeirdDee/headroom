@@ -197,6 +197,7 @@ export function registerKpoReader(deps: AgentDeps): void {
         deltaRSD: extra.length > 0 ? neg(add(...extra.map((r) => r.totalRSD))) : '0',
       });
     }
+    rt.state.progress.kpo = { complete: unreadRows.length === 0 };
     rt.publish('hr.kpo.claims', ID, {
       complete: unreadRows.length === 0,
       unreadRows,
@@ -213,6 +214,7 @@ export function registerKpoReader(deps: AgentDeps): void {
     const book = inputs.kpo;
     if (!book || book.rows.length === 0) {
       setStatus(rt, ID, { kind: 'done', summary: 'No KPO book provided' });
+      rt.state.progress.kpo = { complete: true };
       rt.publish('hr.kpo.claims', ID, {
         complete: true,
         unreadRows: [],

@@ -325,6 +325,12 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     if (error !== undefined) rec.metric.error = error;
     if (rec.timer) clearTimeout(rec.timer);
     rec.cancelled = true;
+    if (status === 'failed')
+      hrState.failedLoops.push({
+        agentId: rec.input.agentId,
+        loopId: rec.metric.loopId,
+        error: error ?? 'failed',
+      });
     const result: LoopResult = {
       loopId: rec.metric.loopId,
       status,
@@ -387,6 +393,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
 
   function reportHandlerError(participantId: string, event: HrEvent, error: unknown): void {
     const err = error instanceof Error ? error : new Error(String(error));
+    hrState.handlerErrors.push(`${participantId}: ${err.message}`);
     publish('hr.participant.error', 'runtime', {
       participantId,
       eventId: event.eventId,

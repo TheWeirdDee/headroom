@@ -45,7 +45,27 @@ export interface RunSummary {
   headroom: CardVM | null;
   openQuestions: number;
   participantErrors: number;
-  status: 'completed' | 'awaiting_user' | 'failed';
+  /**
+   * failed: it timed out or no loop succeeded. degraded: something failed or an input is missing, so the
+   * card is incomplete. awaiting_user: open questions. completed: none of these.
+   */
+  status: 'completed' | 'awaiting_user' | 'degraded' | 'failed';
+}
+
+export function runStatus(args: {
+  timedOut: boolean;
+  loops: number;
+  failedLoops: number;
+  participantErrors: number;
+  openQuestions: number;
+  card: CardVM | null;
+}): RunSummary['status'] {
+  if (args.timedOut || (args.loops > 0 && args.failedLoops === args.loops)) return 'failed';
+  const gaps = args.card?.completeness.gaps ?? [];
+  const broken = gaps.some((g) => g.kind === 'failed' || g.kind === 'missing');
+  if (args.failedLoops > 0 || args.participantErrors > 0 || broken) return 'degraded';
+  if (args.openQuestions > 0) return 'awaiting_user';
+  return args.card?.completeness.complete ? 'completed' : 'degraded';
 }
 
 export interface RunOptions {
@@ -162,6 +182,8 @@ export function startRun(o: RunOptions): Run {
     const summary = summarize(result);
     latest = summary;
     settling = undefined;
+    // The card as it stands now that nothing is running.
+    if (summary.headroom) rt.publish('hr.headroom.updated', 'engine', summary.headroom);
     rt.publish('hr.run.completed', 'engine', summary);
     o.onCompleted?.(summary);
     return summary;
@@ -205,6 +227,7 @@ export function startRun(o: RunOptions): Run {
     const escalated = figs.filter((f) => f.status === 'needs_user').length;
     const openQuestions = [...state.questions.values()].filter((q) => q.answer === undefined).length;
     const participantErrors = events.filter((e) => e.type === 'hr.participant.error').length;
+    const card = buildCard(state, o.rules, o.inputs, deps.today()) ?? null;
     return {
       runId: o.runId,
       profileId: o.inputs.inputId,
@@ -234,10 +257,17 @@ export function startRun(o: RunOptions): Run {
         out: loops.reduce((s, l) => s + l.tokensOut, 0),
         byAgent,
       },
-      headroom: buildCard(state, o.rules, o.inputs) ?? null,
+      headroom: card,
       openQuestions,
       participantErrors,
-      status: result === 'timeout' ? 'failed' : openQuestions > 0 ? 'awaiting_user' : 'completed',
+      status: runStatus({
+        timedOut: result === 'timeout',
+        loops: loops.length,
+        failedLoops: loops.filter((l) => l.status === 'failed').length,
+        participantErrors,
+        openQuestions,
+        card,
+      }),
     };
   }
 

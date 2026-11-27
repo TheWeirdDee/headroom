@@ -36,7 +36,10 @@ async function main(): Promise<void> {
     profilesDir: join(ROOT, 'data', 'profiles'),
     liveFetcher: env.offline ? offlineFetcher : liveFetcher,
     // By default a replay answers after a short fixed pause; --speed N plays the recorded latencies N times faster.
-    replay: replaySource(join(ROOT, 'runs'), speed === undefined ? {} : { speed }),
+    replay: replaySource(join(ROOT, 'runs'), {
+      ratesFile: join(ROOT, 'data', 'rates', 'kurs.json'),
+      ...(speed === undefined ? {} : { speed }),
+    }),
     // A public instance keeps only the most recent runs in memory.
     ...(env.publicDemo ? { maxRuns: 30 } : {}),
     ...(env.offline ? {} : { recorder: sampleRecorder(join(ROOT, 'runs')) }),

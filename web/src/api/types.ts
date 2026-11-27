@@ -120,8 +120,16 @@ export interface MoneyVM {
 }
 
 export type Band = 'green' | 'amber' | 'red' | 'crossed';
+/** The band a card shows: none until every input is verified. */
+export type CardBand = Band | 'incomplete';
+
+export interface Completeness {
+  complete: boolean;
+  gaps: Array<{ kind: 'failed' | 'missing' | 'needs_you' | 'pending'; text: string }>;
+}
 
 export interface CardVM {
+  completeness: Completeness;
   asOf: string;
   limit6m: {
     committed: MoneyVM;
@@ -129,7 +137,7 @@ export interface CardVM {
     headroomWithDraft: MoneyVM;
     limit: MoneyVM;
     ratioWithDraft: { display: string; value: string; figureId: string };
-    band: Band;
+    band: CardBand;
     consequenceRuleId?: string;
   };
   vat8m: {
@@ -137,7 +145,7 @@ export interface CardVM {
     withDraft: MoneyVM;
     headroomWithDraft: MoneyVM;
     threshold: MoneyVM;
-    band: Band;
+    band: CardBand;
     consequenceRuleId?: string;
     assumptionRuleIds: string[];
   };
@@ -193,7 +201,7 @@ export interface RunSummary {
   tokens: { in: number; out: number };
   openQuestions: number;
   participantErrors: number;
-  status: 'completed' | 'awaiting_user' | 'failed';
+  status: 'completed' | 'awaiting_user' | 'degraded' | 'failed';
 }
 
 export interface HrEvent<P = unknown> {
@@ -219,7 +227,7 @@ export interface Snapshot {
   synthetic: boolean;
   startedAt: string;
   recording: { recordedAt: string; models: { reader: string; verifier: string } } | null;
-  status: 'running' | 'completed' | 'awaiting_user' | 'failed';
+  status: 'running' | 'completed' | 'awaiting_user' | 'degraded' | 'failed';
   lastEventId: number;
   config: { year: number; asOf: string };
   profile: { name: string; pib: string };

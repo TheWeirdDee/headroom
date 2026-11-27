@@ -103,6 +103,8 @@ export function sampleRecorder(runsDir: string): (runId: string, profileId: stri
 export const REPLAY_PAUSE_MS = 250;
 
 export interface ReplayTiming {
+  /** Recorded NBS responses shipped with the samples, used for a date the recording did not ask for. */
+  ratesFile?: string;
   /** Play the recorded latencies this many times faster, instead of the short fixed pause. */
   speed?: number;
   /** Answer at once (tests and the landing page's showcase). */
@@ -124,7 +126,16 @@ export function loadRecording(dir: string, opts: ReplayTiming = {}): LoadedRecor
     models: { reader: string; verifier: string };
   };
   const models = new Map<string, ResponseRecord>();
-  const kurs = new Map<string, { status: number; body: string }>();
+  const kurs = new Map<string, { status: number; body: string }>(
+    opts.ratesFile
+      ? Object.entries(
+          JSON.parse(readFileSync(opts.ratesFile, 'utf8')) as Record<
+            string,
+            { status: number; body: string }
+          >,
+        )
+      : [],
+  );
   for (const line of readFileSync(join(dir, 'responses.jsonl'), 'utf8').split('\n')) {
     if (!line.trim()) continue;
     const rec = JSON.parse(line) as ResponseRecord | KursRecord;

@@ -300,6 +300,7 @@ export function registerStatementReader(deps: AgentDeps): void {
     }
     void Promise.all(work).then(() => {
       ownDone = true;
+      rt.state.progress.statementsRead = true;
       rt.publish('hr.reader.done', ID, { agentId: ID });
       checkUnmatched();
     });

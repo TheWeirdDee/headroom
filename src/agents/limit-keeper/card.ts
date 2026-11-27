@@ -8,6 +8,10 @@ import type { RuleBook } from '../../domain/rules/engine.ts';
 import type { RunInputs } from '../../engine/inputs.ts';
 import type { HeadroomState } from '../../runtime/state.ts';
 import type { Figure } from '../../domain/types.ts';
+import { assessCompleteness, currentDraftRsd, type Completeness } from './completeness.ts';
+
+/** The band shown: none until every input is verified. */
+export type CardBand = Band | 'incomplete';
 
 export interface MoneyVM {
   display: string;
@@ -18,13 +22,14 @@ export interface MoneyVM {
 
 export interface CardVM {
   asOf: string;
+  completeness: Completeness;
   limit6m: {
     committed: MoneyVM;
     withDraft: MoneyVM;
     headroomWithDraft: MoneyVM;
     limit: MoneyVM;
     ratioWithDraft: { display: string; value: string; figureId: string };
-    band: Band;
+    band: CardBand;
     consequenceRuleId?: string;
   };
   vat8m: {
@@ -32,7 +37,7 @@ export interface CardVM {
     withDraft: MoneyVM;
     headroomWithDraft: MoneyVM;
     threshold: MoneyVM;
-    band: Band;
+    band: CardBand;
     consequenceRuleId?: string;
     assumptionRuleIds: string[];
   };
@@ -64,7 +69,12 @@ const moneyVM = (f: Figure | undefined): MoneyVM | undefined =>
     ? { display: formatRsd(f.value.amount), amount: f.value.amount, figureId: f.id }
     : undefined;
 
-export function buildCard(state: HeadroomState, rules: RuleBook, inputs: RunInputs): CardVM | undefined {
+export function buildCard(
+  state: HeadroomState,
+  rules: RuleBook,
+  inputs: RunInputs,
+  today: string,
+): CardVM | undefined {
   const v = (key: string): Figure | undefined => state.verified(key);
   const c6 = moneyVM(v(keys.total('limit6m', 'committed')));
   const w6 = moneyVM(v(keys.total('limit6m', 'withDraft')));
@@ -82,8 +92,10 @@ export function buildCard(state: HeadroomState, rules: RuleBook, inputs: RunInpu
   };
   const limit = rules.decimalParam('R-LIMIT-6M', 'limitRSD');
   const threshold = rules.decimalParam('R-VAT-8M', 'thresholdRSD');
-  const band6 = band(w6.amount, limit, thresholds);
-  const band8 = band(w8.amount, threshold, thresholds);
+  const completeness = assessCompleteness(state, rules, inputs, today);
+  const shown = (b: Band): CardBand => (completeness.complete ? b : 'incomplete');
+  const band6 = shown(band(w6.amount, limit, thresholds));
+  const band8 = shown(band(w8.amount, threshold, thresholds));
 
   const independence: CardVM['independence'] = inputs.clients.map((c) => {
     const status = v(keys.indepStatus(c.id));
@@ -96,7 +108,12 @@ export function buildCard(state: HeadroomState, rules: RuleBook, inputs: RunInpu
       met: tri.filter((t) => t === 'met').length,
       notMet: tri.filter((t) => t === 'not_met').length,
       unknown: tri.filter((t) => t === 'unknown').length,
-      status: status?.value.t === 'text' ? status.value.text : 'pending',
+      // A status computed from part of the files could read as a pass.
+      status: !completeness.complete
+        ? 'incomplete'
+        : status?.value.t === 'text'
+          ? status.value.text
+          : 'pending',
       ...(status ? { statusFigureId: status.id } : {}),
       ...(share?.value.t === 'ratio'
         ? {
@@ -114,9 +131,10 @@ export function buildCard(state: HeadroomState, rules: RuleBook, inputs: RunInpu
   const draftAmountFig = state
     .figuresWhere((f) => f.key === keys.draft('amount') && f.status === 'verified')
     .pop();
-  const draftRsd = moneyVM(v(keys.draft('amountRSD')));
+  const draftRsd = moneyVM(currentDraftRsd(state, inputs, today));
   return {
     asOf: state.config.asOf,
+    completeness,
     limit6m: {
       committed: c6,
       withDraft: w6,

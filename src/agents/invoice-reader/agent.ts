@@ -241,12 +241,14 @@ export function registerInvoiceReader(deps: AgentDeps): void {
 
   async function track(p: Promise<void>): Promise<void> {
     outstanding += 1;
+    rt.state.progress.invoicesRead = false;
     try {
       await p;
     } finally {
       outstanding -= 1;
       if (outstanding === 0) {
         setStatus(rt, ID, { kind: 'done', summary: `Read ${inputs.documents.length} documents` });
+        rt.state.progress.invoicesRead = true;
         rt.publish('hr.reader.done', ID, { agentId: ID });
       }
     }
@@ -259,6 +261,7 @@ export function registerInvoiceReader(deps: AgentDeps): void {
     const readable = inputs.documents.filter((d): d is ReadableDocument => d.kind === 'readable');
     if (readable.length === 0) {
       setStatus(rt, ID, { kind: 'done', summary: 'No readable invoices' });
+      rt.state.progress.invoicesRead = true;
       rt.publish('hr.reader.done', ID, { agentId: ID });
       return;
     }
