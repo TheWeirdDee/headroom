@@ -1,4 +1,4 @@
-// Generates the bundled synthetic profiles (PRD 12) from scripts/profile-plan.json with a seeded random
+// Generates the bundled synthetic profiles (PRD 12) from scripts/profile-seeds.json with a seeded random
 // generator: same seed, same files. NBS rates come from the Kurs API through the product's own client and
 // are recorded in data/rates/kurs.json, so later runs work offline. Run: npm run generate:data
 // (add --fetch to allow fetching rates that are not recorded yet).
@@ -798,7 +798,7 @@ async function buildProfile(
 }
 
 async function main(): Promise<void> {
-  const plan = PLAN.parse(JSON.parse(readFileSync(join(import.meta.dirname, 'profile-plan.json'), 'utf8')));
+  const plan = PLAN.parse(JSON.parse(readFileSync(join(import.meta.dirname, 'profile-seeds.json'), 'utf8')));
   const rates = await rateSource(process.argv.includes('--fetch'));
   const outDir = process.env['HEADROOM_PROFILES_OUT'] ?? join(ROOT, 'data', 'profiles');
   for (const p of plan.profiles) {
