@@ -107,7 +107,7 @@ Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model (
 | Median loops at once (peak) / loop time ÷ wall time  | 15 / 10.73 (wall time is mostly the request pacer)                   |
 | Median wall time / tokens per run                    | 482 s / 64,203 in, 6,934 out                                         |
 
-The first runs of `c01` and `p07` were made before the claims fix of commit `64de262` (described below); the other five on commit `78f16f1`. The model did fall short before these runs: the first demo recording missed E1 (see "Try it without your files or a key"). Seven runs on five profiles is a small sample; it shows the pipeline holding up with a small free model, not a measured accuracy.
+The first runs of `c01` and `p07` were made before the claims fix of commit `64de262` (described below); the other five on commit `78f16f1`. The model did fall short before these runs: the first demo recording missed E1 (see "Try it without your files or a key"). Commit `84ea7a8` (after these runs) changed when the LimitKeeper gives a verdict (only once every input is verified); the runs above predate it. Seven runs on five profiles is a small sample; it shows the pipeline holding up with a small free model, not a measured accuracy.
 
 ### With a second real model: Groq `gpt-oss-120b` (partial, separate table)
 
