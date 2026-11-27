@@ -7,7 +7,7 @@
 // Live runs cost money, so they need --confirm-spend (a gate the user decides). Fake-mode numbers measure
 // the pipeline (rules, verifier, conflicts) with a model that cannot misread; they are never published as
 // model accuracy, which is why they go to a separate folder the Evidence page does not read.
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadInputSet } from '../src/engine/load-inputs.ts';
 import { startRun, type RunSummary } from '../src/engine/run-engine.ts';
@@ -78,6 +78,8 @@ interface RunResult {
   headroomCorrect: boolean;
   headroom: string;
   emergent: string[];
+  models: { reader: string; verifier: string };
+  failedLoops: string[];
 }
 
 const errKey = (type: string, subject: string): string => `${type}:${type === 'E8' ? '' : subject}`;
@@ -112,6 +114,10 @@ async function runOnce(profileId: string, n: number): Promise<RunResult> {
   });
   const summary = await run.done;
   const state = run.rt.state;
+  const failedLoops = run.rt
+    .loopMetrics()
+    .filter((l) => l.status === 'failed')
+    .map((l) => `${l.agentId}: ${l.error ?? 'failed'}`);
   run.dispose();
 
   const found = [...state.discrepancies.values()]
@@ -194,6 +200,8 @@ async function runOnce(profileId: string, n: number): Promise<RunResult> {
     headroomCorrect,
     headroom,
     emergent,
+    models: mode === 'fake' ? { reader: 'fake-model (test)', verifier: 'fake-model (test)' } : env.models,
+    failedLoops,
   };
 }
 
@@ -229,15 +237,55 @@ const median = (xs: number[]): number => {
 };
 const pct = (a: number, b: number): string => (b === 0 ? 'n/a' : `${((a / b) * 100).toFixed(1)}%`);
 
+// Live runs are saved one by one in eval/raw/, so batches run on different days (free-tier quota) add up
+// and a quota cut-off loses nothing. --append reports over every saved run with the same models.
+const rawDir = join(ROOT, 'eval', 'raw');
+const append = mode === 'live' && process.argv.includes('--append');
 const results: RunResult[] = [];
-for (const p of profiles) {
-  for (let n = 1; n <= runsPer; n++) {
-    process.stdout.write(`${p} run ${n}/${runsPer}... `);
-    const r = await runOnce(p, n);
+if (append && existsSync(rawDir)) {
+  for (const f of readdirSync(rawDir)
+    .filter((x) => /^[cp]\d\d-r\d+\.json$/.test(x))
+    .sort()) {
+    const r = JSON.parse(readFileSync(join(rawDir, f), 'utf8')) as RunResult;
+    if (r.models.reader !== env.models.reader || r.models.verifier !== env.models.verifier) {
+      process.stderr.write(`${f} was made with other models (${r.models.reader}); not mixing them.\n`);
+      process.exit(1);
+    }
     results.push(r);
-    process.stdout.write(`${r.found.length} findings, ${(r.summary.wallTimeMs / 1000).toFixed(1)} s\n`);
+  }
+  process.stdout.write(`Loaded ${results.length} saved runs from eval/raw.\n`);
+}
+let stopped: string | undefined;
+outer: for (const p of profiles) {
+  const before = results.filter((r) => r.profileId === p).length;
+  for (let i = 1; i <= runsPer; i++) {
+    const n = before + i;
+    process.stdout.write(`${p} run ${n}... `);
+    const r = await runOnce(p, n);
+    const quota = r.failedLoops.find((e) => /daily request quota/i.test(e));
+    if (quota) {
+      // A run cut short by the provider's daily quota measures the quota, not Headroom: it is not counted.
+      stopped = `${p} run ${n} hit the daily quota and was not counted`;
+      process.stdout.write('stopped: daily quota used up\n');
+      break outer;
+    }
+    results.push(r);
+    if (mode === 'live') {
+      mkdirSync(rawDir, { recursive: true });
+      writeFileSync(join(rawDir, `${p}-r${n}.json`), `${JSON.stringify(r)}\n`);
+    }
+    process.stdout.write(
+      `${r.found.length} findings, ${r.failedLoops.length} failed loops, ${(r.summary.wallTimeMs / 1000).toFixed(1)} s\n`,
+    );
   }
 }
+if (results.length === 0) {
+  process.stderr.write(`No runs to report${stopped ? `: ${stopped}` : ''}.\n`);
+  process.exit(1);
+}
+const measured = [...new Set(results.map((r) => r.profileId))].sort();
+const runsOf = (p: string): number => results.filter((r) => r.profileId === p).length;
+const repeated = measured.filter((p) => runsOf(p) > 1);
 
 // 1. Detection per type.
 const types = [...new Set(results.flatMap((r) => r.planted.map((k) => k.split(':')[0] ?? '')))].sort();
@@ -284,7 +332,7 @@ const contested = results.reduce((s, r) => s + r.contested, 0);
 const contestedWrong = results.reduce((s, r) => s + r.contestedWrong, 0);
 const unsourced = results.reduce((s, r) => s + r.summary.unsourcedFigures, 0);
 const headOk = results.filter((r) => r.headroomCorrect).length;
-const consistent = profiles.filter(
+const consistent = repeated.filter(
   (p) => new Set(results.filter((r) => r.profileId === p).map((r) => r.headroom)).size === 1,
 ).length;
 const emergentPlanted = results.reduce(
@@ -296,7 +344,7 @@ const rejections: Record<string, number> = {};
 for (const r of results)
   for (const [k, v] of Object.entries(r.summary.rejections)) rejections[k] = (rejections[k] ?? 0) + v;
 const mapper = mapperScore();
-const scope = `on ${profiles.length} synthetic profiles we designed`;
+const scope = `on ${measured.length} synthetic profiles we designed`;
 
 const metrics = [
   {
@@ -329,7 +377,17 @@ const metrics = [
     name: 'Runs with 6M and 8M totals (with the draft) equal to the truth',
     value: `${headOk} / ${results.length}`,
   },
-  { name: 'Profiles with identical headroom across runs', value: `${consistent} / ${profiles.length}` },
+  {
+    name: 'Profiles with identical headroom across runs',
+    value: repeated.length ? `${consistent} / ${repeated.length}` : 'n/a',
+    note: repeated.length
+      ? `measured only on profiles with more than one run: ${repeated.map((p) => `${p} (${runsOf(p)} runs)`).join(', ')}`
+      : 'every profile ran once',
+  },
+  {
+    name: 'Runs with a failed loop',
+    value: `${results.filter((r) => r.failedLoops.length > 0).length} / ${results.length}`,
+  },
   {
     name: 'Median loops running at once (peak)',
     value: String(median(results.map((r) => r.summary.maxConcurrentLoops))),
@@ -372,7 +430,7 @@ const metrics = [
 ].map((m) => Object.fromEntries(Object.entries(m).filter(([, v]) => v !== undefined)));
 
 const seed = (
-  JSON.parse(readFileSync(join(profilesDir, profiles[0] ?? 'p07', '_truth', 'truth.json'), 'utf8')) as Truth
+  JSON.parse(readFileSync(join(profilesDir, measured[0] ?? 'p07', '_truth', 'truth.json'), 'utf8')) as Truth
 ).seed;
 const evidence = {
   generatedAt: new Date().toISOString(),
@@ -381,8 +439,9 @@ const evidence = {
     mode,
     models: mode === 'fake' ? { reader: 'fake-model (test)', verifier: 'fake-model (test)' } : env.models,
     mozaikVersion: MOZAIK_PACKAGE.version,
-    runsPerProfile: runsPer,
-    profiles,
+    runsPerProfile: Object.fromEntries(measured.map((p) => [p, runsOf(p)])),
+    profiles: measured,
+    ...(stopped ? { stopped } : {}),
     seed,
   },
   metrics,
@@ -397,10 +456,11 @@ writeFileSync(join(outDir, 'raw', 'runs.json'), `${JSON.stringify(results, null,
 const md = [
   '# Headroom evaluation results',
   '',
-  `Measured ${evidence.conditions.date} ${scope}, ${runsPer} run(s) each, mode ${mode}, models ${evidence.conditions.models.reader} / ${evidence.conditions.models.verifier}, Mozaik ${MOZAIK_PACKAGE.version}, profile seed ${seed}.`,
+  `Measured ${evidence.conditions.date} ${scope}, runs per profile: ${measured.map((p) => `${p} ${runsOf(p)}`).join(', ')}; mode ${mode}, models ${evidence.conditions.models.reader} / ${evidence.conditions.models.verifier}, Mozaik ${MOZAIK_PACKAGE.version}, profile seed ${seed}.`,
   mode === 'fake'
     ? '\nFake mode uses the deterministic test model: it measures the pipeline, not model reading accuracy.\n'
     : '',
+  stopped ? `\nIncomplete: ${stopped}.\n` : '',
   '| Metric | Value | Target | Note |',
   '|---|---|---|---|',
   ...metrics.map((m) => `| ${m['name']} | ${m['value']} | ${m['target'] ?? ''} | ${m['note'] ?? ''} |`),

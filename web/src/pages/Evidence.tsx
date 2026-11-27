@@ -41,7 +41,11 @@ export function Evidence() {
               <dd>{data.conditions.mozaikVersion}</dd>
               <dt className="text-muted">Runs</dt>
               <dd>
-                {data.conditions.runsPerProfile} per profile, {data.conditions.profiles.length} profiles
+                {data.conditions.profiles.length} profiles;{' '}
+                {Object.entries(data.conditions.runsPerProfile)
+                  .map(([p, n]) => `${p} ${n}`)
+                  .join(', ')}
+                {data.conditions.stopped ? `. Incomplete: ${data.conditions.stopped}` : ''}
               </dd>
             </dl>
           </section>

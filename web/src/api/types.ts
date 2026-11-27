@@ -417,7 +417,8 @@ export interface Evidence {
     mode: 'live' | 'replay' | 'fake';
     models: { reader: string; verifier: string };
     mozaikVersion: string;
-    runsPerProfile: number;
+    runsPerProfile: Record<string, number>;
+    stopped?: string;
     profiles: string[];
   };
   metrics: Array<{ name: string; value: string; target?: string; passed?: boolean; note?: string }>;

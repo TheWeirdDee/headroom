@@ -1,14 +1,29 @@
 {
-  "generatedAt": "2026-11-26T20:27:07.531Z",
+  "generatedAt": "2026-11-27T01:27:26.603Z",
   "conditions": {
-    "date": "2026-11-26",
+    "date": "2026-11-27",
     "mode": "fake",
     "models": {
       "reader": "fake-model (test)",
       "verifier": "fake-model (test)"
     },
     "mozaikVersion": "6.0.0",
-    "runsPerProfile": 1,
+    "runsPerProfile": {
+      "c01": 1,
+      "c02": 1,
+      "p01": 1,
+      "p02": 1,
+      "p03": 1,
+      "p04": 1,
+      "p05": 1,
+      "p06": 1,
+      "p07": 1,
+      "p08": 1,
+      "p09": 1,
+      "p10": 1,
+      "p11": 1,
+      "p12": 1
+    },
     "profiles": [
       "c01",
       "c02",
@@ -71,7 +86,12 @@
     },
     {
       "name": "Profiles with identical headroom across runs",
-      "value": "14 / 14"
+      "value": "n/a",
+      "note": "every profile ran once"
+    },
+    {
+      "name": "Runs with a failed loop",
+      "value": "0 / 14"
     },
     {
       "name": "Median loops running at once (peak)",
@@ -79,7 +99,7 @@
     },
     {
       "name": "Median loop time / wall time",
-      "value": "0.15",
+      "value": "0.14",
       "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
     },
     {
