@@ -48,6 +48,8 @@ Headroom is not an application that calls agents. A run is one Mozaik runtime th
 
 Mozaik calls a processor without awaiting it, so each participant's processor puts the event in that participant's own [queue](src/runtime/inbox.ts): one agent handles one event at a time, different agents run side by side. `runLoop` reports no failure of its own, so a failed request is turned into a failed loop, which makes the run `degraded` or `failed`. A [test](test/engine/mozaik.e2e.test.ts) fails if an agent stops being a participant with specifications of its own.
 
+Found in Mozaik while building this and reported upstream with a reproduction: its Gemini mapper drops `thoughtSignature`, so the request after a tool call fails ([jigjoy-ai/mozaik-network#160](https://github.com/jigjoy-ai/mozaik-network/issues/160); workaround in [gemini-signatures.ts](src/runtime/mozaik/gemini-signatures.ts)).
+
 **Checks between agents.** Readers claim the same keys: the InvoiceReader and the KpoReader both state an invoice's date and RSD amount, and the RateClerk re-derives the amount from the NBS rate. Agreement corroborates; disagreement is a conflict that the Verifier settles by checking both against their sources and, if both hold, by source authority (invoice document over KPO row for invoice facts, statement row over document for payment facts). The losing figure becomes the discrepancy the user sees.
 
 ## Use it on your own files
@@ -178,6 +180,10 @@ Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model (
 | Median wall time / tokens per run                    | 482 s / 64,203 in, 6,934 out                                         |
 
 The first runs of `c01` and `p07` were made before the claims fix of commit `64de262` (described below); the other five on commit `78f16f1`. The model did fall short before these runs: the first demo recording missed E1 (see "Try it without your files or a key"). Commits made after these runs changed the pipeline (the card gives a verdict only once every input is verified, E1 matches one payment to one invoice, the Verifier checks which field a value comes from, and the agents were rebuilt as Mozaik participants), and the runs above have not been repeated since. Seven runs on five profiles is a small sample; it shows the pipeline holding up with a small free model, not a measured accuracy.
+
+### One live run of the current code
+
+After the later changes, one run was made on 27 Nov 2026 at commit `0f1d044` with `gemini-3.5-flash-lite`, on the small synthetic profile of the test suite (3 invoices, 3 planted errors), because the day's free quota did not cover a full sample. All 3 planted errors were found and nothing else; 35 model requests, 27 loops, none failed; the card was complete; up to 10 requests and all 5 model agents were waiting on the model at the same time. Output: [eval/live-current/RESULTS.md](eval/live-current/RESULTS.md). It measures no accuracy.
 
 ### With a second real model: Groq `gpt-oss-120b` (partial, separate table)
 
