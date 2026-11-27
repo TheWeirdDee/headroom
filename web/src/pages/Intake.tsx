@@ -243,6 +243,12 @@ export function Intake() {
           Your files are processed on this machine. In live mode, document text is sent to the model provider
           to be read; the arithmetic is done here.
         </p>
+        {!noKey && health !== undefined && health.maxRpm > 0 && (
+          <p className="mt-1 text-sm text-muted">
+            A check takes several minutes: requests are limited to {health.maxRpm} a minute for the free tier,
+            and about a dozen invoices need some 85 of them. The card says incomplete until the run is done.
+          </p>
+        )}
       </div>
 
       {noKey && (

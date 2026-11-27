@@ -117,7 +117,6 @@ function Unbilled({ limit, onOpen }: { limit: CardVM['limit6m']; onOpen: (id: st
             on {formatDateSr(p.date)}
           </span>
         ))}
-        .
       </p>
       <p className="mt-1 text-xs text-muted">
         On your invoices alone, after this one: <Num m={limit.headroomWithDraft} onOpen={onOpen} /> left.

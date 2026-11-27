@@ -45,7 +45,9 @@ export function VerifierCatches({
                 for <span className="font-mono text-xs">{f.key}</span>
                 {accepted && (
                   <>
-                    ; verified instead:{' '}
+                    {text(accepted) === text(f)
+                      ? '; verified after a second reading that cites it properly: '
+                      : '; verified instead: '}
                     <button
                       type="button"
                       onClick={() => onOpen(accepted.id)}
