@@ -8,6 +8,12 @@ const read = <T>(rel: string): T => JSON.parse(readFileSync(join(ROOT, rel), 'ut
 
 const SETS = [
   {
+    id: 'gemini31',
+    folder: 'eval/live-gemini-3.1',
+    title: 'Real model: Gemini 3.1, current code',
+    note: 'The free backup model, on the code of the afternoon of 27 November, one run per profile.',
+  },
+  {
     id: 'gemini',
     folder: 'eval',
     title: 'Real model: Gemini, free tier',

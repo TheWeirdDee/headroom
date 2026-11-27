@@ -64,7 +64,7 @@ test('sample run: lanes, verified board, headroom card, findings, drawer, questi
 
   // Planted discrepancies are listed with their type.
   for (const t of ['E1', 'E2', 'E3', 'E5', 'E9'])
-    await expect(page.getByRole('tabpanel').getByText(t, { exact: true })).toBeVisible();
+    await expect(page.getByRole('tabpanel').getByText(t, { exact: true }).first()).toBeVisible();
 
   // Every number opens its sources: the draft in RSD is derived from an NBS rate.
   await card.getByRole('button', { name: /RSD/ }).first().click();

@@ -63,7 +63,7 @@ Four commands that check the claims below, each exiting non-zero if the claim is
 npm run benchmark      # concurrent against one model request at a time
 npm run prove          # several agents had model requests outstanding at the same time
 npm run demo:catch     # the Verifier rejects a misread amount and the total stays right
-npm test               # includes the keyless run: 65 loops, none failed, all 5 planted errors
+npm test               # includes the keyless run: 66 loops, none failed, all 6 planted errors
 ```
 
 ## Agents on Mozaik
@@ -115,22 +115,22 @@ Found in Mozaik while building this and reported upstream with a reproduction: i
 
 ## Proof it is concurrent
 
-**The same agents reach the verdict 7.9 times sooner when they run together.**
+**The same agents reach the verdict 9.0 times sooner when they run together.**
 
 ```
 npm run benchmark           # no key, no network, about 3 minutes
 ```
 
-The sample is run twice on the same code with the same recorded model answers. Only one thing differs: in the second run a single model request may be in flight at a time. Each request takes 1.4 s, the median of the 12 recorded requests that did not wait for a rate limit. Measured 2026-11-27:
+The sample is run twice on the same code with the same recorded model answers. Only one thing differs: in the second run a single model request may be in flight at a time. Each request takes 1.9 s, the median of the 19 recorded requests that did not wait for a rate limit. Measured 2026-11-27:
 
 |                             | Concurrent | One request at a time |
 | --------------------------- | ---------- | --------------------- |
-| Time to a complete verdict  | **14.8 s** | **117.5 s**           |
-| Model requests              | 83         | 83                    |
-| Agent loops (failed)        | 65 (0)     | 65 (0)                |
+| Time to a complete verdict  | **18.4 s** | **166.1 s**           |
+| Model requests              | 85         | 85                    |
+| Agent loops (failed)        | 66 (0)     | 66 (0)                |
 | Peak requests at once       | 15         | 1                     |
 | Peak agents waiting at once | 5          | 1                     |
-| Figures verified            | 217        | 217                   |
+| Figures verified            | 219        | 219                   |
 | 6M and 8M totals            | identical  | identical             |
 
 The command exits 1 if the totals differ, a loop fails or the gain falls below 2 times. A free tier that allows 15 requests a minute hides the gain: there the rate limit sets the pace.
@@ -147,22 +147,22 @@ The command runs the `p07` sample on Mozaik and records, for every model request
 One run without a key, on 27 Nov 2026 (times differ a little from run to run):
 
 ```
-  independence-checker 3333335333331...............................................  6 requests
+  independence-checker 3333353333332...............................................  6 requests
   kpo-reader           1111112111111...............................................  2 requests
-  statement-reader     11111111111111..............................................  2 requests
-  invoice-reader       444444445644446644445544446533335433444211111111211111111111  26 requests
-  verifier             .....366666+66666+666668966667+6666697666786977797764441....  47 requests
+  statement-reader     11111121111111..............................................  2 requests
+  invoice-reader       444444444465444574444554446533333443334422222334333333431111  28 requests
+  verifier             .....666666+66668966667876666676666787667755688887776665....  47 requests
 
 Peak requests outstanding at once   15
 Peak agents waiting on a model      5 (independence-checker, invoice-reader, kpo-reader, statement-reader, verifier)
-Time with 2+ agents waiting at once 2.53 s of 2.74 s with any request
-Sum of request times                23.15 s (one after another would take this long)
+Time with 2+ agents waiting at once 2.79 s of 3.01 s with any request
+Sum of request times                26.72 s (one after another would take this long)
 PASS: the agents asked their models at the same time.
 ```
 
 The run screen draws every loop as a bar on a timeline. A loop there is open from its start to its answer, which on a free tier includes waiting for the quota, so "loops open at once" is not the same as requests in flight; use `npm run prove` for the latter.
 
-A live run of the current code with `gemini-3.5-flash-lite` on a small sample had up to 10 requests and all 5 model agents outstanding at once ([output](eval/live-current/RESULTS.md)).
+A live run on 27 November with `gemini-3.5-flash-lite` on a small sample had up to 10 requests and all 5 model agents outstanding at once ([output](eval/live-current/RESULTS.md)).
 
 ## Watch the Verifier catch a wrong number
 
@@ -200,12 +200,13 @@ The model never re-reads an amount or a date: those are checked by code against 
 
 Measured on synthetic profiles we designed, with planted errors. Conditions, every table and what has **not** been measured: [docs/evaluation.md](docs/evaluation.md).
 
-| Run                                                              | Planted errors found  | Findings not planted            | Totals equal to the truth |
-| ---------------------------------------------------------------- | --------------------- | ------------------------------- | ------------------------- |
-| Gemini `gemini-3.5-flash-lite`, 5 profiles, 7 runs               | 19 / 19 (all 9 types) | 0                               | 7 / 7                     |
-| Groq `gpt-oss-120b`, 2 profiles, 2 runs                          | 3 / 3                 | 2 (a Headroom bug, fixed since) | 2 / 2                     |
-| Current code, live, 1 small profile, 1 run                       | 3 / 3                 | 0                               | not measured              |
-| Current code, deterministic test model, 14 profiles, 2 runs each | 80 / 80               | 0                               | 28 / 28                   |
+| Run                                                                     | Planted errors found  | Findings not planted            | Totals equal to the truth |
+| ----------------------------------------------------------------------- | --------------------- | ------------------------------- | ------------------------- |
+| Current code, live, the showcase sample, `gemini-3.1-flash-lite`, 1 run | 6 / 6                 | 0                               | 1 / 1                     |
+| Gemini `gemini-3.5-flash-lite`, 5 profiles, 7 runs                      | 19 / 19 (all 9 types) | 0                               | 7 / 7                     |
+| Groq `gpt-oss-120b`, 2 profiles, 2 runs                                 | 3 / 3                 | 2 (a Headroom bug, fixed since) | 2 / 2                     |
+| Gemini `gemini-3.5-flash-lite`, 1 small profile, 1 run                  | 3 / 3                 | 0                               | not measured              |
+| Current code, deterministic test model, 14 profiles, 2 runs each        | 82 / 82               | 0                               | 28 / 28                   |
 
 The real-model runs on the 14-profile set were made before later changes to the pipeline and have not been repeated. The last row measures the pipeline (rules, checks, conflicts, totals), not how well a model reads.
 
@@ -240,7 +241,7 @@ A client list file (`clients.json`) is optional and fills the client form. Its `
 ]
 ```
 
-- The default model is `gemini-3.5-flash-lite`, which has a free tier. Requests are paced (14 a minute, under the free tier's 15; `HEADROOM_MAX_RPM`), so a year of about a dozen invoices needs some 85 requests and about 6 minutes, out of the free tier's 500 requests a day.
+- The default model is `gemini-3.5-flash-lite`, which has a free tier. Requests are paced (14 a minute, under the free tier's 15; `HEADROOM_MAX_RPM`), so a year of about a dozen invoices needs some 85 requests of the free tier's 500 a day. The recorded live run of the showcase sample (11 invoices, 85 requests) took 376 s, a little over 6 minutes.
 - **Free backup model.** If the daily quota runs out during a check, the rest of it goes to `gemini-3.1-flash-lite` on the same free key, and the run screen says so. `HEADROOM_MODEL_BACKUP` names other backups (for example `groq/openai/gpt-oss-120b`, which also sends document text to Groq) or `none`. Recordings and evaluations never switch models.
 - Groq models work as `groq/<model>` with `GROQ_API_KEY` (`HEADROOM_MODEL_READER`, `HEADROOM_MODEL_VERIFIER`); [groq.ts](src/runtime/mozaik/groq.ts) points Mozaik's chat-completions endpoint at Groq.
 - CI runs the tests on Linux and Windows. macOS is not tested.
