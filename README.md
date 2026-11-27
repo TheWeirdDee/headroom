@@ -4,6 +4,8 @@ Before a Serbian paušalac sends an invoice, Headroom shows how much room is lef
 
 **Not financial or tax advice · Bundled samples are synthetic**
 
+**Live demo:** https://headroom-umber.vercel.app (recorded sample only, no key, no uploads; the server sleeps when idle, so the first request can take up to a minute).
+
 Built for the JigJoy Black Friday AI Hackathon (track: Agents in Finance) on Mozaik (`@mozaik-ai/core` 6.0.0).
 
 ![The run screen replaying the recorded sample: seven agent lanes, the Figure Board filling with verified figures, the timeline of overlapping loops, and the headroom card turning red when the StatementReader finds a payment with no invoice](docs/demo.gif)
@@ -21,17 +23,17 @@ Headroom answers those three questions from their own bank statement, invoices a
 ## Use it on your own files
 
 ```
-git clone <repo> && cd headroom
+git clone https://github.com/TheWeirdDee/headroom.git && cd headroom
 npm run setup
 cp .env.example .env         # add your Gemini key (GEMINI_API_KEY, free at aistudio.google.com)
 npm start                    # open http://localhost:4317
 ```
 
-Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns if asked, fill in the invoice you are about to send, and click **Check this invoice**. Requirements: Node 22 and a model key. The default model is Google's `gemini-3.5-flash-lite`, a small and fast model with a free tier; on 26 Nov 2026 the stronger `gemini-3.5-flash` kept answering "high demand" and `gemini-3.8-flash` allows 20 requests a day on the free tier, while a run needs about 85. Requests are paced (10 a minute by default, `HEADROOM_MAX_RPM`) so the free quota slows a run down instead of failing it. Claude, GPT and DeepSeek models work too (set `HEADROOM_MODEL_READER` / `HEADROOM_MODEL_VERIFIER` and that provider's key), and so do Groq models, written `groq/<model>` with `GROQ_API_KEY` (Mozaik 6.0.0 has no Groq provider; `src/runtime/mozaik/groq.ts` points Mozaik's OpenAI chat-completions endpoint at Groq's OpenAI-compatible API). Live mode and uploads run only on your own computer. Tested on Linux (Ubuntu); macOS and Windows are not yet tested.
+Then drop in your bank statement CSV, invoice PDFs and KPO book, map the columns if asked, fill in the invoice you are about to send, and click **Check this invoice**. Requirements: Node 22 and a model key. The default model is Google's `gemini-3.5-flash-lite`, a small and fast model with a free tier; on 26 Nov 2026 the stronger `gemini-3.5-flash` kept answering "high demand" and `gemini-3.8-flash` allows 20 requests a day on the free tier, while a run needs about 85. Requests are paced (10 a minute by default, `HEADROOM_MAX_RPM`) so the free quota slows a run down instead of failing it. Claude, GPT and DeepSeek models work too (set `HEADROOM_MODEL_READER` / `HEADROOM_MODEL_VERIFIER` and that provider's key), and so do Groq models, written `groq/<model>` with `GROQ_API_KEY` (Mozaik 6.0.0 has no Groq provider; `src/runtime/mozaik/groq.ts` points Mozaik's OpenAI chat-completions endpoint at Groq's OpenAI-compatible API). Live mode and uploads run only on your own computer. CI runs the tests on Linux and Windows; macOS is not tested.
 
 ## Try it without your files or a key
 
-A hosted read-only copy can run the same offline mode (`render.yaml`, `npm run start:public`): no model key on the server, uploads refused, a band on every page saying so, and recorded runs that finish in seconds.
+The [live demo](https://headroom-umber.vercel.app) is a hosted read-only copy of the same offline mode (`render.yaml`, `npm run start:public`): no model key on the server, uploads refused, a band on every page saying so, and recorded runs that finish in seconds.
 
 ```
 npm run start:offline        # bundled sample, recorded model outputs, no key, no network
@@ -77,7 +79,7 @@ Concurrency carries the product. Three readers, the Verifier, the RateClerk and 
 
 ## Proof it is concurrent
 
-In the real-model recording of `p07` (`runs/demo-p07/summary.json`): 65 loops, at most 15 running at the same time, 4,993 s of loop time inside 483 s of wall time (10.3 loops' worth of work in flight on average). Most of that wall time is the request pacer: the free Gemini tier allows few requests a minute, so loops wait their turn, and that waiting counts as loop time. In fake mode (deterministic test model, 14 profiles) the median peak is 14.5 loops at once. The run screen draws every loop as a bar on a timeline. Live-model medians over all profiles are published once the live evaluation has run.
+In the real-model recording of `p07` (`runs/demo-p07/summary.json`): 65 loops, at most 15 running at the same time, 4,993 s of loop time inside 483 s of wall time (10.3 loops' worth of work in flight on average). Most of that wall time is the request pacer: the free Gemini tier allows few requests a minute, so loops wait their turn, and that waiting counts as loop time. In fake mode (deterministic test model, 14 profiles) the median peak is 14.5 loops at once. The run screen draws every loop as a bar on a timeline.
 
 ## Every number has a source
 
@@ -239,6 +241,7 @@ A small synchronous claims store: agents propose a value for a key with sources;
 ```
 npm run dev          # API with reload on :4317 and Vite on :5173
 npm test             # unit and integration tests (deterministic test model)
+npx playwright install chromium   # once, before the first end-to-end run
 npm run test:e2e     # Playwright against the real server
 npm run lint && npm run typecheck
 npm run eval -- --mode fake

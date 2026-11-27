@@ -53,9 +53,10 @@ import {
 } from '../types.ts';
 
 // ---------------------------------------------------------------------------------------------------
-// GAP (privacy): @mozaik-ai/cloud-sdk, created for every loop, uploads loop events with the agent's full
-// memory to api.app.jigjoy.ai when MOZAIK_API_KEY / MOZAIK_PROJECT_KEY is set or ~/.mozaik/credentials.json
-// exists. Headroom promises that only the model provider sees document text, so telemetry is forced off.
+// Mozaik Cloud observability is opt-in: with a Cloud key or credentials file, @mozaik-ai/cloud-sdk sends
+// each loop's events, including the agent's context, to Mozaik Cloud. Headroom's agents read the user's
+// financial documents, and Headroom promises that only the model provider sees that text, so it keeps
+// Cloud off for its runs.
 // ---------------------------------------------------------------------------------------------------
 export const CLOUD_ENV_VARS = ['MOZAIK_API_KEY', 'MOZAIK_PROJECT_KEY'] as const;
 

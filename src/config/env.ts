@@ -31,7 +31,7 @@ export class EnvError extends Error {
   }
 }
 
-/** Mozaik Cloud keys would upload loop events (with document text) to a third party: refuse them. */
+/** With a Mozaik Cloud key, loop events (with document text) are sent to Cloud: Headroom refuses one. */
 export function assertNoCloudKeys(root: string): void {
   const file = join(root, '.env');
   if (!existsSync(file)) return;

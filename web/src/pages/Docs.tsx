@@ -90,7 +90,7 @@ cp .env.example .env      # put your key in GEMINI_API_KEY
 npm start                 # then open http://localhost:4317`}</Code>
           <p>
             Click <strong>Check my invoice</strong>, add your files, map the columns if asked, fill in the
-            invoice you are about to send, and start the check. Tested on Linux; macOS and Windows are not
+            invoice you are about to send, and start the check. Tested on Linux and Windows; macOS is not
             tested yet.
           </p>
         </Section>
