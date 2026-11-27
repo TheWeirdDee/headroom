@@ -108,6 +108,22 @@ Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model, 
 
 Before these runs the model fell short in ways the eval would count as misses; they are described under "Try it without your files or a key" (the first demo recording missed E1). These two runs are small; they show the pipeline working with a real model, not a measured accuracy.
 
+### With a second real model: Groq `gpt-oss-120b` (partial, separate table)
+
+Measured 27 Nov 2026 with `groq/openai/gpt-oss-120b` as reader and verifier model through Groq's free tier, **on 2 other synthetic profiles we designed, one run each**: `c02` (clean) and `p01` (3 planted errors). Groq's free tier allowed two runs that day (8,000 tokens a minute, about 200,000 a day; a run uses about 90,000). The next run, `p03`, hit the daily limit and was not counted. Results in `eval/groq-gpt-oss-120b/`.
+
+| Metric (2 runs)                               | Value                                                                                                  |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Planted errors found                          | 3 / 3 (E1, E3, E8 in `p01`)                                                                            |
+| Verified invoice facts equal to the truth     | 60 / 60                                                                                                |
+| Wrong figures that got verified               | 0                                                                                                      |
+| Figures shown without a source                | 0                                                                                                      |
+| Runs with 6M and 8M totals equal to the truth | 2 / 2                                                                                                  |
+| Runs with a failed loop                       | 0 / 2                                                                                                  |
+| **Findings that were not planted**            | **2: one E-CONFLICT on criterion 6 for client Linden, in each run (one of them on the clean profile)** |
+
+The two false findings came from Headroom, not the model: the IndependenceChecker recomputed criterion 6 while its first value was still waiting for the Verifier (Groq's pacing makes that window long), and the claims helper treated the two versions as a conflict between equal sources. Fixed in commit `64de262` (an agent's new value for its own claim now supersedes it); these two runs were made before the fix.
+
 ### With the deterministic test model (all 14 profiles)
 
 The table below is from **fake mode** (14 synthetic profiles we designed, one run each, deterministic test model). It measures the pipeline (rules, Verifier, conflicts, totals), not how well a real model reads documents.

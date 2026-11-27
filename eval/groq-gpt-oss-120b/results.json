@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-11-27T06:33:08.240Z",
+  "conditions": {
+    "date": "2026-11-27",
+    "mode": "live",
+    "models": {
+      "reader": "groq/openai/gpt-oss-120b",
+      "verifier": "groq/openai/gpt-oss-120b"
+    },
+    "mozaikVersion": "6.0.0",
+    "runsPerProfile": {
+      "c02": 1,
+      "p01": 1
+    },
+    "profiles": [
+      "c02",
+      "p01"
+    ],
+    "stopped": "p03 run 1 hit the daily quota and was not counted",
+    "seed": "headroom-2026-11-26"
+  },
+  "metrics": [
+    {
+      "name": "Planted errors detected",
+      "value": "3 / 3 (100.0%)",
+      "note": "on 2 synthetic profiles we designed"
+    },
+    {
+      "name": "False discrepancies on clean profiles",
+      "value": "1 in 1 runs",
+      "target": "0",
+      "passed": false
+    },
+    {
+      "name": "Findings that were not planted (all profiles)",
+      "value": "2"
+    },
+    {
+      "name": "Verified invoice facts equal to the truth",
+      "value": "60 / 60 (100.0%)",
+      "note": "issue date, amount in RSD and kind of every invoice"
+    },
+    {
+      "name": "Wrong figures that got verified",
+      "value": "0",
+      "target": "0",
+      "passed": true,
+      "note": "the most important miss: listed below with figure ids"
+    },
+    {
+      "name": "Contested figures that were in fact wrong",
+      "value": "0 / 0"
+    },
+    {
+      "name": "Figures shown without a source",
+      "value": "0",
+      "target": "0",
+      "passed": true
+    },
+    {
+      "name": "Runs with 6M and 8M totals (with the draft) equal to the truth",
+      "value": "2 / 2"
+    },
+    {
+      "name": "Profiles with identical headroom across runs",
+      "value": "n/a",
+      "note": "every profile ran once"
+    },
+    {
+      "name": "Runs with a failed loop",
+      "value": "0 / 2"
+    },
+    {
+      "name": "Median loops running at once (peak)",
+      "value": "15"
+    },
+    {
+      "name": "Median loop time / wall time",
+      "value": "10.16",
+      "note": "above 1 means loops overlapped"
+    },
+    {
+      "name": "Median wall time per run",
+      "value": "575.6 s"
+    },
+    {
+      "name": "Median tokens per run (in / out)",
+      "value": "67108.5 / 24588"
+    },
+    {
+      "name": "Verifier contests by reason (all runs)",
+      "value": "UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0"
+    },
+    {
+      "name": "Planted book errors that surfaced as real agent conflicts",
+      "value": "0 / 0",
+      "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
+    },
+    {
+      "name": "Messy CSV layouts parsed without errors",
+      "value": "7 / 7",
+      "note": "02-windows-1250.csv: account currency asked from the user"
+    }
+  ],
+  "perType": [
+    {
+      "type": "E1",
+      "planted": 1,
+      "found": 1,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E3",
+      "planted": 1,
+      "found": 1,
+      "missed": 0,
+      "extra": 0
+    },
+    {
+      "type": "E8",
+      "planted": 1,
+      "found": 1,
+      "missed": 0,
+      "extra": 0
+    }
+  ],
+  "misses": []
+}
