@@ -83,7 +83,32 @@ Every figure carries `SourceRef`s: a document page and line range with the excer
 
 ## Results
 
-`npm run eval` runs every bundled profile against its ground truth. The table below is from **fake mode** (14 synthetic profiles we designed, one run each, deterministic test model). It measures the pipeline (rules, Verifier, conflicts, totals), not how well a real model reads documents. Live-model results (3 runs per profile) need a model key and are published in `eval/RESULTS.md` and on the Evidence page when measured.
+`npm run eval` runs bundled profiles against their ground truth and writes `eval/results.json` and `eval/RESULTS.md` (the Evidence page shows them).
+
+### With a real model (partial)
+
+Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model, Mozaik 6.0.0, profile seed `headroom-2026-11-26`, **on 2 synthetic profiles we designed, one run each**: `c01` (clean, no planted errors) and `p07` (the showcase, 5 planted errors). The other 12 profiles have not been run with a real model yet: the free tier allows 500 requests a day for this model, a run needs about 85, and the first day's quota went on three demo recordings and these two runs (the next run, `c02`, hit the quota and was not counted). Error types E4, E6, E7 and E8 do not occur in these two profiles, so they are not measured live yet. Consistency across runs is not measured yet (every profile ran once).
+
+| Metric (2 runs)                                             | Value                                                |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| Planted errors found                                        | 5 / 5 (E1, E2, E3, E5, E9 in `p07`)                  |
+| Findings on the clean profile                               | 0                                                    |
+| Findings that were not planted                              | 0                                                    |
+| Verified invoice facts equal to the truth                   | 60 / 60 (issue date, amount in RSD, kind)            |
+| Wrong figures that got verified                             | 0                                                    |
+| Figures shown without a source                              | 0                                                    |
+| Runs with 6M and 8M totals equal to the truth               | 2 / 2                                                |
+| Runs with a failed loop                                     | 0 / 2                                                |
+| Verifier contests                                           | 2, both NOT_SUPPORTED_BY_SOURCE                      |
+| Planted book errors that surfaced as agent conflicts        | 2 / 2 (E2, E5)                                       |
+| Median loops running at once (peak) / loop time ÷ wall time | 15.5 / 10.99 (wall time is mostly the request pacer) |
+| Median wall time / tokens per run                           | 451 s / 59,969 in, 6,472 out                         |
+
+Before these runs the model fell short in ways the eval would count as misses; they are described under "Try it without your files or a key" (the first demo recording missed E1). These two runs are small; they show the pipeline working with a real model, not a measured accuracy.
+
+### With the deterministic test model (all 14 profiles)
+
+The table below is from **fake mode** (14 synthetic profiles we designed, one run each, deterministic test model). It measures the pipeline (rules, Verifier, conflicts, totals), not how well a real model reads documents.
 
 | Metric                                                         | Value                                                                                           | Target | Note                                                                                      |
 | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------- |
@@ -97,7 +122,7 @@ Every figure carries `SourceRef`s: a document page and line range with the excer
 | Runs with 6M and 8M totals (with the draft) equal to the truth | 14 / 14                                                                                         |        |                                                                                           |
 | Profiles with identical headroom across runs                   | 14 / 14                                                                                         |        |                                                                                           |
 | Median loops running at once (peak)                            | 14.5                                                                                            |        |                                                                                           |
-| Median loop time / wall time                                   | 0.15                                                                                            |        | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
+| Median loop time / wall time                                   | 0.14                                                                                            |        | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
 | Median wall time per run                                       | 1.6 s                                                                                           |        |                                                                                           |
 | Median tokens per run (in / out)                               | 19000 / 4582                                                                                    |        |                                                                                           |
 | Verifier contests by reason (all runs)                         | UNSOURCED 0, SOURCE_MISMATCH 0, DERIVATION_MISMATCH 0, NOT_SUPPORTED_BY_SOURCE 0, IMPLAUSIBLE 0 |        |                                                                                           |
