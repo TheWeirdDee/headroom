@@ -11,6 +11,7 @@ import { SseHub } from './sse.ts';
 import { resolveSource, withHeaders, type ResolvedSource } from './resolve-source.ts';
 import { buildKpoExport, type KpoExport } from '../exporters/kpo.ts';
 import { DraftSchema } from '../engine/load-inputs.ts';
+import { injectMisread, MISREAD_AMOUNT, type InjectedFault } from '../engine/faults.ts';
 import type { RuleBook } from '../domain/rules/engine.ts';
 import type { RunInputs } from '../engine/inputs.ts';
 import type { AppEnv } from '../config/env.ts';
@@ -31,6 +32,7 @@ export class RunError extends Error {
       | 'BAD_ANSWER'
       | 'BAD_DRAFT'
       | 'READ_ONLY'
+      | 'BAD_FAULT'
       | 'INPUTS_INVALID',
     message: string,
     readonly status = 400,
@@ -50,6 +52,8 @@ export interface RunRecord {
   mode: 'live' | 'replay';
   /** The landing page's showcase is shared by every visitor: nobody may answer or change it. */
   readOnly: boolean;
+  /** A deliberate fault added to this replay, shown wherever the run is. */
+  fault?: InjectedFault;
   startedAt: string;
   summary?: RunSummary;
   card?: CardVM;
@@ -212,7 +216,11 @@ export class RunManager {
     mode: 'live' | 'replay';
     /** The landing page's shared showcase: answered at once, and read-only. */
     shared?: boolean;
+    /** Add one deliberate misreading to the recorded sample, to show the Verifier catching it. */
+    fault?: InjectedFault['id'];
   }): Promise<string> {
+    if (req.fault && (req.profileId !== MISREAD_AMOUNT.profileId || req.mode !== 'replay'))
+      throw new RunError('BAD_FAULT', 'The injected fault belongs to the recorded sample p07 only.');
     const { env } = this.o;
     const isSample = req.profileId !== undefined;
     if (req.mode === 'live' && env.offline)
@@ -281,6 +289,7 @@ export class RunManager {
         : { kind: 'upload', uploadId: req.uploadId ?? '' },
       mode: req.mode,
       readOnly: req.shared === true,
+      ...(req.fault ? { fault: MISREAD_AMOUNT } : {}),
       startedAt: new Date(now()).toISOString(),
       ...(replay ? { recording: { recordedAt: replay.recordedAt, models: replay.models } } : {}),
       agents: new Map(),
@@ -288,6 +297,9 @@ export class RunManager {
       viewEvents: [],
       run: undefined as unknown as Run,
     };
+    const faulty = req.fault ? MISREAD_AMOUNT : undefined;
+    const faultyDoc = faulty && inputs.documents.find((d) => d.fileName === `${faulty.invoice}.pdf`);
+    if (faulty && !faultyDoc) throw new RunError('BAD_FAULT', 'The faulted invoice is missing.');
     // A replay asks the models it was recorded with, so its request hashes match the recording.
     const config = defaultRunConfig(year, asOf, { models: replay?.models ?? env.models });
     const run = startRun({
@@ -298,7 +310,10 @@ export class RunManager {
       mode: req.mode,
       kurs,
       ...(replay
-        ? { backend: replay.backend }
+        ? {
+            backend:
+              faulty && faultyDoc ? injectMisread(replay.backend, faultyDoc.sha256, faulty) : replay.backend,
+          }
         : this.o.modelBackend
           ? { backend: this.o.modelBackend() }
           : {}),
@@ -341,6 +356,7 @@ export class RunManager {
       runId,
       mode: r.mode,
       readOnly: r.readOnly,
+      fault: r.fault ?? null,
       source: r.source,
       synthetic: r.inputs.synthetic,
       startedAt: r.startedAt,
@@ -428,6 +444,7 @@ export class RunManager {
       runId,
       generatedAt: new Date().toISOString(),
       synthetic: r.inputs.synthetic,
+      ...(r.fault ? { injectedFault: r.fault } : {}),
       summary: r.summary ?? null,
       card: r.card ?? null,
       discrepancies: [...s.discrepancies.values()].map((d) => ({

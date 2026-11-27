@@ -38,6 +38,8 @@ jobs:
       - run: npm test
       # Several agents must have model requests outstanding at the same time, or this fails.
       - run: npm run prove
+      # The Verifier must reject an injected misread and the totals must still be right.
+      - run: npm run demo:catch
       - run: npm run check:licenses
       # Pipeline evaluation with the deterministic test model; fails if any figure is shown without a
       # source or a wrong figure gets verified (PRD 19, metric 5).

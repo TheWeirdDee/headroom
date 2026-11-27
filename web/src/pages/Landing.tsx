@@ -263,6 +263,15 @@ export function Landing() {
                 <FileCheck2 size={16} aria-hidden /> Check my invoice
               </Link>
               {sampleButton('Try with sample data')}
+              <button
+                type="button"
+                disabled={busy || !health}
+                onClick={() => start(SHOWCASE, 'replay', 'misread-amount')}
+                className={btnSecondary}
+                title="The recorded sample with one misreading injected on purpose"
+              >
+                <ScanSearch size={16} aria-hidden /> Catch a wrong number
+              </button>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
               {['Runs on your computer', 'Source behind every number', 'Not financial or tax advice'].map(

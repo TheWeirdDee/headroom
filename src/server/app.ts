@@ -44,6 +44,7 @@ const StartRun = z
     uploadId: z.string().optional(),
     draft: DraftSchema.optional(),
     mode: z.enum(['live', 'replay']),
+    fault: z.literal('misread-amount').optional(),
   })
   .refine(
     (b) => (b.profileId === undefined) !== (b.uploadId === undefined),
@@ -177,7 +178,12 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
   app.post('/api/runs', async (req, reply) => {
     const b = parse(StartRun, req.body);
     const runId = b.profileId
-      ? await d.runs.start({ profileId: b.profileId, mode: b.mode, ...(b.draft ? { draft: b.draft } : {}) })
+      ? await d.runs.start({
+          profileId: b.profileId,
+          mode: b.mode,
+          ...(b.draft ? { draft: b.draft } : {}),
+          ...(b.fault ? { fault: b.fault } : {}),
+        })
       : await d.runs.start({
           uploadId: b.uploadId ?? '',
           uploadDir: d.uploads.prepare(b.uploadId ?? ''),

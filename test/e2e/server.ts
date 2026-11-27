@@ -8,6 +8,7 @@ import { RunManager } from '../../src/server/run-manager.ts';
 import { UploadStore } from '../../src/server/uploads.ts';
 import { loadRules } from '../../src/domain/rules/loader.ts';
 import { fakeModel } from '../helpers/fake-model.ts';
+import { replaySource } from '../../src/engine/recordings.ts';
 import type { AppEnv } from '../../src/config/env.ts';
 
 const rates = JSON.parse(readFileSync('data/rates/kurs.json', 'utf8')) as Record<
@@ -32,6 +33,8 @@ const runs = new RunManager({
   profilesDir: 'data/profiles',
   liveFetcher: async (u) => rates[u] ?? { status: 503, body: '' },
   modelBackend: () => fakeModel(),
+  // The committed recording, for the injected-misread sample.
+  replay: replaySource('runs', { ratesFile: 'data/rates/kurs.json' }),
 });
 const app = await buildApp({
   env,

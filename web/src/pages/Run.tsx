@@ -15,6 +15,7 @@ import { DiscrepancyList } from '../components/DiscrepancyList.tsx';
 import { QuestionCard } from '../components/QuestionCard.tsx';
 import { DraftForm } from '../components/DraftForm.tsx';
 import { StatusChip } from '../components/StatusChip.tsx';
+import { VerifierCatches } from '../components/VerifierCatches.tsx';
 import { formatDateSr, formatSr } from '../format/money.ts';
 
 const RUN_STATUS: Record<string, { status: string; label: string }> = {
@@ -78,6 +79,7 @@ export function Run() {
         mode={snap.mode}
         recording={snap.recording}
         rejected={totalRejections(view)}
+        {...(snap.fault ? { fault: snap.fault.note } : {})}
       />
       <div className="mx-auto max-w-[1440px] space-y-4 px-4 py-4">
         {view.replayMiss && (
@@ -131,6 +133,8 @@ export function Run() {
           </a>
         </header>
         {editing && <DraftForm runId={runId} draft={snap.draft} clients={snap.clients} />}
+
+        <VerifierCatches figures={Object.values(view.figures)} onOpen={onOpen} />
 
         {(snap.parseErrors.length > 0 || snap.unreadable.length > 0) && (
           <div className="rounded border border-amber/50 bg-amber/10 p-3 text-sm">

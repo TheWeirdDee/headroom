@@ -101,6 +101,22 @@ test('sample run: lanes, verified board, headroom card, findings, drawer, questi
   expect(errors).toEqual([]);
 });
 
+test('the injected misread is labelled, rejected by the Verifier and replaced', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Catch a wrong number' }).click();
+  await expect(page).toHaveURL(/\/runs\/run-/);
+  await expect(page.getByRole('note', { name: 'Status of this run' })).toContainText('Injected fault');
+  const rejected = page.getByRole('region', { name: 'Rejected by the Verifier' });
+  await expect(rejected).toContainText('5.300,00 EUR', { timeout: 30_000 });
+  await expect(rejected).toContainText('verified instead', { timeout: 30_000 });
+  await expect(rejected).toContainText('does not show the amount 5300');
+  // The same after a reload, from the snapshot.
+  await page.reload();
+  await expect(rejected).toContainText('does not show the amount 5300', { timeout: 30_000 });
+  expect(errors).toEqual([]);
+});
+
 test('an unrecognised CSV opens the column mapper before the check can start', async ({ page }) => {
   await page.goto('/check');
   const csv =

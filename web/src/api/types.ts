@@ -234,6 +234,8 @@ export interface Snapshot {
   mode: 'live' | 'replay';
   /** The shared landing-page showcase: it cannot be answered or changed. */
   readOnly?: boolean;
+  /** A deliberate fault added to this replay. */
+  fault?: { id: string; invoice: string; note: string } | null;
   source: { kind: 'sample'; profileId: string } | { kind: 'upload'; uploadId: string };
   synthetic: boolean;
   startedAt: string;

@@ -51,6 +51,7 @@ export function installBoardMirror(state: HeadroomState, publish: Publish): () =
             reasonCode,
             detail: detail.join(': '),
             producerId: snapshot?.producedBy,
+            checks: snapshot?.checks ?? [],
           });
         } else if (e.status === 'needs_user') {
           publish('hr.figure.needs_user', e.by, { key: e.key, figureId: e.recordId, reason: e.reason });

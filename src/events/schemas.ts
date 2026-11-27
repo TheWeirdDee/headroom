@@ -155,6 +155,7 @@ export const PayloadSchemas = {
     ]),
     detail: z.string(),
     producerId: z.string().optional(),
+    checks: z.array(z.unknown()).optional(),
   }),
   'hr.figure.superseded': z.object({
     key: z.string(),

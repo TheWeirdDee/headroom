@@ -14,11 +14,13 @@ export function TopBand({
   mode,
   recording,
   rejected,
+  fault,
 }: {
   data?: 'sample' | 'user';
   mode?: 'live' | 'replay';
   recording?: Recording | null;
   rejected?: number;
+  fault?: string;
 }) {
   const health = useApp((s) => s.health);
   const offline = mode === 'replay' || (mode === undefined && health?.mode === 'offline');
@@ -39,6 +41,7 @@ export function TopBand({
           <span>Data: {data === 'sample' ? 'SAMPLE (SYNTHETIC)' : 'YOUR FILES (processed locally)'}</span>
         )}
         <span>Mode: {modeText}</span>
+        {fault && <span className="font-medium text-danger">{fault}</span>}
         {rejected !== undefined && (
           <span className="inline-flex items-center gap-1">
             <ShieldCheck size={12} aria-hidden /> Rejected by Verifier:{' '}

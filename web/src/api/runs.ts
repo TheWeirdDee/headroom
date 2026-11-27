@@ -6,8 +6,12 @@ export function sampleMode(health: Health | undefined): 'live' | 'replay' {
   return health && health.mode === 'live' && health.hasModelKey ? 'live' : 'replay';
 }
 
-export async function startSample(profileId: string, mode: 'live' | 'replay'): Promise<string> {
-  const r = await postJson<{ runId: string }>('/api/runs', { profileId, mode });
+export async function startSample(
+  profileId: string,
+  mode: 'live' | 'replay',
+  fault?: 'misread-amount',
+): Promise<string> {
+  const r = await postJson<{ runId: string }>('/api/runs', { profileId, mode, ...(fault ? { fault } : {}) });
   return r.runId;
 }
 

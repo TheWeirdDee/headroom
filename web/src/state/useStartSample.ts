@@ -6,7 +6,7 @@ import { useApp } from './app.ts';
 
 /** Starts a sample run and opens it. Live needs a model key; without one the caller offers the recorded run. */
 export function useStartSample(): {
-  start: (profileId: string, mode?: 'live' | 'replay') => void;
+  start: (profileId: string, mode?: 'live' | 'replay', fault?: 'misread-amount') => void;
   busy: boolean;
   error?: string;
   needsKey: boolean;
@@ -16,10 +16,10 @@ export function useStartSample(): {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const needsKey = health !== undefined && health.mode === 'live' && !health.hasModelKey;
-  const start = (profileId: string, mode?: 'live' | 'replay'): void => {
+  const start = (profileId: string, mode?: 'live' | 'replay', fault?: 'misread-amount'): void => {
     setBusy(true);
     setError(undefined);
-    startSample(profileId, mode ?? sampleMode(health))
+    startSample(profileId, mode ?? sampleMode(health), fault)
       .then((runId) => navigate(`/runs/${runId}`))
       .catch((e: unknown) => setError(e instanceof ApiError ? e.message : 'The run could not be started.'))
       .finally(() => setBusy(false));

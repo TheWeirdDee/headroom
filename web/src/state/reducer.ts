@@ -157,7 +157,8 @@ function applyEvent(v: RunView, e: HrEvent): RunView {
       break;
     }
     case 'hr.figure.contested': {
-      n = patchFigure(n, p['figureId'] as string, { status: 'contested' });
+      const checks = p['checks'] as Figure['checks'];
+      n = patchFigure(n, p['figureId'] as string, { status: 'contested', ...(checks ? { checks } : {}) });
       const code = p['reasonCode'] as string;
       n = { ...n, rejections: { ...n.rejections, [code]: (n.rejections[code] ?? 0) + 1 } };
       break;

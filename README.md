@@ -104,6 +104,21 @@ PASS: the agents asked their models at the same time.
 
 The run screen draws every loop as a bar on a timeline. A loop there is open from its start to its answer, which on a free tier includes waiting for the quota, so "loops open at once" is not the same as requests in flight; use `npm run prove` for the latter.
 
+## Watch the Verifier catch a wrong number
+
+```
+npm run demo:catch          # or the "Catch a wrong number" button on the landing page
+```
+
+This replays the recorded sample with **one fault injected on purpose**: the first reading of invoice 2026-006 is altered from 3500.00 to 5300.00 EUR before it reaches the InvoiceReader. The model did not make that mistake, and every screen and report of such a run says so. What follows is the pipeline's own work:
+
+```
+invoice-reader proposed 5300 EUR -> CONTESTED: excerpt "3.500,00 EUR" does not show the amount 5300
+invoice-reader proposed 3500 EUR -> VERIFIED
+```
+
+The Verifier rejects the figure, the InvoiceReader reads the document again with the Verifier's note (answered with what the model really answered), and the 6M total equals that of the replay without the fault (a test also checks it against the ground truth). The command exits 1 otherwise, and CI runs it. This particular catch is a code check: the cited line does not hold the number.
+
 ## Every number has a source
 
 Every figure carries `SourceRef`s: a document page and line range with the excerpt and its SHA-256, a statement or KPO row with its raw line and hash, an NBS response with its hash and JSON path, a contract field, a rule, a user answer, or the input figures it was derived from. The Verifier checks each proposed figure before it counts: the source exists, the hash matches, derived values recompute exactly, the value matches the source (code checks dates, amounts, currency and invoice numbers; a model only judges country, kind and contract criteria), and the value is plausible. A failed check contests the figure with a reason code; after three contests on one key the question goes to you. Only verified figures reach the headroom card, and the run report counts figures shown without a source (it must be 0).
