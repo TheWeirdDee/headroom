@@ -183,6 +183,28 @@ npm start                    # open http://localhost:4317
 
 Drop in your bank statement CSV, invoice PDFs (with a text layer) and KPO book, map the columns if asked, enter your clients and the invoice you are about to send, and click **Check this invoice**.
 
+A client list file (`clients.json`) is optional and fills the client form. Its `contract` fields are the only way contract wording reaches the independence test; without them those criteria stay unknown. Each field is a sentence from or about your contract ([full example](data/profiles/p07/clients.json)):
+
+```json
+[
+  {
+    "id": "acme",
+    "name": "Acme GmbH",
+    "country": "DE",
+    "isBusiness": true,
+    "vatId": "DE123456789",
+    "contract": {
+      "workingHoursSetByClient": "No: the contractor sets own hours.",
+      "workplaceSetByClient": "No: work is done remotely.",
+      "trainingByClient": "No: no training by the client.",
+      "equipmentOrManagementByClient": "No: the contractor uses own equipment.",
+      "clientLineOfBusinessWithoutRiskClause": "No: the contractor bears delivery risk.",
+      "nonCompeteClause": "No: no restriction on other clients."
+    }
+  }
+]
+```
+
 - The default model is `gemini-3.5-flash-lite`, which has a free tier. Requests are paced (10 a minute, `HEADROOM_MAX_RPM`), so a year of about a dozen invoices takes around 8 minutes and 85 requests of the free tier's 500 a day.
 - Groq models work as `groq/<model>` with `GROQ_API_KEY` (`HEADROOM_MODEL_READER`, `HEADROOM_MODEL_VERIFIER`); [groq.ts](src/runtime/mozaik/groq.ts) points Mozaik's chat-completions endpoint at Groq. Claude and OpenAI models Mozaik supports can be selected the same way; they have not been run here.
 - CI runs the tests on Linux and Windows. macOS is not tested.

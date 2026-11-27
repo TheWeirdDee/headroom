@@ -1,5 +1,7 @@
 // The front door, the run screen, the source drawer, questions, the column mapper and the KPO book,
 // driven in a real browser.
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { test, expect, type Page } from '@playwright/test';
 
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F2FF}]/u;
@@ -114,6 +116,53 @@ test('the injected misread is labelled, rejected by the Verifier and replaced', 
   // The same after a reload, from the snapshot.
   await page.reload();
   await expect(rejected).toContainText('does not show the amount 5300', { timeout: 30_000 });
+  expect(errors).toEqual([]);
+});
+
+test('your own files: upload, check, contract details kept, KPO book, delete', async ({ page }) => {
+  const errors = watchErrors(page);
+  const dir = join('data', 'profiles', 'p07');
+  const invoices = readdirSync(join(dir, 'invoices')).map((f) => join(dir, 'invoices', f));
+  await page.goto('/check');
+  await page
+    .getByLabel('Choose files')
+    .setInputFiles([
+      ...invoices,
+      join(dir, 'statement.csv'),
+      join(dir, 'kpo.csv'),
+      join(dir, 'clients.json'),
+    ]);
+  await expect(page.getByText('Columns mapped')).toHaveCount(2);
+  // The client file fills the form.
+  await expect(page.getByLabel('Client name').first()).toHaveValue('Heron Systems GmbH');
+  await page.getByLabel('Name or business name').fill('Proba PR');
+  await page.getByLabel('PIB (9 digits)').fill('109424584');
+  await page.getByLabel('Check as of').fill('2026-11-26');
+  const draft = page.getByRole('region', { name: '4. The invoice you are about to send' });
+  await draft.locator('select').nth(0).selectOption({ label: 'Heron Systems GmbH' });
+  await draft.locator('input[inputmode="decimal"]').fill('8550');
+  await draft.locator('select').nth(1).selectOption('EUR');
+  await draft.locator('input[type="date"]').fill('2026-11-26');
+  await page.getByRole('button', { name: 'Check this invoice' }).click();
+  await expect(page).toHaveURL(/\/runs\/run-/);
+  await expect(page.getByRole('note', { name: 'Status of this run' })).toContainText('YOUR FILES');
+  const card = page.getByRole('region', { name: 'Headroom', exact: true });
+  await expect(card.getByText(/over the limit if the payment with no invoice is invoiced/)).toBeVisible({
+    timeout: 45_000,
+  });
+  // The contract details of the client file reached the agents: criteria were judged from them.
+  await page.getByRole('textbox', { name: 'Search by key' }).fill('criterion:heron:1');
+  await page.getByRole('region', { name: 'Figure Board' }).getByRole('row').nth(1).click();
+  await expect(page.getByRole('dialog', { name: 'Figure sources' })).toContainText(
+    'the client sets core working hours',
+  );
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('contentinfo')).not.toContainText('Synthetic data only. Not financial', {
+    useInnerText: true,
+  });
+  await page.getByRole('link', { name: 'KPO book' }).click();
+  await expect(page.getByRole('region', { name: 'KPO book' })).toContainText('Faktura 2026-001');
+  await expect(page.getByText('Do not use this as your KPO book')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

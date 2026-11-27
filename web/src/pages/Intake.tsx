@@ -25,6 +25,16 @@ interface Client {
   country: string;
   isBusiness: boolean;
   pib?: string;
+  vatId?: string;
+  /** Contract summary fields from the client file; the IndependenceChecker judges criteria from them. */
+  contract?: Record<string, string>;
+}
+
+/** The text-valued fields of a contract object, or nothing. */
+function contractOf(v: unknown): Record<string, string> | undefined {
+  if (typeof v !== 'object' || v === null || Array.isArray(v)) return undefined;
+  const fields = Object.entries(v).filter((e): e is [string, string] => typeof e[1] === 'string');
+  return fields.length ? Object.fromEntries(fields) : undefined;
 }
 
 function slug(name: string, taken: Set<string>): string {
@@ -51,12 +61,15 @@ async function readClients(files: File[]): Promise<Client[]> {
       const out: Client[] = [];
       for (const c of data as Array<Record<string, unknown>>) {
         if (typeof c['name'] !== 'string' || typeof c['country'] !== 'string') continue;
+        const contract = contractOf(c['contract']);
         out.push({
           id: typeof c['id'] === 'string' ? c['id'] : '',
           name: c['name'],
           country: c['country'].toUpperCase(),
           isBusiness: c['isBusiness'] !== false,
           ...(typeof c['pib'] === 'string' ? { pib: c['pib'] } : {}),
+          ...(typeof c['vatId'] === 'string' ? { vatId: c['vatId'] } : {}),
+          ...(contract ? { contract } : {}),
         });
       }
       if (out.length) return out;
@@ -191,6 +204,8 @@ export function Intake() {
           country: x.country,
           isBusiness: x.isBusiness,
           ...(x.pib ? { pib: x.pib } : {}),
+          ...(x.vatId ? { vatId: x.vatId } : {}),
+          ...(x.contract ? { contract: x.contract } : {}),
         })),
         draft: c.draft,
       });
@@ -455,6 +470,11 @@ export function Intake() {
                 >
                   <Trash2 size={16} aria-hidden />
                 </button>
+                {c.contract && (
+                  <p className="text-xs text-muted sm:col-span-4">
+                    Contract details from your client file: {Object.keys(c.contract).join(', ')}
+                  </p>
+                )}
               </li>
             ))}
           </ul>

@@ -12,6 +12,7 @@ const TOC: Array<{ id: string; label: string }> = [
   { id: 'files', label: 'Your files' },
   { id: 'models', label: 'Models and keys' },
   { id: 'a-run', label: 'What happens in a run' },
+  { id: 'client-file', label: 'Client file' },
   { id: 'verification', label: 'How numbers are checked' },
   { id: 'outputs', label: 'Exports' },
   { id: 'privacy', label: 'Privacy' },
@@ -213,6 +214,27 @@ npm run demo:catch                 # the Verifier rejects an injected misread`}<
               re-opens the run and the dependent agents recompute.
             </li>
           </ol>
+        </Section>
+
+        <Section id="client-file" title="Client file">
+          <p>
+            Optionally add a <code className="font-mono text-text">clients.json</code> to your files. It fills
+            the client form, and its <code className="font-mono text-text">contract</code> fields are the only
+            way contract wording reaches the independence test; without them those criteria stay unknown. Each
+            field is a sentence from or about your contract.
+          </p>
+          <pre className="overflow-x-auto rounded-md border border-line bg-panel p-4 font-mono text-xs text-text">
+            {`[{ "id": "acme", "name": "Acme GmbH", "country": "DE",
+   "isBusiness": true, "vatId": "DE123456789",
+   "contract": {
+     "workingHoursSetByClient": "No: the contractor sets own hours.",
+     "workplaceSetByClient": "No: work is done remotely.",
+     "trainingByClient": "No: no training by the client.",
+     "equipmentOrManagementByClient": "No: own equipment is used.",
+     "clientLineOfBusinessWithoutRiskClause": "No: delivery risk is borne.",
+     "nonCompeteClause": "No: no restriction on other clients."
+   } }]`}
+          </pre>
         </Section>
 
         <Section id="verification" title="How numbers are checked">
