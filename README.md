@@ -87,26 +87,27 @@ Every figure carries `SourceRef`s: a document page and line range with the excer
 
 `npm run eval` runs bundled profiles against their ground truth and writes `eval/results.json` and `eval/RESULTS.md` (the Evidence page shows them).
 
-### With a real model (partial)
+### With a real model: Gemini `gemini-3.5-flash-lite`
 
-Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model, Mozaik 6.0.0, profile seed `headroom-2026-11-26`, **on 2 synthetic profiles we designed, one run each**: `c01` (clean, no planted errors) and `p07` (the showcase, 5 planted errors). The other 12 profiles have not been run with a real model yet: the free tier allows 500 requests a day for this model, a run needs about 85, and the first day's quota went on three demo recordings and these two runs (the next run, `c02`, hit the quota and was not counted). Error types E4, E6, E7 and E8 do not occur in these two profiles, so they are not measured live yet. Consistency across runs is not measured yet (every profile ran once).
+Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model (free tier), Mozaik 6.0.0, profile seed `headroom-2026-11-26`, **on 5 of our 14 synthetic profiles, 7 runs**: `c01` (clean) and `p07` (showcase) twice each, `p02`, `p05` and `p06` once. Together they contain every planted error type, E1 to E9. The other 9 profiles were not run with a real model: the free tier allows 500 requests a day for this model and a run needs about 85. Full table: `eval/RESULTS.md`; per-run files with the commit each ran on: `eval/raw/`.
 
-| Metric (2 runs)                                             | Value                                                |
-| ----------------------------------------------------------- | ---------------------------------------------------- |
-| Planted errors found                                        | 5 / 5 (E1, E2, E3, E5, E9 in `p07`)                  |
-| Findings on the clean profile                               | 0                                                    |
-| Findings that were not planted                              | 0                                                    |
-| Verified invoice facts equal to the truth                   | 60 / 60 (issue date, amount in RSD, kind)            |
-| Wrong figures that got verified                             | 0                                                    |
-| Figures shown without a source                              | 0                                                    |
-| Runs with 6M and 8M totals equal to the truth               | 2 / 2                                                |
-| Runs with a failed loop                                     | 0 / 2                                                |
-| Verifier contests                                           | 2, both NOT_SUPPORTED_BY_SOURCE                      |
-| Planted book errors that surfaced as agent conflicts        | 2 / 2 (E2, E5)                                       |
-| Median loops running at once (peak) / loop time ÷ wall time | 15.5 / 10.99 (wall time is mostly the request pacer) |
-| Median wall time / tokens per run                           | 451 s / 59,969 in, 6,472 out                         |
+| Metric (7 runs)                                      | Value                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------- |
+| Planted errors found                                 | 19 / 19, all nine types (on 5 synthetic profiles we designed)        |
+| Findings on the clean profile                        | 0 in 2 runs                                                          |
+| Findings that were not planted                       | 0                                                                    |
+| Verified invoice facts equal to the truth            | 222 / 222 (issue date, amount in RSD, kind)                          |
+| Wrong figures that got verified                      | 0                                                                    |
+| Figures shown without a source                       | 0                                                                    |
+| Runs with 6M and 8M totals equal to the truth        | 7 / 7                                                                |
+| Same headroom when a profile is run again            | 2 / 2 (only `c01` and `p07` were run twice)                          |
+| Runs with a failed loop                              | 0 / 7                                                                |
+| Planted book errors that surfaced as agent conflicts | 8 / 8 (E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk) |
+| Verifier contests                                    | 5, all NOT_SUPPORTED_BY_SOURCE, each settled by a re-read            |
+| Median loops at once (peak) / loop time ÷ wall time  | 15 / 10.73 (wall time is mostly the request pacer)                   |
+| Median wall time / tokens per run                    | 482 s / 64,203 in, 6,934 out                                         |
 
-Before these runs the model fell short in ways the eval would count as misses; they are described under "Try it without your files or a key" (the first demo recording missed E1). These two runs are small; they show the pipeline working with a real model, not a measured accuracy.
+The first runs of `c01` and `p07` were made before the claims fix of commit `64de262` (described below); the other five on commit `78f16f1`. The model did fall short before these runs: the first demo recording missed E1 (see "Try it without your files or a key"). Seven runs on five profiles is a small sample; it shows the pipeline holding up with a small free model, not a measured accuracy.
 
 ### With a second real model: Groq `gpt-oss-120b` (partial, separate table)
 

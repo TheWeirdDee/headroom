@@ -487,5 +487,1245 @@
       "verifier": "gemini-3.5-flash-lite"
     },
     "failedLoops": []
+  },
+  {
+    "profileId": "c01",
+    "run": 2,
+    "summary": {
+      "runId": "eval-c01-2",
+      "profileId": "c01",
+      "mode": "live",
+      "mozaik": {
+        "package": "@mozaik-ai/core",
+        "version": "6.0.0"
+      },
+      "models": {
+        "reader": "gemini-3.5-flash-lite",
+        "verifier": "gemini-3.5-flash-lite"
+      },
+      "promptHashes": {
+        "invoice-reader": "sha256:7e924e6a4bb462413d8984c86e0451a624f0c63f6e00ef66a8c662015a21ab3b",
+        "statement-reader": "sha256:b2a8f88d66657728f10aaefd346ff0d9417c9c308400d7debbca704f0442867d",
+        "kpo-reader": "sha256:4d4e7083ec6da956dfe3a75120ec5857611654ec435a830b3601437056ac10b4",
+        "independence-checker": "sha256:a09ef1f05b56b2a931bac7915e433de78044002b2ddefdf3d36704ca72d1ed3f",
+        "verifier": "sha256:d1ca970ff942ce2993c5e23208439eabe3d7dcc39b6513ab6bf63ae3f2ed3601"
+      },
+      "wallTimeMs": 363303,
+      "sumLoopTimeMs": 3610458,
+      "maxConcurrentLoops": 15,
+      "loops": 54,
+      "failedLoops": 0,
+      "figures": {
+        "proposed": 0,
+        "verified": 172,
+        "contested": 0,
+        "superseded": 40,
+        "needs_user": 0
+      },
+      "unsourcedFigures": 0,
+      "conflicts": {
+        "raised": 0,
+        "resolved": 0,
+        "escalated": 0
+      },
+      "discrepancies": {},
+      "rejections": {
+        "UNSOURCED": 0,
+        "SOURCE_MISMATCH": 0,
+        "DERIVATION_MISMATCH": 0,
+        "NOT_SUPPORTED_BY_SOURCE": 0,
+        "IMPLAUSIBLE": 0
+      },
+      "vetoedWrites": 0,
+      "tokens": {
+        "in": 54662,
+        "out": 6071,
+        "byAgent": {
+          "independence-checker": {
+            "in": 5265,
+            "out": 678
+          },
+          "kpo-reader": {
+            "in": 1661,
+            "out": 338
+          },
+          "statement-reader": {
+            "in": 3119,
+            "out": 476
+          },
+          "invoice-reader": {
+            "in": 29183,
+            "out": 2683
+          },
+          "verifier": {
+            "in": 15434,
+            "out": 1896
+          }
+        }
+      },
+      "headroom": {
+        "asOf": "2026-11-26",
+        "limit6m": {
+          "committed": {
+            "display": "4.001.482,43 RSD",
+            "amount": "4001482.43",
+            "figureId": "f000182"
+          },
+          "withDraft": {
+            "display": "4.318.044,87 RSD",
+            "amount": "4318044.87",
+            "figureId": "f000183"
+          },
+          "headroomWithDraft": {
+            "display": "1.681.955,13 RSD",
+            "amount": "1681955.13",
+            "figureId": "f000185"
+          },
+          "limit": {
+            "display": "6.000.000,00 RSD",
+            "amount": "6000000.00",
+            "ruleId": "R-LIMIT-6M"
+          },
+          "ratioWithDraft": {
+            "display": "72,0%",
+            "value": "0.719674",
+            "figureId": "f000186"
+          },
+          "band": "green"
+        },
+        "vat8m": {
+          "committed": {
+            "display": "1.767.000,00 RSD",
+            "amount": "1767000",
+            "figureId": "f000199"
+          },
+          "withDraft": {
+            "display": "1.767.000,00 RSD",
+            "amount": "1767000",
+            "figureId": "f000200"
+          },
+          "headroomWithDraft": {
+            "display": "6.233.000,00 RSD",
+            "amount": "6233000",
+            "figureId": "f000202"
+          },
+          "threshold": {
+            "display": "8.000.000,00 RSD",
+            "amount": "8000000.00",
+            "ruleId": "R-VAT-8M"
+          },
+          "band": "green",
+          "assumptionRuleIds": [
+            "R-VAT-8M-BASIS"
+          ]
+        },
+        "independence": [
+          {
+            "clientId": "osprey",
+            "clientName": "Osprey Labs Inc.",
+            "met": 3,
+            "notMet": 4,
+            "unknown": 2,
+            "status": "at_risk",
+            "statusFigureId": "f000001",
+            "share12mWithDraft": {
+              "display": "37,6%",
+              "value": "0.376045",
+              "figureId": "f000205",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "linden",
+            "clientName": "Linden Works B.V.",
+            "met": 2,
+            "notMet": 4,
+            "unknown": 3,
+            "status": "at_risk",
+            "statusFigureId": "f000002",
+            "share12mWithDraft": {
+              "display": "21,5%",
+              "value": "0.214742",
+              "figureId": "f000207",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "lipa",
+            "clientName": "Lipa Dizajn d.o.o.",
+            "met": 3,
+            "notMet": 4,
+            "unknown": 2,
+            "status": "at_risk",
+            "statusFigureId": "f000003",
+            "share12mWithDraft": {
+              "display": "40,9%",
+              "value": "0.409213",
+              "figureId": "f000209",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          }
+        ],
+        "draft": {
+          "amount": {
+            "display": "2.950,00 USD",
+            "amount": "2950.00",
+            "currency": "USD",
+            "figureId": "f000004"
+          },
+          "amountRSD": {
+            "display": "316.562,44 RSD",
+            "amount": "316562.44",
+            "figureId": "f000019"
+          }
+        },
+        "assumptionRuleIds": [
+          "R-FX-DATE",
+          "R-FX-NONPUB",
+          "R-FX-ROUNDING",
+          "R-INDEP-C6-BASIS",
+          "R-INDEP-WHO-FILES",
+          "R-KPO-DATE",
+          "R-PAYMENT-NO-INVOICE",
+          "R-NUMBERING",
+          "R-LIMIT-6M-BASIS",
+          "R-VAT-8M-BASIS"
+        ],
+        "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+      },
+      "openQuestions": 6,
+      "participantErrors": 0,
+      "status": "awaiting_user"
+    },
+    "found": [],
+    "planted": [],
+    "checked": 27,
+    "correct": 27,
+    "wrongVerified": [],
+    "contested": 0,
+    "contestedWrong": 0,
+    "headroomCorrect": true,
+    "headroom": "4318044.87|1767000",
+    "emergent": [],
+    "models": {
+      "reader": "gemini-3.5-flash-lite",
+      "verifier": "gemini-3.5-flash-lite"
+    },
+    "failedLoops": [],
+    "commit": "78f16f1"
+  },
+  {
+    "profileId": "p02",
+    "run": 1,
+    "summary": {
+      "runId": "eval-p02-1",
+      "profileId": "p02",
+      "mode": "live",
+      "mozaik": {
+        "package": "@mozaik-ai/core",
+        "version": "6.0.0"
+      },
+      "models": {
+        "reader": "gemini-3.5-flash-lite",
+        "verifier": "gemini-3.5-flash-lite"
+      },
+      "promptHashes": {
+        "invoice-reader": "sha256:7e924e6a4bb462413d8984c86e0451a624f0c63f6e00ef66a8c662015a21ab3b",
+        "statement-reader": "sha256:b2a8f88d66657728f10aaefd346ff0d9417c9c308400d7debbca704f0442867d",
+        "kpo-reader": "sha256:4d4e7083ec6da956dfe3a75120ec5857611654ec435a830b3601437056ac10b4",
+        "independence-checker": "sha256:a09ef1f05b56b2a931bac7915e433de78044002b2ddefdf3d36704ca72d1ed3f",
+        "verifier": "sha256:d1ca970ff942ce2993c5e23208439eabe3d7dcc39b6513ab6bf63ae3f2ed3601"
+      },
+      "wallTimeMs": 482107,
+      "sumLoopTimeMs": 5188472,
+      "maxConcurrentLoops": 15,
+      "loops": 64,
+      "failedLoops": 0,
+      "figures": {
+        "proposed": 0,
+        "verified": 219,
+        "contested": 0,
+        "superseded": 36,
+        "needs_user": 0
+      },
+      "unsourcedFigures": 0,
+      "conflicts": {
+        "raised": 2,
+        "resolved": 2,
+        "escalated": 0
+      },
+      "discrepancies": {
+        "E6": 1,
+        "E2": 1,
+        "E4": 1
+      },
+      "rejections": {
+        "UNSOURCED": 0,
+        "SOURCE_MISMATCH": 0,
+        "DERIVATION_MISMATCH": 0,
+        "NOT_SUPPORTED_BY_SOURCE": 0,
+        "IMPLAUSIBLE": 0
+      },
+      "vetoedWrites": 0,
+      "tokens": {
+        "in": 64812,
+        "out": 7073,
+        "byAgent": {
+          "independence-checker": {
+            "in": 5284,
+            "out": 695
+          },
+          "kpo-reader": {
+            "in": 2048,
+            "out": 486
+          },
+          "statement-reader": {
+            "in": 3749,
+            "out": 620
+          },
+          "invoice-reader": {
+            "in": 35591,
+            "out": 3107
+          },
+          "verifier": {
+            "in": 18140,
+            "out": 2165
+          }
+        }
+      },
+      "headroom": {
+        "asOf": "2026-11-26",
+        "limit6m": {
+          "committed": {
+            "display": "3.496.506,49 RSD",
+            "amount": "3496506.49",
+            "figureId": "f000216"
+          },
+          "withDraft": {
+            "display": "3.914.139,85 RSD",
+            "amount": "3914139.85",
+            "figureId": "f000217"
+          },
+          "headroomWithDraft": {
+            "display": "2.085.860,15 RSD",
+            "amount": "2085860.15",
+            "figureId": "f000219"
+          },
+          "limit": {
+            "display": "6.000.000,00 RSD",
+            "amount": "6000000.00",
+            "ruleId": "R-LIMIT-6M"
+          },
+          "ratioWithDraft": {
+            "display": "65,2%",
+            "value": "0.652357",
+            "figureId": "f000220"
+          },
+          "band": "green"
+        },
+        "vat8m": {
+          "committed": {
+            "display": "685.000,00 RSD",
+            "amount": "685000",
+            "figureId": "f000248"
+          },
+          "withDraft": {
+            "display": "685.000,00 RSD",
+            "amount": "685000",
+            "figureId": "f000249"
+          },
+          "headroomWithDraft": {
+            "display": "7.315.000,00 RSD",
+            "amount": "7315000",
+            "figureId": "f000251"
+          },
+          "threshold": {
+            "display": "8.000.000,00 RSD",
+            "amount": "8000000.00",
+            "ruleId": "R-VAT-8M"
+          },
+          "band": "green",
+          "assumptionRuleIds": [
+            "R-VAT-8M-BASIS"
+          ]
+        },
+        "independence": [
+          {
+            "clientId": "kestrel",
+            "clientName": "Kestrel Analytics GmbH",
+            "met": 3,
+            "notMet": 4,
+            "unknown": 2,
+            "status": "at_risk",
+            "statusFigureId": "f000001",
+            "share12mWithDraft": {
+              "display": "44,1%",
+              "value": "0.441092",
+              "figureId": "f000241",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "linden",
+            "clientName": "Linden Works B.V.",
+            "met": 0,
+            "notMet": 7,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000168",
+            "share12mWithDraft": {
+              "display": "38,4%",
+              "value": "0.383901",
+              "figureId": "f000244",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "hrast",
+            "clientName": "Hrast Sistemi d.o.o.",
+            "met": 0,
+            "notMet": 7,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000190",
+            "share12mWithDraft": {
+              "display": "17,5%",
+              "value": "0.175007",
+              "figureId": "f000246",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          }
+        ],
+        "draft": {
+          "amount": {
+            "display": "3.550,00 EUR",
+            "amount": "3550.00",
+            "currency": "EUR",
+            "figureId": "f000004"
+          },
+          "amountRSD": {
+            "display": "417.633,36 RSD",
+            "amount": "417633.36",
+            "figureId": "f000009"
+          }
+        },
+        "assumptionRuleIds": [
+          "R-FX-DATE",
+          "R-FX-NONPUB",
+          "R-FX-ROUNDING",
+          "R-INDEP-C6-BASIS",
+          "R-INDEP-WHO-FILES",
+          "R-KPO-DATE",
+          "R-PAYMENT-NO-INVOICE",
+          "R-NUMBERING",
+          "R-LIMIT-6M-BASIS",
+          "R-VAT-8M-BASIS"
+        ],
+        "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+      },
+      "openQuestions": 6,
+      "participantErrors": 0,
+      "status": "awaiting_user"
+    },
+    "found": [
+      "E6:invoice:2026-007",
+      "E2:invoice:2026-003",
+      "E4:invoice:2026-008"
+    ],
+    "planted": [
+      "E2:invoice:2026-003",
+      "E4:invoice:2026-008",
+      "E6:invoice:2026-007"
+    ],
+    "checked": 36,
+    "correct": 36,
+    "wrongVerified": [],
+    "contested": 0,
+    "contestedWrong": 0,
+    "headroomCorrect": true,
+    "headroom": "3914139.85|685000",
+    "emergent": [
+      "E2:invoice:2026-003",
+      "E4:invoice:2026-008"
+    ],
+    "models": {
+      "reader": "gemini-3.5-flash-lite",
+      "verifier": "gemini-3.5-flash-lite"
+    },
+    "failedLoops": [],
+    "commit": "78f16f1"
+  },
+  {
+    "profileId": "p05",
+    "run": 1,
+    "summary": {
+      "runId": "eval-p05-1",
+      "profileId": "p05",
+      "mode": "live",
+      "mozaik": {
+        "package": "@mozaik-ai/core",
+        "version": "6.0.0"
+      },
+      "models": {
+        "reader": "gemini-3.5-flash-lite",
+        "verifier": "gemini-3.5-flash-lite"
+      },
+      "promptHashes": {
+        "invoice-reader": "sha256:7e924e6a4bb462413d8984c86e0451a624f0c63f6e00ef66a8c662015a21ab3b",
+        "statement-reader": "sha256:b2a8f88d66657728f10aaefd346ff0d9417c9c308400d7debbca704f0442867d",
+        "kpo-reader": "sha256:4d4e7083ec6da956dfe3a75120ec5857611654ec435a830b3601437056ac10b4",
+        "independence-checker": "sha256:a09ef1f05b56b2a931bac7915e433de78044002b2ddefdf3d36704ca72d1ed3f",
+        "verifier": "sha256:d1ca970ff942ce2993c5e23208439eabe3d7dcc39b6513ab6bf63ae3f2ed3601"
+      },
+      "wallTimeMs": 420296,
+      "sumLoopTimeMs": 4346264,
+      "maxConcurrentLoops": 15,
+      "loops": 55,
+      "failedLoops": 0,
+      "figures": {
+        "proposed": 0,
+        "verified": 178,
+        "contested": 1,
+        "superseded": 63,
+        "needs_user": 0
+      },
+      "unsourcedFigures": 0,
+      "conflicts": {
+        "raised": 1,
+        "resolved": 1,
+        "escalated": 0
+      },
+      "discrepancies": {
+        "E4": 1,
+        "E9": 1,
+        "E3": 1,
+        "E8": 1
+      },
+      "rejections": {
+        "UNSOURCED": 0,
+        "SOURCE_MISMATCH": 0,
+        "DERIVATION_MISMATCH": 0,
+        "NOT_SUPPORTED_BY_SOURCE": 1,
+        "IMPLAUSIBLE": 0
+      },
+      "vetoedWrites": 0,
+      "tokens": {
+        "in": 54922,
+        "out": 5888,
+        "byAgent": {
+          "independence-checker": {
+            "in": 5251,
+            "out": 682
+          },
+          "kpo-reader": {
+            "in": 1471,
+            "out": 270
+          },
+          "statement-reader": {
+            "in": 3079,
+            "out": 476
+          },
+          "invoice-reader": {
+            "in": 29710,
+            "out": 2584
+          },
+          "verifier": {
+            "in": 15411,
+            "out": 1876
+          }
+        }
+      },
+      "headroom": {
+        "asOf": "2026-11-26",
+        "limit6m": {
+          "committed": {
+            "display": "4.421.382,61 RSD",
+            "amount": "4421382.61",
+            "figureId": "f000209"
+          },
+          "withDraft": {
+            "display": "6.103.680,37 RSD",
+            "amount": "6103680.37",
+            "figureId": "f000210"
+          },
+          "headroomWithDraft": {
+            "display": "-103.680,37 RSD",
+            "amount": "-103680.37",
+            "figureId": "f000212"
+          },
+          "limit": {
+            "display": "6.000.000,00 RSD",
+            "amount": "6000000.00",
+            "ruleId": "R-LIMIT-6M"
+          },
+          "ratioWithDraft": {
+            "display": "101,7%",
+            "value": "1.017280",
+            "figureId": "f000213"
+          },
+          "band": "crossed",
+          "consequenceRuleId": "R-LIMIT-6M-CONSEQUENCE"
+        },
+        "vat8m": {
+          "committed": {
+            "display": "1.889.926,00 RSD",
+            "amount": "1889926",
+            "figureId": "f000237"
+          },
+          "withDraft": {
+            "display": "1.889.926,00 RSD",
+            "amount": "1889926",
+            "figureId": "f000238"
+          },
+          "headroomWithDraft": {
+            "display": "6.110.074,00 RSD",
+            "amount": "6110074",
+            "figureId": "f000240"
+          },
+          "threshold": {
+            "display": "8.000.000,00 RSD",
+            "amount": "8000000.00",
+            "ruleId": "R-VAT-8M"
+          },
+          "band": "green",
+          "assumptionRuleIds": [
+            "R-VAT-8M-BASIS"
+          ]
+        },
+        "independence": [
+          {
+            "clientId": "heron",
+            "clientName": "Heron Systems GmbH",
+            "met": 4,
+            "notMet": 3,
+            "unknown": 2,
+            "status": "at_risk",
+            "statusFigureId": "f000001",
+            "share12mWithDraft": {
+              "display": "59,6%",
+              "value": "0.595829",
+              "figureId": "f000221",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "osprey",
+            "clientName": "Osprey Labs Inc.",
+            "met": 0,
+            "notMet": 7,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000115",
+            "share12mWithDraft": {
+              "display": "14,6%",
+              "value": "0.146458",
+              "figureId": "f000224",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "bor",
+            "clientName": "Bor Studio d.o.o.",
+            "met": 0,
+            "notMet": 6,
+            "unknown": 3,
+            "status": "passes",
+            "statusFigureId": "f000160",
+            "share12mWithDraft": {
+              "display": "25,8%",
+              "value": "0.257713",
+              "figureId": "f000226",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          }
+        ],
+        "draft": {
+          "amount": {
+            "display": "14.300,00 EUR",
+            "amount": "14300.00",
+            "currency": "EUR",
+            "figureId": "f000004"
+          },
+          "amountRSD": {
+            "display": "1.682.297,76 RSD",
+            "amount": "1682297.76",
+            "figureId": "f000009"
+          }
+        },
+        "assumptionRuleIds": [
+          "R-FX-DATE",
+          "R-FX-NONPUB",
+          "R-FX-ROUNDING",
+          "R-INDEP-C6-BASIS",
+          "R-INDEP-WHO-FILES",
+          "R-KPO-DATE",
+          "R-PAYMENT-NO-INVOICE",
+          "R-NUMBERING",
+          "R-LIMIT-6M-BASIS",
+          "R-VAT-8M-BASIS"
+        ],
+        "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+      },
+      "openQuestions": 6,
+      "participantErrors": 0,
+      "status": "awaiting_user"
+    },
+    "found": [
+      "E4:invoice:2026-007",
+      "E9:invoice:2026-006",
+      "E3:invoice:2026-005",
+      "E8:"
+    ],
+    "planted": [
+      "E3:invoice:2026-005",
+      "E4:invoice:2026-007",
+      "E8:",
+      "E9:invoice:2026-006"
+    ],
+    "checked": 27,
+    "correct": 27,
+    "wrongVerified": [],
+    "contested": 0,
+    "contestedWrong": 0,
+    "headroomCorrect": true,
+    "headroom": "6103680.37|1889926",
+    "emergent": [
+      "E4:invoice:2026-007"
+    ],
+    "models": {
+      "reader": "gemini-3.5-flash-lite",
+      "verifier": "gemini-3.5-flash-lite"
+    },
+    "failedLoops": [],
+    "commit": "78f16f1"
+  },
+  {
+    "profileId": "p06",
+    "run": 1,
+    "summary": {
+      "runId": "eval-p06-1",
+      "profileId": "p06",
+      "mode": "live",
+      "mozaik": {
+        "package": "@mozaik-ai/core",
+        "version": "6.0.0"
+      },
+      "models": {
+        "reader": "gemini-3.5-flash-lite",
+        "verifier": "gemini-3.5-flash-lite"
+      },
+      "promptHashes": {
+        "invoice-reader": "sha256:7e924e6a4bb462413d8984c86e0451a624f0c63f6e00ef66a8c662015a21ab3b",
+        "statement-reader": "sha256:b2a8f88d66657728f10aaefd346ff0d9417c9c308400d7debbca704f0442867d",
+        "kpo-reader": "sha256:4d4e7083ec6da956dfe3a75120ec5857611654ec435a830b3601437056ac10b4",
+        "independence-checker": "sha256:a09ef1f05b56b2a931bac7915e433de78044002b2ddefdf3d36704ca72d1ed3f",
+        "verifier": "sha256:d1ca970ff942ce2993c5e23208439eabe3d7dcc39b6513ab6bf63ae3f2ed3601"
+      },
+      "wallTimeMs": 536830,
+      "sumLoopTimeMs": 5305416,
+      "maxConcurrentLoops": 15,
+      "loops": 67,
+      "failedLoops": 0,
+      "figures": {
+        "proposed": 0,
+        "verified": 229,
+        "contested": 1,
+        "superseded": 55,
+        "needs_user": 0
+      },
+      "unsourcedFigures": 0,
+      "conflicts": {
+        "raised": 1,
+        "resolved": 1,
+        "escalated": 0
+      },
+      "discrepancies": {
+        "E6": 1,
+        "E7": 1
+      },
+      "rejections": {
+        "UNSOURCED": 0,
+        "SOURCE_MISMATCH": 0,
+        "DERIVATION_MISMATCH": 0,
+        "NOT_SUPPORTED_BY_SOURCE": 1,
+        "IMPLAUSIBLE": 0
+      },
+      "vetoedWrites": 0,
+      "tokens": {
+        "in": 71859,
+        "out": 7819,
+        "byAgent": {
+          "independence-checker": {
+            "in": 5263,
+            "out": 682
+          },
+          "kpo-reader": {
+            "in": 2099,
+            "out": 467
+          },
+          "statement-reader": {
+            "in": 3974,
+            "out": 667
+          },
+          "invoice-reader": {
+            "in": 41984,
+            "out": 3682
+          },
+          "verifier": {
+            "in": 18539,
+            "out": 2321
+          }
+        }
+      },
+      "headroom": {
+        "asOf": "2026-11-26",
+        "limit6m": {
+          "committed": {
+            "display": "3.596.042,77 RSD",
+            "amount": "3596042.77",
+            "figureId": "f000223"
+          },
+          "withDraft": {
+            "display": "4.096.026,37 RSD",
+            "amount": "4096026.37",
+            "figureId": "f000224"
+          },
+          "headroomWithDraft": {
+            "display": "1.903.973,63 RSD",
+            "amount": "1903973.63",
+            "figureId": "f000226"
+          },
+          "limit": {
+            "display": "6.000.000,00 RSD",
+            "amount": "6000000.00",
+            "ruleId": "R-LIMIT-6M"
+          },
+          "ratioWithDraft": {
+            "display": "68,3%",
+            "value": "0.682671",
+            "figureId": "f000227"
+          },
+          "band": "green"
+        },
+        "vat8m": {
+          "committed": {
+            "display": "1.500.000,00 RSD",
+            "amount": "1500000",
+            "figureId": "f000281"
+          },
+          "withDraft": {
+            "display": "1.500.000,00 RSD",
+            "amount": "1500000",
+            "figureId": "f000282"
+          },
+          "headroomWithDraft": {
+            "display": "6.500.000,00 RSD",
+            "amount": "6500000",
+            "figureId": "f000284"
+          },
+          "threshold": {
+            "display": "8.000.000,00 RSD",
+            "amount": "8000000.00",
+            "ruleId": "R-VAT-8M"
+          },
+          "band": "green",
+          "assumptionRuleIds": [
+            "R-VAT-8M-BASIS"
+          ]
+        },
+        "independence": [
+          {
+            "clientId": "linden",
+            "clientName": "Linden Works B.V.",
+            "met": 4,
+            "notMet": 3,
+            "unknown": 2,
+            "status": "at_risk",
+            "statusFigureId": "f000274",
+            "share12mWithDraft": {
+              "display": "37,2%",
+              "value": "0.371587",
+              "figureId": "f000268",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "heron",
+            "clientName": "Heron Systems GmbH",
+            "met": 1,
+            "notMet": 6,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000138",
+            "share12mWithDraft": {
+              "display": "27,8%",
+              "value": "0.278194",
+              "figureId": "f000271",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "hrast",
+            "clientName": "Hrast Sistemi d.o.o.",
+            "met": 1,
+            "notMet": 5,
+            "unknown": 3,
+            "status": "passes",
+            "statusFigureId": "f000222",
+            "share12mWithDraft": {
+              "display": "35,0%",
+              "value": "0.350220",
+              "figureId": "f000273",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          }
+        ],
+        "draft": {
+          "amount": {
+            "display": "4.250,00 EUR",
+            "amount": "4250.00",
+            "currency": "EUR",
+            "figureId": "f000004"
+          },
+          "amountRSD": {
+            "display": "499.983,60 RSD",
+            "amount": "499983.60",
+            "figureId": "f000019"
+          }
+        },
+        "assumptionRuleIds": [
+          "R-FX-DATE",
+          "R-FX-NONPUB",
+          "R-FX-ROUNDING",
+          "R-INDEP-C6-BASIS",
+          "R-INDEP-WHO-FILES",
+          "R-KPO-DATE",
+          "R-PAYMENT-NO-INVOICE",
+          "R-NUMBERING",
+          "R-LIMIT-6M-BASIS",
+          "R-VAT-8M-BASIS"
+        ],
+        "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+      },
+      "openQuestions": 6,
+      "participantErrors": 0,
+      "status": "awaiting_user"
+    },
+    "found": [
+      "E6:invoice:2026-007",
+      "E7:invoice:2025-062"
+    ],
+    "planted": [
+      "E6:invoice:2026-007",
+      "E7:invoice:2025-062"
+    ],
+    "checked": 39,
+    "correct": 39,
+    "wrongVerified": [],
+    "contested": 0,
+    "contestedWrong": 0,
+    "headroomCorrect": true,
+    "headroom": "4096026.37|1500000",
+    "emergent": [
+      "E7:invoice:2025-062"
+    ],
+    "models": {
+      "reader": "gemini-3.5-flash-lite",
+      "verifier": "gemini-3.5-flash-lite"
+    },
+    "failedLoops": [],
+    "commit": "78f16f1"
+  },
+  {
+    "profileId": "p07",
+    "run": 2,
+    "summary": {
+      "runId": "eval-p07-2",
+      "profileId": "p07",
+      "mode": "live",
+      "mozaik": {
+        "package": "@mozaik-ai/core",
+        "version": "6.0.0"
+      },
+      "models": {
+        "reader": "gemini-3.5-flash-lite",
+        "verifier": "gemini-3.5-flash-lite"
+      },
+      "promptHashes": {
+        "invoice-reader": "sha256:7e924e6a4bb462413d8984c86e0451a624f0c63f6e00ef66a8c662015a21ab3b",
+        "statement-reader": "sha256:b2a8f88d66657728f10aaefd346ff0d9417c9c308400d7debbca704f0442867d",
+        "kpo-reader": "sha256:4d4e7083ec6da956dfe3a75120ec5857611654ec435a830b3601437056ac10b4",
+        "independence-checker": "sha256:a09ef1f05b56b2a931bac7915e433de78044002b2ddefdf3d36704ca72d1ed3f",
+        "verifier": "sha256:d1ca970ff942ce2993c5e23208439eabe3d7dcc39b6513ab6bf63ae3f2ed3601"
+      },
+      "wallTimeMs": 482168,
+      "sumLoopTimeMs": 5203147,
+      "maxConcurrentLoops": 15,
+      "loops": 64,
+      "failedLoops": 0,
+      "figures": {
+        "proposed": 0,
+        "verified": 215,
+        "contested": 1,
+        "superseded": 26,
+        "needs_user": 0
+      },
+      "unsourcedFigures": 0,
+      "conflicts": {
+        "raised": 2,
+        "resolved": 2,
+        "escalated": 0
+      },
+      "discrepancies": {
+        "E2": 1,
+        "E5": 1,
+        "E9": 1,
+        "E1": 1,
+        "E3": 1
+      },
+      "rejections": {
+        "UNSOURCED": 0,
+        "SOURCE_MISMATCH": 0,
+        "DERIVATION_MISMATCH": 0,
+        "NOT_SUPPORTED_BY_SOURCE": 1,
+        "IMPLAUSIBLE": 0
+      },
+      "vetoedWrites": 0,
+      "tokens": {
+        "in": 64203,
+        "out": 6934,
+        "byAgent": {
+          "independence-checker": {
+            "in": 5277,
+            "out": 690
+          },
+          "kpo-reader": {
+            "in": 1681,
+            "out": 375
+          },
+          "statement-reader": {
+            "in": 3652,
+            "out": 602
+          },
+          "invoice-reader": {
+            "in": 35527,
+            "out": 3039
+          },
+          "verifier": {
+            "in": 18066,
+            "out": 2228
+          }
+        }
+      },
+      "headroom": {
+        "asOf": "2026-11-26",
+        "limit6m": {
+          "committed": {
+            "display": "4.789.841,85 RSD",
+            "amount": "4789841.85",
+            "figureId": "f000236"
+          },
+          "withDraft": {
+            "display": "5.795.691,21 RSD",
+            "amount": "5795691.21",
+            "figureId": "f000237"
+          },
+          "headroomWithDraft": {
+            "display": "204.308,79 RSD",
+            "amount": "204308.79",
+            "figureId": "f000239"
+          },
+          "limit": {
+            "display": "6.000.000,00 RSD",
+            "amount": "6000000.00",
+            "ruleId": "R-LIMIT-6M"
+          },
+          "ratioWithDraft": {
+            "display": "96,6%",
+            "value": "0.965949",
+            "figureId": "f000240"
+          },
+          "band": "red"
+        },
+        "vat8m": {
+          "committed": {
+            "display": "369.704,79 RSD",
+            "amount": "369704.79",
+            "figureId": "f000216"
+          },
+          "withDraft": {
+            "display": "369.704,79 RSD",
+            "amount": "369704.79",
+            "figureId": "f000217"
+          },
+          "headroomWithDraft": {
+            "display": "7.630.295,21 RSD",
+            "amount": "7630295.21",
+            "figureId": "f000219"
+          },
+          "threshold": {
+            "display": "8.000.000,00 RSD",
+            "amount": "8000000.00",
+            "ruleId": "R-VAT-8M"
+          },
+          "band": "green",
+          "assumptionRuleIds": [
+            "R-VAT-8M-BASIS"
+          ]
+        },
+        "independence": [
+          {
+            "clientId": "heron",
+            "clientName": "Heron Systems GmbH",
+            "met": 2,
+            "notMet": 5,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000163",
+            "share12mWithDraft": {
+              "display": "100,0%",
+              "value": "1.000000",
+              "figureId": "f000157",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "larkspur",
+            "clientName": "Larkspur Data B.V.",
+            "met": 2,
+            "notMet": 5,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000209",
+            "share12mWithDraft": {
+              "display": "0,0%",
+              "value": "0.000000",
+              "figureId": "f000159",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          },
+          {
+            "clientId": "bor",
+            "clientName": "Bor Studio d.o.o.",
+            "met": 2,
+            "notMet": 5,
+            "unknown": 2,
+            "status": "passes",
+            "statusFigureId": "f000210",
+            "share12mWithDraft": {
+              "display": "0,0%",
+              "value": "0.000000",
+              "figureId": "f000161",
+              "window": {
+                "from": "2025-12-01",
+                "to": "2026-11-30"
+              }
+            }
+          }
+        ],
+        "draft": {
+          "amount": {
+            "display": "8.550,00 EUR",
+            "amount": "8550.00",
+            "currency": "EUR",
+            "figureId": "f000004"
+          },
+          "amountRSD": {
+            "display": "1.005.849,36 RSD",
+            "amount": "1005849.36",
+            "figureId": "f000019"
+          }
+        },
+        "assumptionRuleIds": [
+          "R-FX-DATE",
+          "R-FX-NONPUB",
+          "R-FX-ROUNDING",
+          "R-INDEP-C6-BASIS",
+          "R-INDEP-WHO-FILES",
+          "R-KPO-DATE",
+          "R-PAYMENT-NO-INVOICE",
+          "R-NUMBERING",
+          "R-LIMIT-6M-BASIS",
+          "R-VAT-8M-BASIS"
+        ],
+        "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+      },
+      "openQuestions": 6,
+      "participantErrors": 0,
+      "status": "awaiting_user"
+    },
+    "found": [
+      "E2:invoice:2026-001",
+      "E5:invoice:2026-003",
+      "E9:invoice:2026-002",
+      "E1:payment:S1-12",
+      "E3:invoice:2026-010"
+    ],
+    "planted": [
+      "E1:payment:S1-12",
+      "E2:invoice:2026-001",
+      "E3:invoice:2026-010",
+      "E5:invoice:2026-003",
+      "E9:invoice:2026-002"
+    ],
+    "checked": 33,
+    "correct": 33,
+    "wrongVerified": [],
+    "contested": 0,
+    "contestedWrong": 0,
+    "headroomCorrect": true,
+    "headroom": "5795691.21|369704.79",
+    "emergent": [
+      "E2:invoice:2026-001",
+      "E5:invoice:2026-003"
+    ],
+    "models": {
+      "reader": "gemini-3.5-flash-lite",
+      "verifier": "gemini-3.5-flash-lite"
+    },
+    "failedLoops": [],
+    "commit": "78f16f1"
   }
 ]
