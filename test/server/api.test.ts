@@ -154,6 +154,24 @@ describe('API basics and errors', () => {
   });
 });
 
+describe('frontend on another origin', () => {
+  it('answers only the allowed origin, including preflight', async () => {
+    const { app: a } = await app({ corsOrigins: ['https://web.example.app'] });
+    const ok = await a.inject({ url: '/api/health', headers: { origin: 'https://web.example.app' } });
+    expect(ok.headers['access-control-allow-origin']).toBe('https://web.example.app');
+    const pre = await a.inject({
+      method: 'OPTIONS',
+      url: '/api/runs',
+      headers: { origin: 'https://web.example.app', 'access-control-request-method': 'POST' },
+    });
+    expect(pre.statusCode).toBe(204);
+    expect(pre.headers['access-control-allow-methods']).toContain('POST');
+    const other = await a.inject({ url: '/api/health', headers: { origin: 'https://evil.example' } });
+    expect(other.headers['access-control-allow-origin']).toBeUndefined();
+    await a.close();
+  });
+});
+
 describe('public sample instance', () => {
   it('refuses every upload route and says so in health', async () => {
     const { app: a } = await app({ offline: true, hasModelKey: false, publicDemo: true });

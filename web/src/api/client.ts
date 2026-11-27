@@ -1,4 +1,5 @@
 import type { ApiErrorBody } from './types.ts';
+import { apiUrl } from './base.ts';
 
 export class ApiError extends Error {
   constructor(
@@ -37,12 +38,12 @@ async function parse<T>(res: Response): Promise<T> {
 }
 
 export async function getJson<T>(url: string): Promise<T> {
-  return parse<T>(await fetch(url, { headers: { accept: 'application/json' } }));
+  return parse<T>(await fetch(apiUrl(url), { headers: { accept: 'application/json' } }));
 }
 
 export async function postJson<T>(url: string, body: unknown): Promise<T> {
   return parse<T>(
-    await fetch(url, {
+    await fetch(apiUrl(url), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
@@ -51,10 +52,10 @@ export async function postJson<T>(url: string, body: unknown): Promise<T> {
 }
 
 export async function postForm<T>(url: string, form: FormData): Promise<T> {
-  return parse<T>(await fetch(url, { method: 'POST', body: form }));
+  return parse<T>(await fetch(apiUrl(url), { method: 'POST', body: form }));
 }
 
 export async function del(url: string): Promise<void> {
-  const res = await fetch(url, { method: 'DELETE' });
+  const res = await fetch(apiUrl(url), { method: 'DELETE' });
   if (!res.ok && res.status !== 204) await parse(res);
 }

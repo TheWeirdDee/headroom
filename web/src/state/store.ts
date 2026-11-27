@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
 import { emptyView, reduce, type Action, type RunView } from './reducer.ts';
 import { getJson, ApiError } from '../api/client.ts';
+import { apiUrl } from '../api/base.ts';
 import type { HrEvent, Snapshot } from '../api/types.ts';
 
 interface RunStore {
@@ -44,7 +45,7 @@ export function useRunConnection(runId: string): void {
     };
     void load().then(() => {
       if (closed) return;
-      source = new EventSource(`/api/runs/${runId}/stream`);
+      source = new EventSource(apiUrl(`/api/runs/${runId}/stream`));
       source.addEventListener('open', () => store.setState({ connected: true }));
       source.addEventListener('error', () => store.setState({ connected: false }));
       source.addEventListener('gap', () => void load());

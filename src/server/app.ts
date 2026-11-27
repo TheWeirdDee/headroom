@@ -84,6 +84,24 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     return r.data;
   };
 
+  // A frontend hosted on another origin (HEADROOM_CORS_ORIGINS) may call the API; nobody else.
+  const corsOrigins = new Set(d.env.corsOrigins ?? []);
+  const allowedOrigin = (o: unknown): string | undefined =>
+    typeof o === 'string' && corsOrigins.has(o) ? o : undefined;
+  if (corsOrigins.size > 0)
+    app.addHook('onRequest', async (req, reply) => {
+      const origin = allowedOrigin(req.headers.origin);
+      if (!origin) return;
+      reply.header('access-control-allow-origin', origin).header('vary', 'Origin');
+      if (req.method === 'OPTIONS')
+        return reply
+          .status(204)
+          .header('access-control-allow-methods', 'GET, POST, DELETE')
+          .header('access-control-allow-headers', 'content-type, last-event-id')
+          .header('access-control-max-age', '600')
+          .send();
+    });
+
   // A public sample instance takes no files: only the bundled synthetic samples run there.
   if (d.env.publicDemo)
     app.addHook('onRequest', async (req, reply) => {
@@ -176,6 +194,12 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
     const raw = req.headers['last-event-id'];
     const last = typeof raw === 'string' && /^\d+$/.test(raw) ? Number.parseInt(raw, 10) : undefined;
     reply.hijack();
+    // The stream writes its own headers, so the CORS header is set on the raw response first.
+    const origin = allowedOrigin(req.headers.origin);
+    if (origin) {
+      reply.raw.setHeader('access-control-allow-origin', origin);
+      reply.raw.setHeader('vary', 'Origin');
+    }
     r.hub.attach(reply.raw, last);
   });
 

@@ -15,3 +15,6 @@ services:
         value: 0.0.0.0
       - key: HEADROOM_PUBLIC_DEMO
         value: '1'
+      # The static frontend hosted on Vercel calls this server; list its origin(s), comma-separated.
+      - key: HEADROOM_CORS_ORIGINS
+        value: https://web-1c17.vercel.app

@@ -20,6 +20,8 @@ export interface AppEnv {
   publicDemo?: boolean;
   /** Address to listen on (HOST); 127.0.0.1 unless a host platform needs 0.0.0.0. */
   host?: string;
+  /** Web origins allowed to call the API from another host (HEADROOM_CORS_ORIGINS, comma-separated). */
+  corsOrigins?: string[];
 }
 
 export class EnvError extends Error {
@@ -80,5 +82,9 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
     root,
     publicDemo,
     host: (process.env['HOST'] ?? '').trim() || '127.0.0.1',
+    corsOrigins: (process.env['HEADROOM_CORS_ORIGINS'] ?? '')
+      .split(',')
+      .map((o) => o.trim().replace(/\/+$/, ''))
+      .filter((o) => /^https?:\/\/[^/\s]+$/.test(o)),
   };
 }

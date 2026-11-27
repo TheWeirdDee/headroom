@@ -1,4 +1,5 @@
 // Run screen (PRD 15.2): lanes, Figure Board, Headroom card, discrepancies and questions, timeline.
+import { apiUrl } from '../api/base.ts';
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { BookOpen, CircleAlert, Download, FileWarning, Pencil, X } from 'lucide-react';
@@ -118,7 +119,7 @@ export function Run() {
             <BookOpen size={14} aria-hidden /> KPO book
           </Link>
           <a
-            href={`/api/runs/${runId}/export/report.json`}
+            href={apiUrl(`/api/runs/${runId}/export/report.json`)}
             className="inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm hover:border-muted"
           >
             <Download size={14} aria-hidden /> Report

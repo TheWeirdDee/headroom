@@ -1,4 +1,5 @@
 // KPO book (PRD 15.2 screen 3): the corrected book from verified figures, with the correction log beside it.
+import { apiUrl } from '../api/base.ts';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, Download } from 'lucide-react';
@@ -33,16 +34,16 @@ export function Kpo() {
             <ArrowLeft size={14} aria-hidden /> Back to the run
           </Link>
           <h1 className="mr-auto text-xl font-semibold">KPO book{data ? ` ${data.book.year}` : ''}</h1>
-          <a className={btn} href={`/api/runs/${runId}/export/kpo.csv`}>
+          <a className={btn} href={apiUrl(`/api/runs/${runId}/export/kpo.csv`)}>
             <Download size={14} aria-hidden /> CSV
           </a>
-          <a className={btn} href={`/api/runs/${runId}/export/kpo.csv?locale=sr`}>
+          <a className={btn} href={apiUrl(`/api/runs/${runId}/export/kpo.csv?locale=sr`)}>
             <Download size={14} aria-hidden /> CSV (sr decimal comma)
           </a>
-          <a className={btn} href={`/api/runs/${runId}/export/kpo.pdf`}>
+          <a className={btn} href={apiUrl(`/api/runs/${runId}/export/kpo.pdf`)}>
             <Download size={14} aria-hidden /> PDF
           </a>
-          <a className={btn} href={`/api/runs/${runId}/export/kpo_corrections.csv`}>
+          <a className={btn} href={apiUrl(`/api/runs/${runId}/export/kpo_corrections.csv`)}>
             <Download size={14} aria-hidden /> Corrections CSV
           </a>
         </div>
