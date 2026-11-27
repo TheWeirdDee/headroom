@@ -1,6 +1,6 @@
 import type { RunConfig } from '../domain/types.ts';
 
-/** Model ids must be in the @mozaik-ai/core 6.0.0 supportedModels list (RESEARCH_NOTES V4). */
+/** Model ids must be in the @mozaik-ai/core 6.0.0 supportedModels list. */
 // Gemini by default: it has a free tier. Any other supported model can be set in .env.
 export const DEFAULT_MODELS = { reader: 'gemini-3.5-flash-lite', verifier: 'gemini-3.5-flash-lite' } as const;
 

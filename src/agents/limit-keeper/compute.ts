@@ -1,5 +1,5 @@
 // The totals LimitKeeper proposes, as a pure function of verified figures. The Verifier calls the same
-// function with the cited input figures to re-derive each total to the cent (PRD 8.6 step 3).
+// function with the cited input figures to re-derive each total to the cent.
 import { add } from '../../domain/money.ts';
 import { yearOf, type DateWindow } from '../../domain/dates.ts';
 import { countsForVat, total6m, total8m, type InvoiceFact, type VatScope } from '../../domain/limits.ts';

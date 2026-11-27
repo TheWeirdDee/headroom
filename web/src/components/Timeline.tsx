@@ -1,4 +1,4 @@
-// Concurrency timeline (PRD 15.2): one row per agent, one bar per loop, a live cursor while running.
+// Concurrency timeline: one row per agent, one bar per loop, a live cursor while running.
 import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { AGENT_NAMES, AGENT_ORDER, type RunView } from '../state/reducer.ts';

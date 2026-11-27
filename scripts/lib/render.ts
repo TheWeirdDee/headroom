@@ -1,5 +1,5 @@
 // Renderers for synthetic sample files: invoice PDFs in two layouts ("tool A" in Serbian, "tool B" in
-// English), the bank statement CSV (synthetic format, PRD 12.3) and the KPO book CSV. Deterministic: the
+// English), the bank statement CSV (synthetic format) and the KPO book CSV. Deterministic: the
 // same spec gives the same bytes.
 import PDFDocument from 'pdfkit';
 import { join } from 'node:path';

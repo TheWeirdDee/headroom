@@ -123,7 +123,7 @@ const FENCE_TAGS = /<(\/?)(document|rows|contract|criteria|source|checker_feedba
 
 /**
  * Data placed between fence tags in a prompt cannot close or open a fence: a tag-like sequence in user
- * data gets a space after "<". Document text is data, never instructions (PRD 20.4).
+ * data gets a space after "<". Document text is data, never instructions.
  */
 export function fenceSafe(text: string): string {
   return text.replace(FENCE_TAGS, '< $1$2');

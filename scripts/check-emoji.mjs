@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Fails when any literal emoji code point appears in source, rules, scripts or the README.
-// Standing rule (PRD 15.0): icons come from lucide-react only, never emoji.
+// Standing rule: icons come from lucide-react only, never emoji.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';

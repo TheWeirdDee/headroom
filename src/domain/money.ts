@@ -1,5 +1,5 @@
 // Exact decimal arithmetic for money, rates and ratios. Every amount in Headroom is a DecimalString
-// ("1234.50"); floating point is never used on money (PRD N5, lint rule in eslint.config.js).
+// ("1234.50"); floating point is never used on money (lint rule in eslint.config.js).
 import { Decimal as DecimalBase } from 'decimal.js';
 
 export type DecimalString = string;

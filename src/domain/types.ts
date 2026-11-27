@@ -1,4 +1,4 @@
-// Domain data model (PRD 11). Every Figure carries a non-empty `sources` tuple: "every number has a
+// Domain data model. Every Figure carries a non-empty `sources` tuple: "every number has a
 // source" is enforced by the type system and again at runtime by the Verifier.
 import type { DecimalString, Rounding } from './money.ts';
 import type { IsoDate } from './dates.ts';

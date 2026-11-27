@@ -1,4 +1,4 @@
-// The band on every app screen (PRD 15.1): disclaimer, data label, mode (with the recording's date and
+// The band on every app screen: disclaimer, data label, mode (with the recording's date and
 // models for a replay), and the Verifier's rejections.
 import { ShieldCheck } from 'lucide-react';
 import { useApp } from '../state/app.ts';

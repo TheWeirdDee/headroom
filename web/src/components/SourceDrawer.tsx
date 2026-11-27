@@ -1,4 +1,4 @@
-// Source drawer (PRD 15.3): every figure opens to the exact line, row, URL, rule or answer it came from.
+// Source drawer: every figure opens to the exact line, row, URL, rule or answer it came from.
 // Derived figures list their inputs as chips; clicking one drills down (a stack, with Back).
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowLeft, Copy, ExternalLink, X } from 'lucide-react';

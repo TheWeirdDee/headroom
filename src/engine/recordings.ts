@@ -1,4 +1,4 @@
-// Recording and replay (PRD 14.6): the offline path for bundled samples. A live run of a sample profile
+// Recording and replay: the offline path for bundled samples. A live run of a sample profile
 // writes runs/<runId>/ with every event, every model response keyed by requestHash and every Kurs response.
 // Replay is real Mozaik execution with a custom inference runner that returns the recorded response for
 // each requestHash; a miss fails loudly with REPLAY_MISS and nothing is invented.

@@ -1,4 +1,4 @@
-// One zustand store per open run, fed by the snapshot and then the SSE stream (PRD 15.4). On a gap the
+// One zustand store per open run, fed by the snapshot and then the SSE stream. On a gap the
 // snapshot is fetched again and the stream resumes; the browser's EventSource resends Last-Event-ID.
 import { useEffect } from 'react';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';

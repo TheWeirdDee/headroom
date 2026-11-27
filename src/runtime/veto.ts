@@ -1,4 +1,4 @@
-// Defence in depth (interception veto, PRD 7.2): a submit-tool call in which a reported value has no
+// Defence in depth (interception veto): a submit-tool call in which a reported value has no
 // excerpt is rejected before the tool runs. The tools validate excerpts against the source text too;
 // this check sits in the Mozaik loop itself, between the model's decision and its execution.
 

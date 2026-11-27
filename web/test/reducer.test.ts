@@ -1,4 +1,4 @@
-// The run view is a projection of events (PRD 15.4): replaying a recorded event stream from an empty
+// The run view is a projection of events: replaying a recorded event stream from an empty
 // snapshot must reach the server's final snapshot, and duplicate or stale deliveries change nothing.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';

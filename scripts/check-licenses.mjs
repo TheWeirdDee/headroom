@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Lists production dependency licences and fails on copyleft licences that conflict with MIT
-// distribution (PRD 20.6). Uses license-checker's JSON output.
+// distribution. Uses license-checker's JSON output.
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 

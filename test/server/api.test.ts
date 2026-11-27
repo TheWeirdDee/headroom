@@ -1,4 +1,4 @@
-// HTTP API (PRD 14.2): every route and error code, a full sample run through the API with the
+// HTTP API: every route and error code, a full sample run through the API with the
 // deterministic model, SSE resume, figure sources and the exports.
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, readFileSync, existsSync } from 'node:fs';

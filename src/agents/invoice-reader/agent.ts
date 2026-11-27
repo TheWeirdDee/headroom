@@ -1,4 +1,4 @@
-// InvoiceReader (PRD 8.1): one loop per invoice document (at most INVOICE_READER_CONCURRENCY at a time).
+// InvoiceReader: one loop per invoice document (at most INVOICE_READER_CONCURRENCY at a time).
 // The model reads; code checks every excerpt against the extracted text, normalises values and posts
 // figures on the shared invoice keys with document sources.
 import { createAgent } from '@mozaik-ai/core';

@@ -1,4 +1,4 @@
-// The human participant (PRD 8.7): the draft invoice, answers to questions and what-if draft changes.
+// The human participant: the draft invoice, answers to questions and what-if draft changes.
 // Answers and draft fields become figures sourced to user_answer.
 import { createHuman } from '@mozaik-ai/core';
 import { EventIs } from './situations.ts';

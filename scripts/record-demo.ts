@@ -1,5 +1,5 @@
 // npm run record-demo [profileId]: records a live run of a bundled sample with the real model into
-// runs/demo-<profileId>/, the offline demo (PRD 14.6). Needs the model key in .env (GEMINI_API_KEY by default) and network access
+// runs/demo-<profileId>/, the offline demo. Needs the model key in .env (GEMINI_API_KEY by default) and network access
 // to the model provider and the Kurs API. The previous recording is kept until the new one completes.
 import { existsSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { join } from 'node:path';

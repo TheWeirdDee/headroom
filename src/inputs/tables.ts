@@ -1,6 +1,6 @@
 // CSV statements and KPO books: decoding, column mapping and row parsing by code (no model). Every row
 // keeps its raw line, which becomes the statement_row / kpo_row SourceRef. Unparseable rows are listed
-// with file and line and left out, never guessed (PRD 12.6).
+// with file and line and left out, never guessed.
 import { parse } from 'csv-parse/sync';
 import iconv from 'iconv-lite';
 import { z } from 'zod';

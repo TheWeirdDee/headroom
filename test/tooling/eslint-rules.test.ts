@@ -8,7 +8,7 @@ async function messages(filePath: string, code: string): Promise<string[]> {
   return (result?.messages ?? []).map((m) => m.message);
 }
 
-describe('custom lint rules (PRD 17.4)', () => {
+describe('custom lint rules', () => {
   it('forbids Number() and parseFloat() in src/domain', async () => {
     const msgs = await messages(
       'src/domain/bad.ts',

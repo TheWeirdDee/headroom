@@ -4,7 +4,7 @@ import globals from 'globals';
 
 const TRUTH_PATH = {
   selector: 'Literal[value=/_truth/]',
-  message: 'Ground truth (_truth/) may only be read by scripts/eval.ts and tests (PRD 17.4, 20.3).',
+  message: 'Ground truth (_truth/) may only be read by scripts/eval.ts and tests.',
 };
 const TRUTH_TEMPLATE = {
   selector: 'TemplateElement[value.raw=/_truth/]',
@@ -55,16 +55,16 @@ const NO_FLOAT_PARSE = [
 const SYNC_ONLY = [
   {
     selector: 'AwaitExpression',
-    message: 'Claim store methods are synchronous so board mutations are atomic (PRD 6.2, 9.1).',
+    message: 'Claim store methods are synchronous so board mutations are atomic.',
   },
   {
     selector:
       'FunctionDeclaration[async=true], FunctionExpression[async=true], ArrowFunctionExpression[async=true]',
-    message: 'No async functions in packages/claims/src (PRD 9.1).',
+    message: 'No async functions in packages/claims/src.',
   },
   {
     selector: "MemberExpression[property.name='then']",
-    message: 'No promise chains in packages/claims/src (PRD 9.1).',
+    message: 'No promise chains in packages/claims/src.',
   },
 ];
 
@@ -97,7 +97,7 @@ export default tseslint.config(
     },
   },
   {
-    // The browser app: browser globals; it computes nothing (PRD 15.4), so the domain rules do not apply.
+    // The browser app: browser globals; it computes nothing, so the domain rules do not apply.
     files: ['web/src/**/*.{ts,tsx}'],
     languageOptions: { globals: { ...globals.browser } },
   },

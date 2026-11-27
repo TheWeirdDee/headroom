@@ -1,4 +1,4 @@
-// The single board.onChange subscriber that turns claim changes into hr.figure.* events (PRD 9.3).
+// The single board.onChange subscriber that turns claim changes into hr.figure.* events.
 // Domain code never publishes figure events directly.
 import type { ClaimEvent } from '@headroom/claims';
 import type { HeadroomState } from './state.ts';

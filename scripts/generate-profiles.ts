@@ -1,4 +1,4 @@
-// Generates the bundled synthetic profiles (PRD 12) from scripts/profile-seeds.json with a seeded random
+// Generates the bundled synthetic profiles from scripts/profile-seeds.json with a seeded random
 // generator: same seed, same files. NBS rates come from the Kurs API through the product's own client and
 // are recorded in data/rates/kurs.json, so later runs work offline. Run: npm run generate:data
 // (add --fetch to allow fetching rates that are not recorded yet).

@@ -1,4 +1,4 @@
-// Verifier step 3 (PRD 8.6): re-derive a derived figure from its cited input figures, to the cent, with
+// Verifier step 3: re-derive a derived figure from its cited input figures, to the cent, with
 // the same pure functions the producers use. Inputs must be verified first; otherwise the check waits.
 import { parseKey } from '../../domain/keys.ts';
 import { convertToRsd } from '../../domain/fx.ts';

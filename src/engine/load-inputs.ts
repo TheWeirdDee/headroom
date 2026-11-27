@@ -1,6 +1,6 @@
 // Load an input set from a folder. Bundled samples and user uploads take this same path: profile.json,
 // clients.json, draft.json, mapping.json (column mappings per CSV), invoices/*.pdf, statement CSV(s) and
-// the KPO book. Ground truth (_truth/) is never read here (PRD 20.3).
+// the KPO book. Ground truth (_truth/) is never read here.
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';

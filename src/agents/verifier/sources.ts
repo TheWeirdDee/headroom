@@ -1,4 +1,4 @@
-// Verifier steps 1 and 2 (PRD 8.6): every source resolves against the run's inputs, and its integrity
+// Verifier steps 1 and 2: every source resolves against the run's inputs, and its integrity
 // hash recomputes. Code only.
 import { sha256 } from '../../util/hash.ts';
 import type { Figure, SourceRef } from '../../domain/types.ts';

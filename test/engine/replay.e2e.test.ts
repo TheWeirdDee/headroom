@@ -1,4 +1,4 @@
-// Replay determinism (PRD N4, 14.6): a recorded run of p07, replayed 10 times through real Mozaik loops,
+// Replay determinism: a recorded run of p07, replayed 10 times through real Mozaik loops,
 // reaches the same board every time (keys, values, statuses, sources), and a missing response fails loudly
 // with REPLAY_MISS instead of inventing anything. The recording is made here with the deterministic test
 // model; the shipped demo recording is made the same way with a real model (npm run record-demo).

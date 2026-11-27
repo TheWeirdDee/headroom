@@ -1,4 +1,4 @@
-// The Figure Board (PRD 15.2): a windowed table of every figure, filterable, newest status flashes.
+// The Figure Board: a windowed table of every figure, filterable, newest status flashes.
 import { useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
 import { AGENT_NAMES, type RunView } from '../state/reducer.ts';

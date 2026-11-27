@@ -1,4 +1,4 @@
-// Fixed copy blocks (PRD 26). Used by the card, exports, the API and the README.
+// Fixed copy blocks. Used by the card, exports, the API and the README.
 export const DISCLAIMER =
   'Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act.';
 

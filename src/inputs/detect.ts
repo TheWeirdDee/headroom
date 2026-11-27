@@ -1,4 +1,4 @@
-// Intake detection (PRD 12.6), code only: file kind, encoding, delimiter, header row, column guesses,
+// Intake detection, code only: file kind, encoding, delimiter, header row, column guesses,
 // decimal separator and date format. A guess is only a starting point for the mapping dialog; anything not
 // recognised with confidence is left for the user to map.
 import {

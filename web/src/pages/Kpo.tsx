@@ -1,4 +1,4 @@
-// KPO book (PRD 15.2 screen 3): the corrected book from verified figures, with the correction log beside it.
+// KPO book: the corrected book from verified figures, with the correction log beside it.
 import { apiUrl } from '../api/base.ts';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';

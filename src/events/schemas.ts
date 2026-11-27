@@ -1,4 +1,4 @@
-// Event catalogue (PRD 10). Every hr.* event payload has a schema; the run engine validates events it
+// Event catalogue. Every hr.* event payload has a schema; the run engine validates events it
 // produces in tests, and the UI reducer relies on these shapes.
 import { z } from 'zod';
 

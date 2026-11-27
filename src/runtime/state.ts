@@ -192,7 +192,7 @@ export class HeadroomState extends RuntimeState {
     return f;
   }
 
-  /** The verified figure for a key, if any. Only verified figures count (PRD F4). */
+  /** The verified figure for a key, if any. Only verified figures count. */
   verified(key: string): Figure | undefined {
     const r = this.board.get(key);
     return r && r.status === 'verified' ? this.figures.get(r.id) : undefined;

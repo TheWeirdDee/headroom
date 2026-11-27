@@ -1,4 +1,4 @@
-// Quiescence detector (PRD 14.4). A run is complete when, continuously for `quietMs`: no loop runs, no
+// Quiescence detector. A run is complete when, continuously for `quietMs`: no loop runs, no
 // mailbox has queued or running work, no figure is `proposed`, and no outbound HTTP request is pending.
 // Open needs_user questions do not block completion.
 

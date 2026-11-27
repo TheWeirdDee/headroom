@@ -1,4 +1,4 @@
-// RateClerk (PRD 8.3, deterministic). When an invoice's currency, date and amount are verified it fetches
+// RateClerk (deterministic). When an invoice's currency, date and amount are verified it fetches
 // the NBS middle rate (R-FX, R-FX-DATE, R-FX-NONPUB), proposes fx:<CUR>:<date> and invoice:<n>:amountRSD
 // with a derivation. On its own initiative it raises E5 when the KPO book's RSD amount for a foreign
 // invoice implies a different rate. Rates are never guessed: if Kurs cannot answer, it asks the user.

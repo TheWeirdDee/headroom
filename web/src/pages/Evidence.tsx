@@ -1,4 +1,4 @@
-// Evidence (PRD 15.2 screen 4): the evaluation table written by npm run eval. Nothing is shown until it exists.
+// Evidence: the evaluation table written by npm run eval. Nothing is shown until it exists.
 import { useEffect, useState } from 'react';
 import { CircleCheck, CircleAlert } from 'lucide-react';
 import { getJson, ApiError } from '../api/client.ts';

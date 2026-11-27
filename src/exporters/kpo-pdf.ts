@@ -1,4 +1,4 @@
-// KPO book PDF (PRD 16.1): official layout, header fields, totals, disclaimer, and the correction log on a
+// KPO book PDF: official layout, header fields, totals, disclaimer, and the correction log on a
 // second page. Inter (OFL, assets/fonts) renders Serbian letters.
 import PDFDocument from 'pdfkit';
 import { join } from 'node:path';

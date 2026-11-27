@@ -77,7 +77,7 @@ describe('allowlist serializer', () => {
   });
 });
 
-describe('requestHash (PRD 14.6)', () => {
+describe('requestHash', () => {
   const base: HrInferenceRequest = {
     agentId: 'invoice-reader',
     loopInputKey: 'doc:inv-041.pdf',

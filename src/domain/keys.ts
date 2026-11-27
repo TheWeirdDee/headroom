@@ -1,6 +1,6 @@
 import { parseDigits } from './int.ts';
 
-// Canonical figure keys (PRD 9.2). Shared keys are deliberate: readers that claim facts about the
+// Canonical figure keys. Shared keys are deliberate: readers that claim facts about the
 // same invoice use the same key, so agreement corroborates and disagreement conflicts.
 
 export type InvoiceField =

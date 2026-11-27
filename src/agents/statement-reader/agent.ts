@@ -1,4 +1,4 @@
-// StatementReader (PRD 8.2): code parses the statement, the model classifies incoming rows and proposes
+// StatementReader: code parses the statement, the model classifies incoming rows and proposes
 // invoice links in chunks of 25 (one loop per chunk, at most 4 at a time). After its own loops and the
 // InvoiceReader's are done, a code pass raises E1 for client payments with no matching invoice.
 import { createAgent } from '@mozaik-ai/core';
@@ -310,7 +310,7 @@ export function registerStatementReader(deps: AgentDeps): void {
   }
 
   // A contested judgement is read again with the checker's note, at most MAX_REREADS times per row; after
-  // that the Verifier hands the figure to the user (PRD 8.6).
+  // that the Verifier hands the figure to the user.
   const rereads = new Map<string, number>();
   const agent = createAgent({
     name: ID,

@@ -1,4 +1,4 @@
-// Run screen (PRD 15.2): lanes, Figure Board, Headroom card, discrepancies and questions, timeline.
+// Run screen: lanes, Figure Board, Headroom card, discrepancies and questions, timeline.
 import { apiUrl } from '../api/base.ts';
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';

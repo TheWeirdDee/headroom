@@ -1,4 +1,4 @@
-// User uploads (PRD 12.6, 20.1): files stay on this machine under uploads/<uploadId>/, in the same layout
+// User uploads: files stay on this machine under uploads/<uploadId>/, in the same layout
 // as a bundled sample, so a run on them takes exactly the same path. Nothing here is ever committed,
 // recorded or sent anywhere except the extracted text the model provider reads during a live run.
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';

@@ -1,4 +1,4 @@
-// Intake (PRD 15.2 screen 1): drop files, confirm what each one is, map unknown CSVs, describe the invoice.
+// Intake: drop files, confirm what each one is, map unknown CSVs, describe the invoice.
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { FileText, Pencil, PlayCircle, Plus, Trash2, Upload } from 'lucide-react';

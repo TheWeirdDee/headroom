@@ -1,4 +1,4 @@
-// IndependenceChecker (PRD 8.5). Per client: the model judges only contract_field criteria (citing the
+// IndependenceChecker. Per client: the model judges only contract_field criteria (citing the
 // field and its value, checked by code against clients.json); user_answer criteria become questions;
 // criterion 6 is computed by code over every qualifying 12-month window; the status is code.
 import { createAgent } from '@mozaik-ai/core';
@@ -276,7 +276,7 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
   }
 
   // A contested contract judgement is read again with the checker's note, at most MAX_REREADS times per
-  // criterion; after that the Verifier hands it to the user (PRD 8.6).
+  // criterion; after that the Verifier hands it to the user.
   const rereads = new Map<string, number>();
   const agent = createAgent({
     name: ID,

@@ -1,5 +1,5 @@
-// Messy CSV layouts (PRD 12.6, 18): detection guesses the layout, the mapping parses every row, and no
-// row is guessed. These fixtures are also metric 12 of the evaluation.
+// Messy CSV layouts: detection guesses the layout, the mapping parses every row, and no
+// row is guessed. The evaluation parses them too.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

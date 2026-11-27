@@ -1,4 +1,4 @@
-// Headroom card view model (PRD 16.2), built from verified figures only. Every number carries the id of
+// Headroom card view model, built from verified figures only. Every number carries the id of
 // the figure it comes from (or the rule, for the fixed limits), so the UI can open its source.
 import { keys } from '../../domain/keys.ts';
 import { band, type Band, type BandThresholds } from '../../domain/limits.ts';

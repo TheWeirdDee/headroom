@@ -1,4 +1,4 @@
-// Source drawer content (PRD 15.3): every source of a figure resolved to what the user should see.
+// Source drawer content: every source of a figure resolved to what the user should see.
 import type { Figure, SourceRef } from '../domain/types.ts';
 import type { RunInputs } from '../engine/inputs.ts';
 import type { RuleBook } from '../domain/rules/engine.ts';

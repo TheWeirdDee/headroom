@@ -1,4 +1,4 @@
-// Write a sample profile folder (PRD 12.2) from a spec: the same layout and mapping.json an upload has.
+// Write a sample profile folder from a spec: the same layout and mapping.json an upload has.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {

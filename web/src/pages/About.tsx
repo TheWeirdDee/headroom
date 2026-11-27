@@ -1,4 +1,4 @@
-// About (PRD 15.2 screen 5): what it is, the authority boundary, every rule with its sources, limitations,
+// About: what it is, the authority boundary, every rule with its sources, limitations,
 // and what leaves the machine.
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';

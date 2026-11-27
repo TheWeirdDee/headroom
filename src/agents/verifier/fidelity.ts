@@ -1,4 +1,4 @@
-// Verifier steps 4 and 5 (PRD 8.6). Fidelity: does the cited source say what the figure claims? Dates,
+// Verifier steps 4 and 5. Fidelity: does the cited source say what the figure claims? Dates,
 // amounts, currencies, invoice numbers and code-parsed rows are checked by code; only judgements a model
 // made (country, product or service, payment class, contract criteria) go to the model, which sees just
 // the excerpt and the claimed value. Plausibility is code.

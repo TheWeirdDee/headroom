@@ -1,4 +1,4 @@
-// HTTP API (PRD 14.2). Errors are {error:{code,message,details?}} with the right status code.
+// HTTP API. Errors are {error:{code,message,details?}} with the right status code.
 import type { RunSummary } from '../engine/run-engine.ts';
 import Fastify, { type FastifyInstance, type FastifyReply } from 'fastify';
 import multipart from '@fastify/multipart';

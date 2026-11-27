@@ -1,5 +1,5 @@
 // The front door, the run screen, the source drawer, questions, the column mapper and the KPO book,
-// driven in a real browser (PRD 20: Landing, mute test elements, mapping).
+// driven in a real browser.
 import { test, expect, type Page } from '@playwright/test';
 
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F2FF}]/u;

@@ -42,7 +42,7 @@ jobs:
       - run: npm run demo:catch
       - run: npm run check:licenses
       # Pipeline evaluation with the deterministic test model; fails if any figure is shown without a
-      # source or a wrong figure gets verified (PRD 19, metric 5).
+      # source or a wrong figure gets verified.
       - run: npm run eval -- --mode fake
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

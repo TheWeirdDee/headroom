@@ -1,4 +1,4 @@
-// KpoReader (PRD 8.2a): code parses the user's KPO book; the model only matches each row's description to
+// KpoReader: code parses the user's KPO book; the model only matches each row's description to
 // an invoice number. Code then claims, on the same keys InvoiceReader uses, what the book says about each
 // invoice (entry date, RSD amount, products or services column). Collisions with the invoices are real.
 import { createAgent } from '@mozaik-ai/core';

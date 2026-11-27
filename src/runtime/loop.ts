@@ -1,4 +1,4 @@
-// Timeout and retry policy for model and HTTP calls (workaround for Mozaik gap #14: no abort signal,
+// Timeout and retry policy for model and HTTP calls (Mozaik 6.0.0 has no abort signal,
 // retry policy or timeouts). At most 2 retries, only for transient errors, backoff 1 s then 4 s.
 import { TransientError } from './types.ts';
 

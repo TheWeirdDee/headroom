@@ -1,4 +1,4 @@
-// Verifier (PRD 8.6): independently re-checks every proposed figure before it counts, and settles
+// Verifier: independently re-checks every proposed figure before it counts, and settles
 // conflicts against the source. Steps: source presence, integrity, derivation, fidelity, plausibility.
 // Its model context holds only the claimed value and the cited excerpt, never the producer's reasoning.
 import { createAgent } from '@mozaik-ai/core';
@@ -164,7 +164,7 @@ export function registerVerifier(deps: AgentDeps): void {
 
   function contest(f: Figure, reason: RejectionReason, detail: string, checks: VerificationCheck[]): void {
     state.countRejection(reason);
-    // Each producer gets the first claim plus two corrected re-proposals per key (PRD 8.6).
+    // Each producer gets the first claim plus two corrected re-proposals per key.
     const ck = `${f.key}|${f.producedBy}`;
     const n = (contests.get(ck) ?? 0) + 1;
     contests.set(ck, n);
@@ -304,7 +304,7 @@ export function registerVerifier(deps: AgentDeps): void {
     wake(f.id);
   }
 
-  /** Conflict resolution: same key, different values (PRD 8.6). */
+  /** Conflict resolution: same key, different values. */
   async function resolve(existingId: string, proposedId: string): Promise<void> {
     const a = state.figures.get(existingId);
     const b = state.figures.get(proposedId);

@@ -1,4 +1,4 @@
-// Kurs API client (kurs.resenje.org, official NBS data; RESEARCH_NOTES V8). Timeout 8 s, two retries
+// Kurs API client (kurs.resenje.org, official NBS data). Timeout 8 s, two retries
 // with backoff, a per-run cache, and a response store the Verifier uses to check integrity hashes.
 // Live responses are recorded for replay; in replay mode only recorded responses are served.
 import { sha256 } from '../../util/hash.ts';

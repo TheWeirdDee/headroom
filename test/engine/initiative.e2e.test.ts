@@ -1,4 +1,4 @@
-// Own initiative (PRD F18): RateClerk raises E5 and LimitKeeper publishes crossing attribution without any
+// Own initiative: RateClerk raises E5 and LimitKeeper publishes crossing attribution without any
 // other agent asking. Variant of t01: the book converts the EUR invoice at the payment-date rate, and a
 // larger first invoice puts the corrected total in the red band, so the unexplained payment crosses 6M.
 import { describe, expect, it, beforeAll } from 'vitest';

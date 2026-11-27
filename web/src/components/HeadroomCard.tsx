@@ -1,4 +1,4 @@
-// Headroom card (PRD 16.2). Every number is the server's display string for a verified figure and opens its
+// Headroom card. Every number is the server's display string for a verified figure and opens its
 // sources. The bar width is display only; the band comes from the server, computed with exact decimals.
 import { Link } from 'react-router';
 import { CircleAlert, CircleCheck, CircleDashed, Info, TriangleAlert } from 'lucide-react';

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Slop scan (master prompt 7.4). Fails on placeholder text, debug output, Mozaik imports outside the
+// Slop scan. Fails on placeholder text, debug output, Mozaik imports outside the
 // adapter, and literal money-like numbers in the UI outside tests and formatting helpers.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';

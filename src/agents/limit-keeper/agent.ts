@@ -1,4 +1,4 @@
-// LimitKeeper (PRD 8.4, deterministic). Recomputes the 6M and 8M totals, headroom and ratios from
+// LimitKeeper (deterministic). Recomputes the 6M and 8M totals, headroom and ratios from
 // verified figures only (debounced 150 ms) and proposes them with derivations listing every input figure.
 // Own initiative: E3 (invoice missing from the KPO book), E8 (numbering gaps, "worth checking") and
 // crossing attribution (hr.headroom.crossing when correcting one discrepancy flips the band).

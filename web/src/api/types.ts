@@ -432,7 +432,7 @@ export interface Draft {
   kind: 'product' | 'service';
 }
 
-/** Written by scripts/eval.ts (PRD 19). */
+/** Written by scripts/eval.ts. */
 export interface Evidence {
   generatedAt: string;
   conditions: {

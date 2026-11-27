@@ -1,4 +1,4 @@
-// Discrepancy catalogue (PRD 12.4) and the code-only checks: E6 duplicate KPO rows, E8 numbering
+// Discrepancy catalogue and the code-only checks: E6 duplicate KPO rows, E8 numbering
 // gaps, E3 invoices missing from the book. Wording is neutral and never states a legal obligation.
 import { parseDigits } from './int.ts';
 import { cmp } from './money.ts';

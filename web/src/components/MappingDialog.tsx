@@ -1,4 +1,4 @@
-// Column mapper (PRD 12.6): when a CSV layout is not recognised, the user says which column is which.
+// Column mapper: when a CSV layout is not recognised, the user says which column is which.
 // Nothing is guessed silently: a partial guess is shown pre-filled and must be confirmed.
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';

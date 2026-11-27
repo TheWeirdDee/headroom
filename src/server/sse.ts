@@ -1,4 +1,4 @@
-// SSE hub per run (PRD 14.2): events get sequence numbers; the last 5,000 stay in a ring buffer so a
+// SSE hub per run: events get sequence numbers; the last 5,000 stay in a ring buffer so a
 // reconnecting client resumes from Last-Event-ID, or is told to re-fetch the snapshot if it fell behind.
 import type { ServerResponse } from 'node:http';
 import { serializeEvent } from '../engine/serialize.ts';

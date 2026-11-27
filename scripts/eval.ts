@@ -1,4 +1,4 @@
-// Evaluation harness (PRD 19): runs every bundled profile N times, compares with its _truth, and writes the
+// Evaluation harness: runs every bundled profile N times, compares with its _truth, and writes the
 // results with their denominators, the misses next to the hits, and the conditions.
 //
 //   npm run eval -- --mode live --runs 3 --confirm-spend   real model: writes eval/results.json + RESULTS.md

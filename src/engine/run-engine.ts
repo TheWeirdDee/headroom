@@ -1,4 +1,4 @@
-// Run engine (PRD 14.3): one Mozaik runtime per run. Joins listeners first, publishes hr.run.started,
+// Run engine: one Mozaik runtime per run. Joins listeners first, publishes hr.run.started,
 // waits for quiescence (14.4) or the hard timeout, then publishes hr.run.completed with the summary.
 import { createRuntime, MOZAIK_PACKAGE, type HeadroomRuntime } from '../runtime/mozaik/runtime.ts';
 import { evidenceGate } from '../agents/verifier/gate.ts';
@@ -197,7 +197,7 @@ export function startRun(o: RunOptions): Run {
   settling = settle();
   const done = settling;
 
-  /** Answering a question or changing the draft re-opens a quiet run (PRD 14.4). */
+  /** Answering a question or changing the draft re-opens a quiet run. */
   function reopen(reason: string): void {
     if (settling) return;
     rt.publish('hr.run.reopened', 'engine', { reason });

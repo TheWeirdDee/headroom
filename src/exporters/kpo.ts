@@ -1,4 +1,4 @@
-// KPO book export (PRD 16.1): the corrected book built from verified figures only, in the official layout
+// KPO book export: the corrected book built from verified figures only, in the official layout
 // (R-KPO-LAYOUT), with a correction log against the user's own book. CSV is UTF-8 with BOM.
 import { z } from 'zod';
 import { buildKpoBook, type KpoBook, type KpoInvoice } from '../domain/kpo.ts';
@@ -62,7 +62,7 @@ export function buildKpoExport(state: HeadroomState, inputs: RunInputs, rules: R
     });
   }
   const book = buildKpoBook(rows, state.config.year, state.config.rsdRounding);
-  // The totals row must equal the verified 6M committed total (PRD 16.1): a mismatch is refused.
+  // The totals row must equal the verified 6M committed total: a mismatch is refused.
   if (cmp(book.totals.totalRSD, committed.value.amount) !== 0) {
     throw new ExportError(
       'TOTALS_MISMATCH',

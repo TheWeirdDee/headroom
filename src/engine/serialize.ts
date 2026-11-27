@@ -1,4 +1,4 @@
-// Allowlist serializer for anything written to disk or sent to the browser (PRD 14.6, 20.2). Only the
+// Allowlist serializer for anything written to disk or sent to the browser. Only the
 // listed fields of an event survive; values are walked and any string that looks like a credential is
 // refused. Recordings and SSE never carry environment variables, headers or model provider keys.
 import type { HrEvent } from '../runtime/types.ts';

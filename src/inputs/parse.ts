@@ -1,5 +1,5 @@
 // Code-only parsing of amounts and dates found in user files and documents. A value that cannot be
-// parsed is an error with its location; nothing is guessed (PRD 12.6).
+// parsed is an error with its location; nothing is guessed.
 import { canonical, isDecimalString, type DecimalString } from '../domain/money.ts';
 import { isIsoDate, type IsoDate } from '../domain/dates.ts';
 

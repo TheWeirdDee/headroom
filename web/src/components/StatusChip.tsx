@@ -1,4 +1,4 @@
-// Status is never colour alone: every chip has a text label and an icon (PRD 15.1).
+// Status is never colour alone: every chip has a text label and an icon.
 import {
   CircleCheck,
   CircleDashed,
