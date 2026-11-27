@@ -132,6 +132,11 @@ describe('replay', () => {
       s = m.snapshot(a ?? '') as unknown as Snap;
     }
     expect(board(s)).toBe(board(recorded));
+    // Every visitor sees this run, so nobody may change it.
+    expect(() => m.changeDraft(a ?? '', {})).toThrow(/shared by every visitor/);
+    const q = (m.snapshot(a ?? '') as unknown as { questions: Array<{ id: string }> }).questions[0];
+    expect(() => m.answer(a ?? '', q?.id ?? '', 'Yes')).toThrow(/shared by every visitor/);
+    expect((m.snapshot(a ?? '') as { readOnly: boolean }).readOnly).toBe(true);
   }, 60_000);
 
   it('fails loudly with REPLAY_MISS when a recorded response is missing', async () => {

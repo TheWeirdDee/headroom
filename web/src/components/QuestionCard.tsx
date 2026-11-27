@@ -6,7 +6,15 @@ import { ApiError } from '../api/client.ts';
 import type { Question } from '../api/types.ts';
 import { AGENT_NAMES } from '../state/reducer.ts';
 
-export function QuestionCard({ runId, q }: { runId: string; q: Question }) {
+export function QuestionCard({
+  runId,
+  q,
+  readOnly = false,
+}: {
+  runId: string;
+  q: Question;
+  readOnly?: boolean;
+}) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const send = (answer: string): void => {
@@ -39,7 +47,7 @@ export function QuestionCard({ runId, q }: { runId: string; q: Question }) {
           <button
             key={o}
             type="button"
-            disabled={busy}
+            disabled={busy || readOnly}
             onClick={() => send(o)}
             aria-pressed={q.answer === o}
             className={`rounded border px-3 py-1 text-sm disabled:opacity-60 ${q.answer === o ? 'border-accent bg-accent/15 text-accent' : 'border-line hover:border-muted'}`}

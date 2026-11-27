@@ -105,14 +105,18 @@ export function Run() {
           </div>
           <StatusChip status={rs.status} label={rs.label} />
           {!connected && view.status === 'running' && <StatusChip status="waiting" label="Reconnecting" />}
-          <button
-            type="button"
-            onClick={() => setEditing(!editing)}
-            aria-expanded={editing}
-            className="inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm hover:border-muted"
-          >
-            <Pencil size={14} aria-hidden /> Change the invoice
-          </button>
+          {snap.readOnly ? (
+            <span className="text-sm text-muted">Shared sample run, read-only</span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setEditing(!editing)}
+              aria-expanded={editing}
+              className="inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm hover:border-muted"
+            >
+              <Pencil size={14} aria-hidden /> Change the invoice
+            </button>
+          )}
           <Link
             to={`/runs/${runId}/kpo`}
             className="inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm hover:border-muted"
@@ -196,7 +200,7 @@ export function Run() {
                 ) : (
                   <ul className="divide-y divide-line">
                     {questions.map((q) => (
-                      <QuestionCard key={q.id} runId={runId} q={q} />
+                      <QuestionCard key={q.id} runId={runId} q={q} readOnly={snap.readOnly === true} />
                     ))}
                   </ul>
                 )}

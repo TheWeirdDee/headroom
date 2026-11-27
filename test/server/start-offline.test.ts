@@ -106,4 +106,26 @@ describe('npm run start:offline', () => {
     expect(done.status).toBe('completed');
     expect(done.summary).toMatchObject({ loops: 65, failedLoops: 0 });
   }, 90_000);
+
+  it('refuses changes to the landing page showcase over HTTP', async () => {
+    const { runId } = (await (await fetch(`${base}/api/showcase`)).json()) as { runId: string };
+    const shared = await settled(runId);
+    const post = (path: string, body: unknown): Promise<Response> =>
+      fetch(`${base}/api/runs/${runId}${path}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    const draft = await post('/draft', {
+      clientId: 'heron',
+      currency: 'EUR',
+      amount: '999999.00',
+      issueDate: '2026-11-26',
+      description: 'x',
+      kind: 'service',
+    });
+    const answer = await post(`/questions/${shared.questions[0]?.id ?? ''}/answer`, { answer: 'Yes' });
+    expect([draft.status, answer.status]).toEqual([403, 403]);
+    expect(((await draft.json()) as { error: { code: string } }).error.code).toBe('READ_ONLY');
+  }, 30_000);
 });

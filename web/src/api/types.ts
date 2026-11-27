@@ -223,6 +223,8 @@ export interface AgentStatus {
 export interface Snapshot {
   runId: string;
   mode: 'live' | 'replay';
+  /** The shared landing-page showcase: it cannot be answered or changed. */
+  readOnly?: boolean;
   source: { kind: 'sample'; profileId: string } | { kind: 'upload'; uploadId: string };
   synthetic: boolean;
   startedAt: string;

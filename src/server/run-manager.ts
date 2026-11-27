@@ -30,6 +30,7 @@ export class RunError extends Error {
       | 'FIGURE_NOT_FOUND'
       | 'BAD_ANSWER'
       | 'BAD_DRAFT'
+      | 'READ_ONLY'
       | 'INPUTS_INVALID',
     message: string,
     readonly status = 400,
@@ -47,6 +48,8 @@ export interface RunRecord {
   kurs: KursClient;
   source: { kind: 'sample'; profileId: string } | { kind: 'upload'; uploadId: string };
   mode: 'live' | 'replay';
+  /** The landing page's showcase is shared by every visitor: nobody may answer or change it. */
+  readOnly: boolean;
   startedAt: string;
   summary?: RunSummary;
   card?: CardVM;
@@ -191,7 +194,7 @@ export class RunManager {
    */
   async showcase(profileId: string): Promise<string | undefined> {
     if (!this.o.replay?.backend(profileId)) return undefined;
-    this.showcaseRun ??= this.start({ profileId, mode: 'replay', fast: true });
+    this.showcaseRun ??= this.start({ profileId, mode: 'replay', shared: true });
     try {
       this.showcaseId = await this.showcaseRun;
       return this.showcaseId;
@@ -207,8 +210,8 @@ export class RunManager {
     uploadId?: string;
     draft?: Draft;
     mode: 'live' | 'replay';
-    /** Replay without the recorded delays (the landing page's showcase). */
-    fast?: boolean;
+    /** The landing page's shared showcase: answered at once, and read-only. */
+    shared?: boolean;
   }): Promise<string> {
     const { env } = this.o;
     const isSample = req.profileId !== undefined;
@@ -252,7 +255,7 @@ export class RunManager {
     const runId = `run-${randomUUID().replace(/-/g, '').slice(0, 12)}`;
     const replay =
       req.mode === 'replay' && req.profileId
-        ? this.o.replay?.backend(req.profileId, req.fast ? { instant: true } : undefined)
+        ? this.o.replay?.backend(req.profileId, req.shared ? { instant: true } : undefined)
         : undefined;
     if (req.mode === 'replay' && !replay)
       throw new RunError('REPLAY_NOT_AVAILABLE', 'This sample profile has no recording.');
@@ -277,6 +280,7 @@ export class RunManager {
         ? { kind: 'sample', profileId: req.profileId ?? '' }
         : { kind: 'upload', uploadId: req.uploadId ?? '' },
       mode: req.mode,
+      readOnly: req.shared === true,
       startedAt: new Date(now()).toISOString(),
       ...(replay ? { recording: { recordedAt: replay.recordedAt, models: replay.models } } : {}),
       agents: new Map(),
@@ -336,6 +340,7 @@ export class RunManager {
     return {
       runId,
       mode: r.mode,
+      readOnly: r.readOnly,
       source: r.source,
       synthetic: r.inputs.synthetic,
       startedAt: r.startedAt,
@@ -378,8 +383,20 @@ export class RunManager {
     };
   }
 
-  answer(runId: string, questionId: string, answer: unknown): void {
+  /** A run the caller may change; the shared showcase is not one. */
+  private writable(runId: string): RunRecord {
     const r = this.get(runId);
+    if (r.readOnly)
+      throw new RunError(
+        'READ_ONLY',
+        'This run is shared by every visitor and cannot be changed. Start your own sample run to try it.',
+        403,
+      );
+    return r;
+  }
+
+  answer(runId: string, questionId: string, answer: unknown): void {
+    const r = this.writable(runId);
     if (typeof answer !== 'string' || answer.trim() === '' || answer.length > 100)
       throw new RunError('BAD_ANSWER', 'Answer must be a short text');
     const res = r.run.human.answer(questionId, answer.trim());
@@ -387,7 +404,7 @@ export class RunManager {
   }
 
   changeDraft(runId: string, raw: unknown): void {
-    const r = this.get(runId);
+    const r = this.writable(runId);
     const parsed = DraftSchema.safeParse(raw);
     if (!parsed.success)
       throw new RunError(
