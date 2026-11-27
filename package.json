@@ -27,6 +27,7 @@
     "build:web": "npm --prefix web run build",
     "build": "npm run typecheck && npm run build:web",
     "test:e2e": "npm run build:web && playwright test --trace off",
+    "prove": "tsx scripts/prove.ts",
     "record-demo": "tsx scripts/record-demo.ts",
     "export:showcase": "tsx scripts/export-showcase.ts",
     "eval": "tsx scripts/eval.ts"

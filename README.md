@@ -79,7 +79,30 @@ Concurrency carries the product. Three readers, the Verifier, the RateClerk and 
 
 ## Proof it is concurrent
 
-In the real-model recording of `p07` (`runs/demo-p07/summary.json`): 65 loops, at most 15 running at the same time, 4,993 s of loop time inside 483 s of wall time (10.3 loops' worth of work in flight on average). Most of that wall time is the request pacer: the free Gemini tier allows few requests a minute, so loops wait their turn, and that waiting counts as loop time. In fake mode (deterministic test model, 14 profiles) the median peak is 14.5 loops at once. The run screen draws every loop as a bar on a timeline.
+```
+npm run prove               # no key, no network
+npm run prove -- --live     # the same measurement on provider requests (uses your quota)
+```
+
+The command runs the `p07` sample on Mozaik and records, for every model request, the moment it is sent (after any wait for a rate limit) and the moment it is answered. It prints when each agent was waiting on a model, and **exits 1** unless at least three different agents and four requests were outstanding at the same instant with no failed loop. CI runs it on every push. Without a key the answers come from the recording after a short pause, so it proves that Mozaik runs the agents' loops side by side without blocking; `--live` measures the provider.
+
+One run without a key, on 27 Nov 2026 (times differ a little from run to run):
+
+```
+  independence-checker 3333335333331...............................................  6 requests
+  kpo-reader           1111112111111...............................................  2 requests
+  statement-reader     11111111111111..............................................  2 requests
+  invoice-reader       444444445644446644445544446533335433444211111111211111111111  26 requests
+  verifier             .....366666+66666+666668966667+6666697666786977797764441....  47 requests
+
+Peak requests outstanding at once   15
+Peak agents waiting on a model      5 (independence-checker, invoice-reader, kpo-reader, statement-reader, verifier)
+Time with 2+ agents waiting at once 2.53 s of 2.74 s with any request
+Sum of request times                23.15 s (one after another would take this long)
+PASS: the agents asked their models at the same time.
+```
+
+The run screen draws every loop as a bar on a timeline. A loop there is open from its start to its answer, which on a free tier includes waiting for the quota, so "loops open at once" is not the same as requests in flight; use `npm run prove` for the latter.
 
 ## Every number has a source
 
@@ -106,7 +129,7 @@ Measured 27 Nov 2026 with `gemini-3.5-flash-lite` as reader and verifier model (
 | Runs with a failed loop                              | 0 / 7                                                                |
 | Planted book errors that surfaced as agent conflicts | 8 / 8 (E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk) |
 | Verifier contests                                    | 5, all NOT_SUPPORTED_BY_SOURCE, each settled by a re-read            |
-| Median loops at once (peak) / loop time ÷ wall time  | 15 / 10.73 (wall time is mostly the request pacer)                   |
+| Median loops open at once (peak) / loop ÷ wall time  | 15 / 10.73 (wall time is mostly the request pacer)                   |
 | Median wall time / tokens per run                    | 482 s / 64,203 in, 6,934 out                                         |
 
 The first runs of `c01` and `p07` were made before the claims fix of commit `64de262` (described below); the other five on commit `78f16f1`. The model did fall short before these runs: the first demo recording missed E1 (see "Try it without your files or a key"). Commit `84ea7a8` (after these runs) changed when the LimitKeeper gives a verdict (only once every input is verified); the runs above predate it. Seven runs on five profiles is a small sample; it shows the pipeline holding up with a small free model, not a measured accuracy.
@@ -142,7 +165,7 @@ The table below is from **fake mode** (14 synthetic profiles we designed, one ru
 | Figures shown without a source                                 | 0                                                                                               | 0      |                                                                                           |
 | Runs with 6M and 8M totals (with the draft) equal to the truth | 14 / 14                                                                                         |        |                                                                                           |
 | Profiles with identical headroom across runs                   | 14 / 14                                                                                         |        |                                                                                           |
-| Median loops running at once (peak)                            | 14.5                                                                                            |        |                                                                                           |
+| Median loops open at once (peak)                               | 14.5                                                                                            |        |                                                                                           |
 | Median loop time / wall time                                   | 0.14                                                                                            |        | the test model answers instantly, so wall time is mostly the quiet period that ends a run |
 | Median wall time per run                                       | 1.6 s                                                                                           |        |                                                                                           |
 | Median tokens per run (in / out)                               | 19000 / 4582                                                                                    |        |                                                                                           |
@@ -241,6 +264,7 @@ A small synchronous claims store: agents propose a value for a key with sources;
 ```
 npm run dev          # API with reload on :4317 and Vite on :5173
 npm test             # unit and integration tests (deterministic test model)
+npm run prove        # measures overlapping model requests; exits 1 if the agents did not overlap
 npx playwright install chromium   # once, before the first end-to-end run
 npm run test:e2e     # Playwright against the real server
 npm run lint && npm run typecheck

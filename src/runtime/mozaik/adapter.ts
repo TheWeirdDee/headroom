@@ -235,8 +235,13 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
       try {
         const t0 = now();
         const answer = async (): Promise<InferenceOutput> => {
-          if (opts.backend) return toMozaikOutput(await opts.backend.infer(request), request.step);
-          return providerInfer(input);
+          const answered = opts.observer?.onRequest?.(request);
+          try {
+            if (opts.backend) return toMozaikOutput(await opts.backend.infer(request), request.step);
+            return await providerInfer(input);
+          } finally {
+            answered?.();
+          }
         };
         const out = opts.backend?.recorded
           ? await answer()
@@ -269,7 +274,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
         const neutral = fromMozaikOutput(out);
         rec.metric.tokensIn += neutral.tokensIn;
         rec.metric.tokensOut += neutral.tokensOut;
-        opts.observer?.onResponse(request, neutral, now() - t0);
+        opts.observer?.onResponse?.(request, neutral, now() - t0);
         // GAP: the loop's TransitionResolver throws (an unhandled rejection) when an output holds neither
         // a function call nor an assistant message (e.g. only reasoning). Guarantee a terminal item.
         const callable = out.items.some(

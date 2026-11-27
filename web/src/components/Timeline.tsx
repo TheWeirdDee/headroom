@@ -45,7 +45,7 @@ export function Timeline({ view }: { view: RunView }) {
         {open ? <ChevronDown size={14} aria-hidden /> : <ChevronRight size={14} aria-hidden />}
         <span className="font-medium">Timeline</span>
         <span className="num text-muted">
-          {loops.length} loops · up to {maxConc} at once · {(span / 1000).toFixed(1)} s
+          {loops.length} loops · up to {maxConc} open at once · {(span / 1000).toFixed(1)} s
         </span>
       </button>
       {open && (

@@ -116,8 +116,13 @@ export interface ModelBackend {
 }
 
 export interface InferenceObserver {
+  /**
+   * Called when a request is sent to the model, after any wait for the rate limit; the returned function is
+   * called when it is answered or fails.
+   */
+  onRequest?(request: HrInferenceRequest): () => void;
   /** Called after every successful inference, with the wall time it took (for replay timing). */
-  onResponse(request: HrInferenceRequest, response: HrInferenceResponse, latencyMs: number): void;
+  onResponse?(request: HrInferenceRequest, response: HrInferenceResponse, latencyMs: number): void;
 }
 
 export interface HrRuntime {

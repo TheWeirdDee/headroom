@@ -77,7 +77,7 @@ export function createMemoryRuntime(opts: MemoryAdapterOptions): HrRuntime {
       });
       metric.tokensIn += response.tokensIn;
       metric.tokensOut += response.tokensOut;
-      opts.observer?.onResponse(request, response, now() - t0);
+      opts.observer?.onResponse?.(request, response, now() - t0);
       const call = response.items.find((i) => i.type === 'function_call');
       if (call && call.type === 'function_call') {
         const veto = unsourcedVeto(call.name, call.args);

@@ -105,7 +105,7 @@ function Stats({ r }: { r: RecordedRun }) {
   const items = [
     { value: formatSr(String(r.verified), 0), label: 'figures checked against their source' },
     { value: formatSr(String(r.unsourcedFigures), 0), label: 'numbers shown without a source' },
-    { value: formatSr(String(r.maxConcurrentLoops), 0), label: 'agent loops running at once' },
+    { value: formatSr(String(r.maxConcurrentLoops), 0), label: 'agent loops open at once' },
     ...(r.agentConflicts !== null
       ? [{ value: formatSr(String(r.agentConflicts), 0), label: 'disagreements between agents, settled' }]
       : []),

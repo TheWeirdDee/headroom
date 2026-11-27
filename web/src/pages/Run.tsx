@@ -221,8 +221,8 @@ export function Run() {
           <p className="num text-xs text-muted">
             {view.summary.loops} agent loops in {(view.summary.wallTimeMs / 1000).toFixed(1)} s wall time (
             {(view.summary.sumLoopTimeMs / 1000).toFixed(1)} s of loop time), up to{' '}
-            {view.summary.maxConcurrentLoops} at once · {view.summary.figures.verified} figures verified ·{' '}
-            {view.summary.unsourcedFigures} without a source · Mozaik {view.summary.mozaik.version}
+            {view.summary.maxConcurrentLoops} open at once · {view.summary.figures.verified} figures verified
+            · {view.summary.unsourcedFigures} without a source · Mozaik {view.summary.mozaik.version}
           </p>
         )}
       </div>

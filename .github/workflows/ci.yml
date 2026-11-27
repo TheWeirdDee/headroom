@@ -36,6 +36,8 @@ jobs:
       - run: npm run typecheck
       - run: npm --prefix web run typecheck
       - run: npm test
+      # Several agents must have model requests outstanding at the same time, or this fails.
+      - run: npm run prove
       - run: npm run check:licenses
       # Pipeline evaluation with the deterministic test model; fails if any figure is shown without a
       # source or a wrong figure gets verified (PRD 19, metric 5).
