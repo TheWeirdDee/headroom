@@ -11,6 +11,8 @@ import { parseKursRate } from '../../domain/fx.ts';
 import { existingRowKind } from '../../domain/kpo.ts';
 import { compareIso, toIso } from '../../domain/dates.ts';
 import type { SourceContext } from './sources.ts';
+import { wrongAmount, wrongDate } from './fields.ts';
+import type { ReadableDocument } from '../../inputs/documents.ts';
 
 export interface ModelQuestion {
   field: string; // what the claim is about, in plain words
@@ -129,19 +131,26 @@ export function checkFidelity(f: Figure, ctx: SourceContext): FidelityCheck {
       return fail(`the cited excerpt does not show invoice number ${p.invNo}`);
     }
     const v = f.value;
+    const read = ctx.inputs.documents.find(
+      (d): d is ReadableDocument => d.kind === 'readable' && d.docId === doc.docId,
+    );
     switch (p.field) {
       case 'issueDate':
-      case 'supplyDate':
-        return v.t === 'date' && datesIn(ex).has(v.iso)
-          ? ok
-          : fail(`excerpt "${ex}" does not show the date ${v.t === 'date' ? v.iso : ''}`);
-      case 'amount':
+      case 'supplyDate': {
+        if (v.t !== 'date' || !datesIn(ex).has(v.iso))
+          return fail(`excerpt "${ex}" does not show the date ${v.t === 'date' ? v.iso : ''}`);
+        const why = read ? wrongDate(read, doc, v.iso, p.field) : undefined;
+        return why ? fail(why) : ok;
+      }
+      case 'amount': {
         if (v.t !== 'money') return fail('amount is not money');
         if (!amountsIn(ex).has(canonical(v.amount)))
           return fail(`excerpt "${ex}" does not show the amount ${v.amount}`);
         if (!CURRENCY_MARKS[v.currency]?.test(ex))
           return fail(`excerpt "${ex}" does not show the currency ${v.currency}`);
-        return ok;
+        const why = read ? wrongAmount(read, doc, v.amount) : undefined;
+        return why ? fail(why) : ok;
+      }
       case 'currency':
         return v.t === 'text' && CURRENCY_MARKS[v.text]?.test(ex)
           ? ok
