@@ -25,20 +25,20 @@ describe('custom lint rules (PRD 17.4)', () => {
     expect(msgs.filter((m) => m.includes('domain code'))).toHaveLength(4);
   });
 
-  it('forbids dynamic import and require of Mozaik outside the adapter', async () => {
+  it('forbids dynamic import and require of Mozaik in the rules and parsing code', async () => {
     const code =
       "export const m = import('@mozaik-ai/core');\nexport const r = require('@jigjoy/mozaik-agent');\n";
     expect(
-      (await messages('src/agents/bad.ts', code)).filter((m) => m.includes('Only src/runtime/mozaik')),
+      (await messages('src/domain/bad.ts', code)).filter((m) => m.includes('independent of the agent')),
     ).toHaveLength(2);
   });
 
-  it('forbids Mozaik imports outside src/runtime/mozaik and allows them inside', async () => {
+  it('lets agents be Mozaik participants and keeps the domain and claims package free of Mozaik', async () => {
     const code = "import { createAgent } from '@mozaik-ai/core';\nexport const a = createAgent;\n";
-    expect(
-      (await messages('src/agents/bad.ts', code)).some((m) => m.includes('Only src/runtime/mozaik')),
-    ).toBe(true);
-    expect(await messages('src/runtime/mozaik/adapter.ts', code)).toEqual([]);
+    for (const file of ['src/domain/bad.ts', 'src/inputs/bad.ts', 'packages/claims/src/bad.ts'])
+      expect((await messages(file, code)).some((m) => m.includes('independent of the agent'))).toBe(true);
+    expect(await messages('src/agents/ok.ts', code)).toEqual([]);
+    expect(await messages('src/runtime/mozaik/runtime.ts', code)).toEqual([]);
   });
 
   it('forbids await and async functions in packages/claims/src', async () => {

@@ -20,6 +20,36 @@ They do not know whether this invoice pushes calendar-year turnover past 6,000,0
 
 Headroom answers those three questions from their own bank statement, invoices and KPO book, before they press send, and shows the line each number came from.
 
+## A team on Mozaik
+
+Headroom is not an application that calls agents. A run is one Mozaik runtime that nine participants join; **nothing calls an agent**. Each one acts when an event satisfies one of its own `SituationSpecification`s, writes what it found to the shared state, and the others react. The user starts a run with a single event, and the readers all begin at once. There is no other runtime and no orchestrator: take `@mozaik-ai/core` out and no agent exists.
+
+| Participant                                                     | Reacts when (its specifications, `src/agents/situations.ts`)                                                                                                     | Model                              |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| [InvoiceReader](src/agents/invoice-reader/agent.ts)             | the run starts; **one of its own figures is contested** (it reads the document again with the Verifier's note)                                                   | one loop per invoice               |
+| [StatementReader](src/agents/statement-reader/agent.ts)         | the run starts; a payment, link or invoice figure is settled; one of its figures is contested; the InvoiceReader finishes (then it looks for unmatched payments) | one loop per 25 bank rows          |
+| [KpoReader](src/agents/kpo-reader/agent.ts)                     | the run starts                                                                                                                                                   | one loop per 25 book rows          |
+| [IndependenceChecker](src/agents/independence-checker/agent.ts) | the run starts; invoice figures change; one of its figures is contested; the user answers its question                                                           | one loop per client contract       |
+| [Verifier](src/agents/verifier/agent.ts)                        | someone proposes a figure; two figures conflict; an input settles; the user answers its question                                                                 | one loop per judgement it re-reads |
+| [RateClerk](src/agents/rate-clerk/agent.ts)                     | an invoice's amount, currency or date is verified; someone else claims an amount in RSD; a rate is needed                                                        | none: rules in code                |
+| [LimitKeeper](src/agents/limit-keeper/agent.ts)                 | figures are verified or replaced; a reader finishes; the draft changes                                                                                           | none: rules in code                |
+| [Human](src/agents/human.ts)                                    | the run starts (posts the invoice about to be sent); answers and changes come from the user                                                                      | the user                           |
+| [Transcript](src/agents/observer.ts)                            | every event (the only participant that does)                                                                                                                     | none                               |
+
+| Mozaik                               | What it does here                                                                                                                                                                                                                           | Where                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `createAgent`, `createHuman`, `join` | every participant above; each model agent holds its prompt as its Mozaik instruction                                                                                                                                                        | `src/agents/*/agent.ts`                                                                |
+| `SituationSpecification`, `.and()`   | all routing, for example `EventIs('hr.figure.contested').and(new AboutMyFigure())`                                                                                                                                                          | `src/agents/situations.ts`                                                             |
+| `RuntimeState`                       | the Figure Board _is_ the runtime state every participant reads and writes                                                                                                                                                                  | [state.ts](src/runtime/state.ts)                                                       |
+| `sendEvent`, `SemanticEvent`         | agents talk only through events: figure proposed, contested, verified, questions, rate needed                                                                                                                                               | [runtime.ts](src/runtime/mozaik/runtime.ts)                                            |
+| `runLoop`                            | every model request, with a fresh `ModelContext`; an agent hears its answer through its own specification on `model.answer`                                                                                                                 | [runtime.ts](src/runtime/mozaik/runtime.ts)                                            |
+| `InterceptionHandler`                | the Verifier sits inside the four reading agents' loops and refuses a submission that reports a value without the text it was read from, before the tool runs. A test makes it fire; in the recorded and live runs so far no model did this | [gate.ts](src/agents/verifier/gate.ts)                                                 |
+| custom `InferenceRunner`             | timeouts, retries, rate-limit pacing, recording and replay                                                                                                                                                                                  | [runtime.ts](src/runtime/mozaik/runtime.ts), [recordings.ts](src/engine/recordings.ts) |
+
+Mozaik calls a processor without awaiting it, so each participant's processor puts the event in that participant's own [queue](src/runtime/inbox.ts): one agent handles one event at a time, different agents run side by side. `runLoop` reports no failure of its own, so a failed request is turned into a failed loop, which makes the run `degraded` or `failed`. A [test](test/engine/mozaik.e2e.test.ts) fails if an agent stops being a participant with specifications of its own.
+
+**Checks between agents.** Readers claim the same keys: the InvoiceReader and the KpoReader both state an invoice's date and RSD amount, and the RateClerk re-derives the amount from the NBS rate. Agreement corroborates; disagreement is a conflict that the Verifier settles by checking both against their sources and, if both hold, by source authority (invoice document over KPO row for invoice facts, statement row over document for payment facts). The losing figure becomes the discrepancy the user sees.
+
 ## Use it on your own files
 
 ```
@@ -63,19 +93,6 @@ It took three recordings. The first missed E1: the Verifier's model rejected cor
 - In live mode, the extracted text of your invoices, statement rows and KPO rows is sent to the model provider (Google Gemini by default) to be read. Nothing else leaves the machine: arithmetic, rules and totals run locally.
 - NBS middle rates come from the public Kurs API (`kurs.resenje.org`); only currency and date are sent.
 - Runs on your files are never recorded. Only bundled synthetic samples can be recorded for offline replay.
-
-## How it uses Mozaik
-
-| Capability                                          | Mozaik feature                                                    | Where                                                       |
-| --------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- |
-| Seven agents in parallel, one loop per unit of work | `runLoop`, `createAgent`                                          | `src/runtime/mozaik/adapter.ts`                             |
-| One shared Figure Board                             | `RuntimeState` subclass                                           | `src/runtime/mozaik/adapter.ts`, `src/runtime/state.ts`     |
-| Agents react to each other's figures and answers    | semantic events and situation handlers (`SituationSpecification`) | `src/runtime/mozaik/adapter.ts`, `src/agents/*/agent.ts`    |
-| No figure is written without a source               | `InterceptionHandler` veto on board tool calls                    | `src/runtime/veto.ts`, `src/runtime/mozaik/adapter.ts`      |
-| Readers return typed figures                        | structured output through submit tools with JSON Schema           | `src/agents/common.ts`                                      |
-| Offline mode, recording, timeouts and retries       | custom `InferenceRunner`                                          | `src/runtime/mozaik/adapter.ts`, `src/engine/recordings.ts` |
-
-Concurrency carries the product. Three readers, the Verifier, the RateClerk and the LimitKeeper work at the same time on one board. Readers claim the same keys: the InvoiceReader and the KpoReader both state an invoice's date and RSD amount, the RateClerk re-derives the amount from the NBS rate. Agreement corroborates; disagreement is a conflict that the claims helper and the source-authority order settle (invoice document over KPO row for invoice facts, statement row over document for payment facts), and the losing figure becomes the discrepancy the user sees.
 
 ## Proof it is concurrent
 
@@ -121,7 +138,20 @@ The Verifier rejects the figure, the InvoiceReader reads the document again with
 
 ## Every number has a source
 
-Every figure carries `SourceRef`s: a document page and line range with the excerpt and its SHA-256, a statement or KPO row with its raw line and hash, an NBS response with its hash and JSON path, a contract field, a rule, a user answer, or the input figures it was derived from. The Verifier checks each proposed figure before it counts: the source exists, the hash matches, derived values recompute exactly, the value matches the source (code checks dates, amounts, currency and invoice numbers; a model only judges country, kind and contract criteria), and the value is plausible. A failed check contests the figure with a reason code; after three contests on one key the question goes to you. Only verified figures reach the headroom card, and the run report counts figures shown without a source (it must be 0).
+Every figure carries `SourceRef`s: a document page and line range with the excerpt and its SHA-256, a statement or KPO row with its raw line and hash, an NBS response with its hash and JSON path, a contract field, a rule, a user answer, or the input figures it was derived from. The Verifier checks each proposed figure before it counts. A failed check contests the figure with a reason code; after three contests on one key the question goes to you. Only verified figures reach the headroom card, the card gives no verdict until every input is verified, and the run report counts figures shown without a source (it must be 0).
+
+Most of the checking is code. The Verifier's model is used only for judgements, and it sees the claimed value and the excerpt, never the reader's reasoning:
+
+| What is checked                                                             | How   | What that check can catch                                                                                                      |
+| --------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------ |
+| The source exists and its hash matches                                      | code  | invented or altered citations                                                                                                  |
+| Invoice date, amount, currency, number, client against the cited text       | code  | a value the text does not show; a due or supply date given as the issue date; a unit price, subtotal or tax given as the total |
+| Amounts, dates and names from bank and KPO rows                             | code  | consistency only: the same parser read the row                                                                                 |
+| Conversions, totals, shares and statuses                                    | code  | any difference, to the cent, from recomputing them from the cited input figures                                                |
+| NBS rate                                                                    | code  | a rate that differs from the recorded response                                                                                 |
+| Client country, product or service, kind of bank payment, contract criteria | model | a judgement a second reading does not support                                                                                  |
+
+The model never re-reads an amount or a date: those are checked by code against the text. A wrong value that the text also shows under no recognised label could pass.
 
 ## Results
 
@@ -207,10 +237,10 @@ Browser (React + Vite): landing, intake + column mapper, run screen, KPO, eviden
         |  REST + SSE (/api/runs/:id/stream, Last-Event-ID resume)
 Node 22 backend (Fastify)
   Run engine: one Mozaik runtime per run
-    Mozaik adapter (src/runtime/mozaik/): the only place that imports Mozaik
-    Figure Board (RuntimeState) + claims helper (packages/claims)
-    Agents: InvoiceReader, StatementReader, KpoReader, RateClerk, LimitKeeper,
-            IndependenceChecker, Verifier; Human (answers, draft changes)
+    Participants (src/agents/): InvoiceReader, StatementReader, KpoReader, RateClerk,
+            LimitKeeper, IndependenceChecker, Verifier, Human, Transcript
+    RuntimeState: the Figure Board (src/runtime/state.ts) + claims helper (packages/claims)
+    Loops, events and the InferenceRunner (src/runtime/mozaik/)
     Rules engine (pure TypeScript, rules/*.json, exact decimals)
     Recorder / replayer, quiescence detector
   Exporters: KPO CSV and PDF, correction log, run report JSON

@@ -1,7 +1,8 @@
-// HeadroomState: the shared state every participant reads and writes (the Figure Board). The Mozaik
-// adapter wraps it in a RuntimeState subclass. All board writes go through postFigure / setFigureStatus,
-// which are synchronous (no await), so they are atomic in Node.
+// HeadroomState is the run's Mozaik RuntimeState: the Figure Board every participant reads and writes.
+// All board writes go through postFigure / setFigureStatus, which are synchronous (no await), so they are
+// atomic in Node.
 import { createClaimStore, type ClaimRecord, type ClaimStore, type ProposeResult } from '@headroom/claims';
+import { RuntimeState } from '@mozaik-ai/core';
 import { cmp } from '../domain/money.ts';
 import type {
   ClaimStatus,
@@ -90,7 +91,7 @@ export interface Corroboration {
   sources: SourceRef[];
 }
 
-export class HeadroomState {
+export class HeadroomState extends RuntimeState {
   readonly board: ClaimStore<FigureValue>;
   /** Figure metadata by claim record id. */
   readonly figures = new Map<string, Figure>();
@@ -120,6 +121,7 @@ export class HeadroomState {
     private readonly newId: () => string,
     private readonly now: () => number = () => Date.now(),
   ) {
+    super();
     this.board = createClaimStore<FigureValue>({ newId, now, equals: figureValueEquals });
     // Bind figure metadata to the record created inside propose(); runs synchronously within it.
     this.board.onChange((e) => {

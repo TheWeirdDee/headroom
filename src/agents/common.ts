@@ -5,7 +5,8 @@ import { join } from 'node:path';
 import { z } from 'zod';
 import { sha256 } from '../util/hash.ts';
 import { doingNow, stateOf, type Decision } from './status-text.ts';
-import type { HrRuntime, HrTool } from '../runtime/types.ts';
+import type { HrTool } from '../runtime/types.ts';
+import type { HeadroomRuntime, LoopGate } from '../runtime/mozaik/runtime.ts';
 import type { RuleBook } from '../domain/rules/engine.ts';
 import type { RunInputs } from '../engine/inputs.ts';
 import type { KursClient } from '../integrations/kurs/client.ts';
@@ -25,7 +26,9 @@ export const AGENTS = {
 export type AgentId = (typeof AGENTS)[keyof typeof AGENTS];
 
 export interface AgentDeps {
-  rt: HrRuntime;
+  rt: HeadroomRuntime;
+  /** The Verifier's InterceptionHandler, put on every reading loop. */
+  gate: LoopGate;
   rules: RuleBook;
   inputs: RunInputs;
   kurs: KursClient;
@@ -34,7 +37,7 @@ export interface AgentDeps {
   today: () => string;
 }
 
-export function setStatus(rt: HrRuntime, agentId: string, decision: Decision, loopId?: string): void {
+export function setStatus(rt: HeadroomRuntime, agentId: string, decision: Decision, loopId?: string): void {
   rt.publish('hr.agent.status', agentId, {
     agentId,
     state: stateOf(decision),

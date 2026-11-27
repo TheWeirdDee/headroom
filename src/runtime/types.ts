@@ -1,6 +1,5 @@
-// Our runtime interface (PRD 7.3). No Mozaik imports here: agents, engine and tests depend on these
-// types only, and src/runtime/mozaik/adapter.ts implements them on @mozaik-ai/core.
-import type { HeadroomState } from './state.ts';
+// The plain data the engine, the recorder and the tests exchange about a run: events, loops, model
+// requests and responses. The runtime itself is Mozaik (src/runtime/mozaik/runtime.ts).
 
 export interface HrEvent<P = unknown> {
   eventId: string;
@@ -11,22 +10,8 @@ export interface HrEvent<P = unknown> {
   payload: P;
 }
 
-export interface EventFilter {
-  /** Exact types, or prefixes ending in '*' ("hr.figure.*"). */
-  types?: string[];
-  producerId?: string;
-  notProducerId?: string;
-  /** Lifecycle events (participant.joined/left) are dropped unless this is true (gap #5). */
-  includeLifecycle?: boolean;
-}
-
+/** A participant's reaction to one event. */
 export type HrHandler = (event: HrEvent) => void | Promise<void>;
-
-export interface HrParticipant {
-  id: string;
-  name: string;
-  kind: 'agent' | 'human' | 'observer';
-}
 
 /** A tool an agent's model may call. Arguments are validated by the tool itself (Zod). */
 export interface HrTool {
@@ -123,19 +108,6 @@ export interface InferenceObserver {
   onRequest?(request: HrInferenceRequest): () => void;
   /** Called after every successful inference, with the wall time it took (for replay timing). */
   onResponse?(request: HrInferenceRequest, response: HrInferenceResponse, latencyMs: number): void;
-}
-
-export interface HrRuntime {
-  readonly runId: string;
-  readonly state: HeadroomState;
-  publish(type: string, producerId: string, payload: unknown): HrEvent;
-  on(participantId: string, filter: EventFilter, handler: HrHandler): void;
-  join(p: HrParticipant): void;
-  startLoop(input: LoopInput): LoopHandle;
-  /** For the quiescence detector. */
-  activity(): { runningLoops: number; queuedEvents: number; busyMailboxes: number };
-  loopMetrics(): LoopMetric[];
-  shutdown(): Promise<void>;
 }
 
 export class TransientError extends Error {

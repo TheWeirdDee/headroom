@@ -32,6 +32,8 @@ const CHECKS = [
 ];
 
 const MOZAIK_IMPORT = /(?:from|import|require\(|import\()\s*['"](?:@mozaik-ai\/|@jigjoy\/)/;
+// Agents are Mozaik participants; rules, parsing, exports, the web app and the claims package are not.
+const WITHOUT_MOZAIK = /^(src\/(domain|inputs|exporters|integrations)|packages\/claims|web\/src)\//;
 // Thousands-grouped amounts (6.000.000 / 6,000,000.00) or long decimals with two places (5400000.00).
 const MONEY_LITERAL = /\b\d{1,3}(?:[.,]\d{3}){1,}(?:[.,]\d{2})?\b|\b\d{4,}\.\d{2}\b/;
 
@@ -48,12 +50,12 @@ export function scan(base, roots, exclude = []) {
       for (const c of CHECKS) {
         if (c.re.test(line)) findings.push({ file: rel, line: i + 1, id: c.id, message: c.message });
       }
-      if (MOZAIK_IMPORT.test(line) && !rel.startsWith('src/runtime/mozaik/') && rel !== 'package.json') {
+      if (MOZAIK_IMPORT.test(line) && WITHOUT_MOZAIK.test(rel)) {
         findings.push({
           file: rel,
           line: i + 1,
           id: 'mozaik-import',
-          message: 'Mozaik import outside src/runtime/mozaik/',
+          message: 'Mozaik import in code that stays independent of the agent runtime',
         });
       }
       if (rel.startsWith('web/src/') && !isUiMoneyExempt(rel) && MONEY_LITERAL.test(line)) {

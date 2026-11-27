@@ -208,7 +208,7 @@ export function HeadroomCard({
       <section className="rounded border border-line bg-panel p-5" aria-label="Headroom">
         <h2 className="font-medium">Headroom</h2>
         <p className="mt-2 text-sm text-muted">
-          Shown once the totals are verified. No number appears here before a second agent has checked it.
+          Shown once the totals are verified. No number appears here before the Verifier has checked it.
         </p>
       </section>
     );

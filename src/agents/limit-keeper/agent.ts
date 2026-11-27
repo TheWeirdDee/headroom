@@ -2,6 +2,8 @@
 // verified figures only (debounced 150 ms) and proposes them with derivations listing every input figure.
 // Own initiative: E3 (invoice missing from the KPO book), E8 (numbering gaps, "worth checking") and
 // crossing attribution (hr.headroom.crossing when correcting one discrepancy flips the band).
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, ReaderFinished } from '../situations.ts';
 import { AGENTS, setStatus, type AgentDeps } from '../common.ts';
 import { computeTotals, type DraftFact } from './compute.ts';
 import { invoiceRecords, sixMFacts, eightMFacts, verifiedInvoiceFigures } from '../facts.ts';
@@ -34,8 +36,6 @@ export function registerLimitKeeper(deps: AgentDeps): void {
     redFrom: rules.decimalParam('R-LIMIT-BANDS', 'redFrom'),
     crossedFrom: rules.decimalParam('R-LIMIT-BANDS', 'crossedFrom'),
   };
-
-  rt.join({ id: ID, name: 'LimitKeeper', kind: 'agent' });
 
   const ruleSrc = (ruleId: string): SourceRef => ({ type: 'rule', ruleId, url: rules.url(ruleId) });
 
@@ -340,55 +340,56 @@ export function registerLimitKeeper(deps: AgentDeps): void {
       }
     }, DEBOUNCE_MS);
   }
-
-  rt.on(ID, { types: ['hr.figure.verified', 'hr.figure.superseded'] }, (e: HrEvent) => {
-    const p = parseKey((e.payload as { key: string }).key);
-    if (
-      p?.kind === 'invoice' &&
-      ['amountRSD', 'issueDate', 'clientCountry', 'kind', 'client'].includes(p.field)
-    )
-      schedule();
-    else if (p?.kind === 'draft' && p.field === 'amountRSD') schedule();
-    else if (p?.kind === 'fx' || (p?.kind === 'discrepancy' && p.type === 'E1')) schedule();
-    scheduleCard();
+  // No model: its reactions are exact arithmetic over verified figures.
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['rules', 'totals'],
+    instruction: 'Total verified turnover against the 6M and 8M limits, from rules in code.',
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      rt.when(new EventIs('hr.figure.verified', 'hr.figure.superseded'), (e: HrEvent) => {
+        const p = parseKey((e.payload as { key: string }).key);
+        if (
+          p?.kind === 'invoice' &&
+          ['amountRSD', 'issueDate', 'clientCountry', 'kind', 'client'].includes(p.field)
+        )
+          schedule();
+        else if (p?.kind === 'draft' && p.field === 'amountRSD') schedule();
+        else if (p?.kind === 'fx' || (p?.kind === 'discrepancy' && p.type === 'E1')) schedule();
+        scheduleCard();
+      }),
+      // Anything that can make the card complete or incomplete publishes it again.
+      rt.when(
+        new EventIs(
+          'hr.figure.proposed',
+          'hr.figure.contested',
+          'hr.figure.needs_user',
+          'hr.loop.failed',
+          'hr.participant.error',
+          'hr.reader.done',
+          'hr.payments.matched',
+          'hr.question.asked',
+          'hr.question.answered',
+          'hr.draft.changed',
+        ),
+        () => scheduleCard(),
+      ),
+      rt.when(new ReaderFinished(AGENTS.invoiceReader), () => {
+        invoicesDone = true;
+        schedule();
+      }),
+      rt.when(new EventIs('hr.kpo.claims'), (e: HrEvent) => {
+        const p = e.payload as { invoiceNumbers: string[]; complete: boolean };
+        // A book with rows that could not be read cannot show that an invoice is missing from it.
+        kpoClaims = p.complete ? new Set(p.invoiceNumbers) : undefined;
+        schedule();
+      }),
+      rt.when(new EventIs('hr.run.started', 'hr.draft.changed'), () => schedule()),
+      rt.when(new EventIs('hr.run.stopping'), () => {
+        if (timer) clearTimeout(timer);
+        state.debouncing.delete(ID);
+      }),
+    ],
   });
-
-  // Anything that can make the card complete or incomplete publishes it again.
-  rt.on(
-    ID,
-    {
-      types: [
-        'hr.figure.proposed',
-        'hr.figure.contested',
-        'hr.figure.needs_user',
-        'hr.loop.failed',
-        'hr.participant.error',
-        'hr.reader.done',
-        'hr.payments.matched',
-        'hr.question.asked',
-        'hr.question.answered',
-        'hr.draft.changed',
-      ],
-    },
-    () => scheduleCard(),
-  );
-
-  rt.on(ID, { types: ['hr.reader.done'], producerId: AGENTS.invoiceReader }, () => {
-    invoicesDone = true;
-    schedule();
-  });
-
-  rt.on(ID, { types: ['hr.kpo.claims'] }, (e: HrEvent) => {
-    const p = e.payload as { invoiceNumbers: string[]; complete: boolean };
-    // A book with rows that could not be read cannot show that an invoice is missing from it.
-    kpoClaims = p.complete ? new Set(p.invoiceNumbers) : undefined;
-    schedule();
-  });
-
-  rt.on(ID, { types: ['hr.run.started', 'hr.draft.changed'] }, () => schedule());
-
-  rt.on(ID, { types: ['hr.run.stopping'] }, () => {
-    if (timer) clearTimeout(timer);
-    state.debouncing.delete(ID);
-  });
+  rt.join(agent);
 }

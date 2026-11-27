@@ -427,7 +427,7 @@ export function Landing() {
             <p className="mt-6 max-w-3xl font-serif text-xl leading-snug text-muted">
               &ldquo;
               {health?.authorityBoundary ??
-                'Models read documents, code does the arithmetic and applies the rules, a second agent checks every figure, and you decide whether to send the invoice.'}
+                'Models read documents, code does the arithmetic and applies the rules, a Verifier agent checks every figure against its source, and you decide whether to send the invoice.'}
               &rdquo;
             </p>
           </Reveal>

@@ -11,7 +11,7 @@ import { UploadError, type UploadStore } from './uploads.ts';
 import { ExportError, correctionsCsv, kpoCsv } from '../exporters/kpo.ts';
 import { kpoPdf } from '../exporters/kpo-pdf.ts';
 import { DraftSchema } from '../engine/load-inputs.ts';
-import { MOZAIK_PACKAGE } from '../runtime/mozaik/adapter.ts';
+import { MOZAIK_PACKAGE } from '../runtime/mozaik/runtime.ts';
 import { AUTHORITY_BOUNDARY, DISCLAIMER } from '../domain/copy.ts';
 import type { AppEnv } from '../config/env.ts';
 import type { RuleBook } from '../domain/rules/engine.ts';

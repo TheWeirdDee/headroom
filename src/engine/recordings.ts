@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { requestHash } from '../runtime/request-hash.ts';
 import { serializeEvent, serializeValue } from './serialize.ts';
 import { replayFetcher, type Fetcher } from '../integrations/kurs/client.ts';
-import { MOZAIK_PACKAGE } from '../runtime/mozaik/adapter.ts';
+import { MOZAIK_PACKAGE } from '../runtime/mozaik/runtime.ts';
 import type {
   HrInferenceRequest,
   HrInferenceResponse,

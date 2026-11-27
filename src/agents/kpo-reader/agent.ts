@@ -1,6 +1,8 @@
 // KpoReader (PRD 8.2a): code parses the user's KPO book; the model only matches each row's description to
 // an invoice number. Code then claims, on the same keys InvoiceReader uses, what the book says about each
 // invoice (entry date, RSD amount, products or services column). Collisions with the invoices are real.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs } from '../situations.ts';
 import { z } from 'zod';
 import {
   AGENTS,
@@ -104,8 +106,6 @@ export function registerKpoReader(deps: AgentDeps): void {
   const matches: Match[] = [];
   const unreadRows: number[] = [];
 
-  rt.join({ id: ID, name: 'KpoReader', kind: 'agent' });
-
   async function readChunk(file: string, rows: ExistingKpoRow[]): Promise<void> {
     const from = rows[0]?.rowIndex ?? 0;
     const to = rows[rows.length - 1]?.rowIndex ?? 0;
@@ -129,10 +129,9 @@ export function registerKpoReader(deps: AgentDeps): void {
     ].join('\n');
     await limit.run(async () => {
       setStatus(rt, ID, { kind: 'reading_kpo_chunk', from, to });
-      const result = await rt.startLoop({
-        agentId: ID,
+      const result = await rt.think(agent, {
+        gate: deps.gate,
         loopInputKey: `kpo:${sha256(user)}`,
-        system: prompt.text,
         promptHash: prompt.hash,
         user,
         model: rt.state.config.models.reader,
@@ -209,24 +208,33 @@ export function registerKpoReader(deps: AgentDeps): void {
       summary: `Matched ${claimed.size} invoices in ${matches.length} KPO rows`,
     });
   }
-
-  rt.on(ID, { types: ['hr.run.started'] }, () => {
-    const book = inputs.kpo;
-    if (!book || book.rows.length === 0) {
-      setStatus(rt, ID, { kind: 'done', summary: 'No KPO book provided' });
-      rt.state.progress.kpo = { complete: true };
-      rt.publish('hr.kpo.claims', ID, {
-        complete: true,
-        unreadRows: [],
-        invoiceNumbers: [],
-        rowsWithoutInvoice: [],
-      });
-      rt.publish('hr.reader.done', ID, { agentId: ID });
-      return;
-    }
-    void Promise.all(chunk(book.rows, CHUNK).map((rows) => readChunk(book.file, rows))).then(() => {
-      postClaims(book.file);
-      rt.publish('hr.reader.done', ID, { agentId: ID });
-    });
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['inference', 'reads-kpo-book'],
+    instruction: prompt.text,
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      ...rt.ownLoops(),
+      rt.when(new EventIs('hr.run.started'), () => {
+        const book = inputs.kpo;
+        if (!book || book.rows.length === 0) {
+          setStatus(rt, ID, { kind: 'done', summary: 'No KPO book provided' });
+          rt.state.progress.kpo = { complete: true };
+          rt.publish('hr.kpo.claims', ID, {
+            complete: true,
+            unreadRows: [],
+            invoiceNumbers: [],
+            rowsWithoutInvoice: [],
+          });
+          rt.publish('hr.reader.done', ID, { agentId: ID });
+          return;
+        }
+        void Promise.all(chunk(book.rows, CHUNK).map((rows) => readChunk(book.file, rows))).then(() => {
+          postClaims(book.file);
+          rt.publish('hr.reader.done', ID, { agentId: ID });
+        });
+      }),
+    ],
   });
+  rt.join(agent);
 }

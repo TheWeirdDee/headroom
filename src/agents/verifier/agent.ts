@@ -1,6 +1,8 @@
 // Verifier (PRD 8.6): independently re-checks every proposed figure before it counts, and settles
 // conflicts against the source. Steps: source presence, integrity, derivation, fidelity, plausibility.
 // Its model context holds only the claimed value and the cited excerpt, never the producer's reasoning.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, ProposedUndisputed, AnswerToMyQuestion } from '../situations.ts';
 import { z } from 'zod';
 import { AGENTS, Semaphore, jsonSchema, loadPrompt, setStatus, type AgentDeps } from '../common.ts';
 import { fenceSafe } from '../common.ts';
@@ -53,8 +55,6 @@ export function registerVerifier(deps: AgentDeps): void {
   const waiting = new Map<string, Set<string>>(); // input figure id -> figures waiting on it
   const inFlight = new Set<string>();
 
-  rt.join({ id: ID, name: 'Verifier', kind: 'agent' });
-
   async function askModel(
     q: ModelQuestion,
     key: string,
@@ -69,10 +69,8 @@ export function registerVerifier(deps: AgentDeps): void {
       '</source>',
     ].join('\n');
     for (let attempt = 1; attempt <= 2; attempt++) {
-      const result = await rt.startLoop({
-        agentId: ID,
+      const result = await rt.think(agent, {
         loopInputKey: `fidelity:${key}:${q.claimed}:${q.excerptSha256 || sha256(q.excerpt)}:a${attempt}`,
-        system: prompt.text,
         promptHash: prompt.hash,
         user,
         model: state.config.models.verifier,
@@ -470,57 +468,62 @@ export function registerVerifier(deps: AgentDeps): void {
       });
     }
   }
-
-  // The user's choice settles a key the Verifier could not: the chosen value is verified, the rest retire.
-  rt.on(ID, { types: ['hr.question.answered'] }, (e: HrEvent) => {
-    const { questionId, answer, answeredAt } = e.payload as {
-      questionId: string;
-      answer: string;
-      answeredAt: string;
-    };
-    const ids = candidatesOf.get(questionId);
-    if (!ids) return;
-    const figs = ids.map((id) => state.figures.get(id)).filter((x): x is Figure => x !== undefined);
-    const chosen = figs.find((f) => valueText(f) === answer);
-    if (!chosen) return;
-    for (const f of figs) {
-      if (f.id === chosen.id || f.status === 'superseded') continue;
-      state.setFigureStatus(f.id, 'superseded', ID, undefined, `the user chose ${answer}`);
-    }
-    if (chosen.status !== 'verified' && chosen.status !== 'superseded') {
-      state.setFigureStatus(chosen.id, 'verified', ID, [
-        ...(chosen.checks ?? []),
-        { name: 'fidelity', passed: true, detail: `chosen by you at ${answeredAt}` },
-      ]);
-      afterVerified(chosen);
-    }
+  // Checks what the other agents write: it reacts to their figures, never to its own say-so.
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['inference', 'checks-figures'],
+    instruction: prompt.text,
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      ...rt.ownLoops(),
+      // The user's choice settles a key the Verifier could not: the chosen value is verified, the rest retire.
+      rt.when(new AnswerToMyQuestion(state), (e: HrEvent) => {
+        const { questionId, answer, answeredAt } = e.payload as {
+          questionId: string;
+          answer: string;
+          answeredAt: string;
+        };
+        const ids = candidatesOf.get(questionId);
+        if (!ids) return;
+        const figs = ids.map((id) => state.figures.get(id)).filter((x): x is Figure => x !== undefined);
+        const chosen = figs.find((f) => valueText(f) === answer);
+        if (!chosen) return;
+        for (const f of figs) {
+          if (f.id === chosen.id || f.status === 'superseded') continue;
+          state.setFigureStatus(f.id, 'superseded', ID, undefined, `the user chose ${answer}`);
+        }
+        if (chosen.status !== 'verified' && chosen.status !== 'superseded') {
+          state.setFigureStatus(chosen.id, 'verified', ID, [
+            ...(chosen.checks ?? []),
+            { name: 'fidelity', passed: true, detail: `chosen by you at ${answeredAt}` },
+          ]);
+          afterVerified(chosen);
+        }
+      }),
+      rt.when(new ProposedUndisputed(), (e: HrEvent) => {
+        const { figure, result } = e.payload as { figure?: Figure; result: string };
+        if (figure && result === 'claimed') void verify(figure.id);
+      }),
+      rt.when(new EventIs('hr.figure.conflict'), (e: HrEvent) => {
+        const { existingId, proposedId } = e.payload as { existingId: string; proposedId: string };
+        void resolve(existingId, proposedId);
+      }),
+      rt.when(new EventIs('hr.figure.verified'), (e: HrEvent) => {
+        wake((e.payload as { figureId: string }).figureId);
+      }),
+      // An input that is replaced, disputed or sent to the user retires the derivations waiting on it.
+      rt.when(
+        new EventIs('hr.figure.superseded', 'hr.figure.contested', 'hr.figure.needs_user'),
+        (e: HrEvent) => {
+          const p = e.payload as { oldId?: string; figureId?: string };
+          const oldId = p.oldId ?? p.figureId ?? '';
+          const set = waiting.get(oldId);
+          if (!set) return;
+          waiting.delete(oldId);
+          for (const id of set) void verify(id); // re-evaluates as stale and retires it
+        },
+      ),
+    ],
   });
-
-  rt.on(ID, { types: ['hr.figure.proposed'] }, (e: HrEvent) => {
-    const { figure, result } = e.payload as { figure?: Figure; result: string };
-    if (figure && result === 'claimed') void verify(figure.id);
-  });
-
-  rt.on(ID, { types: ['hr.figure.conflict'] }, (e: HrEvent) => {
-    const { existingId, proposedId } = e.payload as { existingId: string; proposedId: string };
-    void resolve(existingId, proposedId);
-  });
-
-  rt.on(ID, { types: ['hr.figure.verified'] }, (e: HrEvent) => {
-    wake((e.payload as { figureId: string }).figureId);
-  });
-
-  // An input that is replaced, disputed or sent to the user retires the derivations waiting on it.
-  rt.on(
-    ID,
-    { types: ['hr.figure.superseded', 'hr.figure.contested', 'hr.figure.needs_user'] },
-    (e: HrEvent) => {
-      const p = e.payload as { oldId?: string; figureId?: string };
-      const oldId = p.oldId ?? p.figureId ?? '';
-      const set = waiting.get(oldId);
-      if (!set) return;
-      waiting.delete(oldId);
-      for (const id of set) void verify(id); // re-evaluates as stale and retires it
-    },
-  );
+  rt.join(agent);
 }

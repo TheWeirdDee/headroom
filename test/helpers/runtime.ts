@@ -1,18 +1,16 @@
+// Test participants on a real Mozaik runtime; only the model is scripted.
+import { createAgent, createHuman, type Agent, type SituationHandler } from '@mozaik-ai/core';
 import { HeadroomState } from '../../src/runtime/state.ts';
-import { createMemoryRuntime } from '../../src/runtime/memory/adapter.ts';
-import { createMozaikRuntime } from '../../src/runtime/mozaik/adapter.ts';
+import { createRuntime, type HeadroomRuntime, type ThinkInput } from '../../src/runtime/mozaik/runtime.ts';
+import { AnyEvent } from '../../src/agents/situations.ts';
 import { defaultRunConfig } from '../../src/config/defaults.ts';
 import { sequentialIds } from '../../src/util/hash.ts';
 import type {
   HrEvent,
   HrInferenceRequest,
   HrInferenceResponse,
-  HrRuntime,
-  LoopInput,
   ModelBackend,
 } from '../../src/runtime/types.ts';
-
-export type AdapterKind = 'mozaik' | 'memory';
 
 export function makeState(runId = 'run-test'): HeadroomState {
   return new HeadroomState(
@@ -25,19 +23,30 @@ export function makeState(runId = 'run-test'): HeadroomState {
 }
 
 export function makeRuntime(
-  kind: AdapterKind,
   backend: ModelBackend,
   state: HeadroomState = makeState(),
   extra: { loopTimeoutMs?: number } = {},
-): HrRuntime {
-  const common = {
+): HeadroomRuntime {
+  return createRuntime({
     state,
     backend,
     newEventId: sequentialIds('e'),
     defaultLoopTimeoutMs: extra.loopTimeoutMs ?? 2_000,
     sleep: async () => {},
-  };
-  return kind === 'mozaik' ? createMozaikRuntime(common) : createMemoryRuntime(common);
+  });
+}
+
+/** Join a Mozaik agent that follows its own loops. */
+export function agentNamed(rt: HeadroomRuntime, name: string, handlers: SituationHandler[] = []): Agent {
+  const agent = createAgent({
+    name,
+    capabilities: ['inference'],
+    instruction: 'You are a test agent.',
+    tools: [],
+    handlers: [...rt.ownLoops(), ...handlers],
+  });
+  rt.join(agent);
+  return agent;
 }
 
 /** A backend driven by a function of the request; records every request it sees. */
@@ -66,11 +75,9 @@ export const call = (name: string, args: unknown, tokensIn = 10, tokensOut = 5):
   tokensOut,
 });
 
-export function loopInput(agentId: string, overrides: Partial<LoopInput> = {}): LoopInput {
+export function thinkInput(overrides: Partial<ThinkInput> = {}): ThinkInput {
   return {
-    agentId,
-    loopInputKey: `${agentId}-input`,
-    system: 'You are a test agent.',
+    loopInputKey: 'test-input',
     promptHash: 'sha256:test',
     user: 'Do the thing.',
     model: 'claude-sonnet-5-5',
@@ -81,13 +88,20 @@ export function loopInput(agentId: string, overrides: Partial<LoopInput> = {}): 
   };
 }
 
-/** Collect every event delivered to an observer participant. */
-export function observe(rt: HrRuntime, id = 'observer'): HrEvent[] {
+/** Collect every event delivered to a participant that reacts to all of them. */
+export function observe(rt: HeadroomRuntime, name = 'observer'): HrEvent[] {
   const seen: HrEvent[] = [];
-  rt.join({ id, name: id, kind: 'observer' });
-  rt.on(id, { includeLifecycle: true }, (e) => {
-    seen.push(e);
-  });
+  rt.join(
+    createHuman({
+      name,
+      capabilities: [],
+      handlers: [
+        rt.when(new AnyEvent(), (e) => {
+          seen.push(e);
+        }),
+      ],
+    }),
+  );
   return seen;
 }
 

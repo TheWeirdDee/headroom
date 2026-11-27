@@ -100,7 +100,7 @@
     {
       "bandBefore": "red",
       "bandAfter": "crossed",
-      "discrepancyId": "f000189",
+      "discrepancyId": "f000199",
       "discrepancyType": "E1",
       "subjectKey": "payment:S1-12",
       "baseline": "corrected",
@@ -120,7 +120,7 @@
   ],
   "discrepancies": [
     {
-      "id": "f000182",
+      "id": "f000183",
       "type": "E9",
       "title": "Client country differs between invoice and client details",
       "detail": "Invoice 2026-002 gives the client's country as RS; the client details say DE. This decides whether the invoice counts toward the 8M VAT threshold.",
@@ -152,7 +152,7 @@
       "baseline": "book"
     },
     {
-      "id": "f000183",
+      "id": "f000184",
       "type": "E2",
       "title": "KPO book uses a different date than the invoice",
       "detail": "The KPO book enters invoice 2026-001 on 2026-02-09; the invoice is dated 2026-01-16.",
@@ -190,7 +190,55 @@
       "baseline": "book"
     },
     {
-      "id": "f000189",
+      "id": "f000188",
+      "type": "E5",
+      "title": "KPO amount uses a rate other than the NBS middle rate",
+      "detail": "The KPO book records 493032.96 RSD for 4200 EUR, an implied rate of 117.3888: the NBS rate of the payment date 2026-03-02. Converted at 117.3815 (NBS, 2026-02-13) it is 493002.30 RSD.",
+      "figureIds": ["f000123", "f000186", "f000185", "f000187"],
+      "sources": [
+        {
+          "type": "kpo_row",
+          "file": "kpo.csv",
+          "rowIndex": 3,
+          "rawLine": "3,2026-02-16,\"Faktura 2026-003, Heron Systems GmbH\",0.00,493032.96,493032.96",
+          "rawLineSha256": "e8fb292523d353a065a97507b1a19a3917be24b32d726e81019f1088e049cfaf"
+        },
+        {
+          "type": "url",
+          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
+          "fetchedAt": "2026-11-27T09:41:14.653Z",
+          "httpStatus": 200,
+          "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
+          "jsonPath": "$.exchange_middle"
+        },
+        {
+          "type": "rule",
+          "ruleId": "R-FX",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
+        },
+        { "type": "rule", "ruleId": "R-FX-NONPUB", "url": "https://kurs.resenje.org/doc/" },
+        {
+          "type": "url",
+          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
+          "fetchedAt": "2026-11-27T09:41:14.659Z",
+          "httpStatus": 200,
+          "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
+          "jsonPath": "$.exchange_middle"
+        },
+        {
+          "type": "rule",
+          "ruleId": "R-FX",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "invoice:2026-003",
+      "producedBy": "rate-clerk",
+      "deltaRSD": "-30.66",
+      "baseline": "book"
+    },
+    {
+      "id": "f000199",
       "type": "E1",
       "title": "Payment received with no matching invoice",
       "detail": "2026-08-25: 240000 RSD from Lipa Studio. No invoice names it, and no unpaid invoice has the same amount and currency.",
@@ -218,59 +266,11 @@
       "payment": { "currency": "RSD", "amount": "240000", "date": "2026-08-25" }
     },
     {
-      "id": "f000191",
-      "type": "E5",
-      "title": "KPO amount uses a rate other than the NBS middle rate",
-      "detail": "The KPO book records 493032.96 RSD for 4200 EUR, an implied rate of 117.3888: the NBS rate of the payment date 2026-03-02. Converted at 117.3815 (NBS, 2026-02-13) it is 493002.30 RSD.",
-      "figureIds": ["f000123", "f000188", "f000187", "f000190"],
-      "sources": [
-        {
-          "type": "kpo_row",
-          "file": "kpo.csv",
-          "rowIndex": 3,
-          "rawLine": "3,2026-02-16,\"Faktura 2026-003, Heron Systems GmbH\",0.00,493032.96,493032.96",
-          "rawLineSha256": "e8fb292523d353a065a97507b1a19a3917be24b32d726e81019f1088e049cfaf"
-        },
-        {
-          "type": "url",
-          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T09:00:51.445Z",
-          "httpStatus": 200,
-          "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
-          "jsonPath": "$.exchange_middle"
-        },
-        {
-          "type": "rule",
-          "ruleId": "R-FX",
-          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
-        },
-        { "type": "rule", "ruleId": "R-FX-NONPUB", "url": "https://kurs.resenje.org/doc/" },
-        {
-          "type": "url",
-          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T09:00:51.448Z",
-          "httpStatus": 200,
-          "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
-          "jsonPath": "$.exchange_middle"
-        },
-        {
-          "type": "rule",
-          "ruleId": "R-FX",
-          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
-        }
-      ],
-      "status": "verified",
-      "subjectKey": "invoice:2026-003",
-      "producedBy": "rate-clerk",
-      "deltaRSD": "-30.66",
-      "baseline": "book"
-    },
-    {
       "id": "f000224",
       "type": "E3",
       "title": "Issued invoice missing from the KPO book",
       "detail": "Invoice 2026-010 (510574.73 RSD) is not in the KPO book.",
-      "figureIds": ["f000169", "f000200"],
+      "figureIds": ["f000169", "f000197"],
       "sources": [
         {
           "type": "document",

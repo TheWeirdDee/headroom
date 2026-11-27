@@ -1,6 +1,7 @@
 // Run engine (PRD 14.3): one Mozaik runtime per run. Joins listeners first, publishes hr.run.started,
 // waits for quiescence (14.4) or the hard timeout, then publishes hr.run.completed with the summary.
-import { createMozaikRuntime, MOZAIK_PACKAGE } from '../runtime/mozaik/adapter.ts';
+import { createRuntime, MOZAIK_PACKAGE, type HeadroomRuntime } from '../runtime/mozaik/runtime.ts';
+import { evidenceGate } from '../agents/verifier/gate.ts';
 import { HeadroomState, REJECTION_REASONS } from '../runtime/state.ts';
 import { waitForQuiescence } from './quiescence.ts';
 import { registerObserver, type EventSink } from '../agents/observer.ts';
@@ -12,14 +13,14 @@ import { registerKpoReader } from '../agents/kpo-reader/agent.ts';
 import { registerStatementReader } from '../agents/statement-reader/agent.ts';
 import { registerInvoiceReader } from '../agents/invoice-reader/agent.ts';
 import { registerHuman, type HumanApi } from '../agents/human.ts';
-import { loadPrompt, type AgentDeps } from '../agents/common.ts';
+import { AGENTS, loadPrompt, type AgentDeps } from '../agents/common.ts';
 import { buildCard, type CardVM } from '../agents/limit-keeper/card.ts';
 import { todayInBelgrade } from '../domain/dates.ts';
 import { sequentialIds } from '../util/hash.ts';
 import type { RuleBook } from '../domain/rules/engine.ts';
 import type { RunConfig } from '../domain/types.ts';
 import type { RunInputs } from './inputs.ts';
-import type { HrEvent, HrRuntime, InferenceObserver, LoopMetric, ModelBackend } from '../runtime/types.ts';
+import type { HrEvent, InferenceObserver, LoopMetric, ModelBackend } from '../runtime/types.ts';
 import type { KursClient } from '../integrations/kurs/client.ts';
 import { pacerRpm } from '../runtime/pacer.ts';
 
@@ -87,7 +88,7 @@ export interface RunOptions {
 
 export interface Run {
   runId: string;
-  rt: HrRuntime;
+  rt: HeadroomRuntime;
   human: HumanApi;
   events: HrEvent[];
   /** Resolves with the summary when the run first goes quiet (or times out). */
@@ -117,7 +118,7 @@ export function maxConcurrency(loops: LoopMetric[]): number {
 export function startRun(o: RunOptions): Run {
   const now = o.now ?? ((): number => Date.now());
   const state = new HeadroomState(o.runId, o.inputs.inputId, o.mode, o.config, sequentialIds('f'), now);
-  const rt = createMozaikRuntime({
+  const rt = createRuntime({
     state,
     ...(o.backend ? { backend: o.backend } : {}),
     ...(o.inferenceObserver ? { observer: o.inferenceObserver } : {}),
@@ -129,6 +130,7 @@ export function startRun(o: RunOptions): Run {
   const events: HrEvent[] = [];
   const deps: AgentDeps = {
     rt,
+    gate: evidenceGate(rt, AGENTS.verifier),
     rules: o.rules,
     inputs: o.inputs,
     kurs: o.kurs,
@@ -136,7 +138,8 @@ export function startRun(o: RunOptions): Run {
     today: () => todayInBelgrade(new Date(now())),
   };
 
-  // Listeners join first so no event is missed (PRD 14.3 step 3).
+  // Seven agents, the user and the transcript join one Mozaik runtime; listeners first, so none misses an
+  // event. Nobody calls an agent: each acts when an event satisfies one of its situation specifications.
   registerObserver(rt, [(e) => events.push(e), ...(o.sinks ?? [])]);
   registerVerifier(deps);
   registerLimitKeeper(deps);
@@ -154,7 +157,8 @@ export function startRun(o: RunOptions): Run {
     ]),
   );
   const started = now();
-  rt.publish('hr.run.started', 'engine', {
+  // The user starts the run; the readers' specifications match this one event and they all begin at once.
+  rt.publish('hr.run.started', AGENTS.human, {
     profileId: o.inputs.inputId,
     synthetic: o.inputs.synthetic,
     mode: o.mode,

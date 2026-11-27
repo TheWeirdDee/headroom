@@ -1,5 +1,7 @@
 // The human participant (PRD 8.7): the draft invoice, answers to questions and what-if draft changes.
 // Answers and draft fields become figures sourced to user_answer.
+import { createHuman } from '@mozaik-ai/core';
+import { EventIs } from './situations.ts';
 import { AGENTS, type AgentDeps } from './common.ts';
 import { keys } from '../domain/keys.ts';
 import type { Draft, FigureValue, SourceRef } from '../domain/types.ts';
@@ -15,8 +17,6 @@ export function registerHuman(deps: AgentDeps): HumanApi {
   const { rt, inputs } = deps;
   const state = rt.state;
   let revision = 0;
-
-  rt.join({ id: ID, name: 'You', kind: 'human' });
 
   function postDraft(): void {
     revision += 1;
@@ -46,7 +46,13 @@ export function registerHuman(deps: AgentDeps): HumanApi {
     post('client', { t: 'text', text: d.clientId }, d.clientId);
   }
 
-  rt.on(ID, { types: ['hr.run.started'] }, () => postDraft());
+  rt.join(
+    createHuman({
+      name: ID,
+      capabilities: ['answers-questions', 'changes-the-invoice'],
+      handlers: [rt.when(new EventIs('hr.run.started'), () => postDraft())],
+    }),
+  );
 
   return {
     answer(questionId, answer) {

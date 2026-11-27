@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { registerVerifier } from '../../src/agents/verifier/agent.ts';
+import { evidenceGate } from '../../src/agents/verifier/gate.ts';
 import { checkPlausibility } from '../../src/agents/verifier/fidelity.ts';
 import { loadRules } from '../../src/domain/rules/loader.ts';
 import { createKursClient } from '../../src/integrations/kurs/client.ts';
@@ -93,12 +94,12 @@ const kpoSrc: SourceRef = {
 function setup() {
   const state = makeState();
   const rt = makeRuntime(
-    'memory',
     scripted(() => msg('{}')),
     state,
   );
   const deps: AgentDeps = {
     rt,
+    gate: evidenceGate(rt, 'verifier'),
     rules: loadRules(),
     inputs: inputs(),
     kurs: createKursClient({

@@ -2,6 +2,8 @@
 // the NBS middle rate (R-FX, R-FX-DATE, R-FX-NONPUB), proposes fx:<CUR>:<date> and invoice:<n>:amountRSD
 // with a derivation. On its own initiative it raises E5 when the KPO book's RSD amount for a foreign
 // invoice implies a different rate. Rates are never guessed: if Kurs cannot answer, it asks the user.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, AboutFigure, AnswerToMyQuestion } from '../situations.ts';
 import { AGENTS, setStatus, type AgentDeps } from '../common.ts';
 import { keys, parseKey } from '../../domain/keys.ts';
 import { classifyBookedRate, convertToRsd, fxDate } from '../../domain/fx.ts';
@@ -22,9 +24,7 @@ export function registerRateClerk(deps: AgentDeps): void {
   // Invoice number -> ids of the verified inputs last converted; a new verified input re-converts.
   const converted = new Map<string, string>();
   const e5Done = new Set<string>();
-  const rateFigures = new Map<string, Figure>(); // fx key -> figure
-
-  rt.join({ id: ID, name: 'RateClerk', kind: 'agent' });
+  const rateFigures = new Map<string, Figure>();
 
   const ruleSrc = (ruleId: string): SourceRef => ({ type: 'rule', ruleId, url: rules.url(ruleId) });
 
@@ -268,69 +268,89 @@ export function registerRateClerk(deps: AgentDeps): void {
       scope: 'draft',
     });
   }
-
-  rt.on(ID, { types: ['hr.figure.verified'] }, async (e: HrEvent) => {
-    const { key } = e.payload as { key: string };
-    const p = parseKey(key);
-    if (p?.kind === 'invoice' && ['currency', 'issueDate', 'supplyDate', 'amount'].includes(p.field)) {
-      await convertInvoice(p.invNo);
-      await checkBookRate(p.invNo);
-    }
-    if (p?.kind === 'draft' && p.field === 'amount') await convertDraft();
-    // A rate the user typed in: convert what was waiting for it.
-    if (p?.kind === 'fx' && state.verified(key)?.sources.some((s) => s.type === 'user_answer')) {
-      const numbers = new Set<string>();
-      for (const f of state.figuresWhere((x) => x.key.startsWith('invoice:'))) {
-        const k = parseKey(f.key);
-        if (k?.kind === 'invoice') numbers.add(k.invNo);
-      }
-      for (const invNo of numbers) await convertInvoice(invNo);
-      await convertDraft();
-    }
+  // No model: rates come from NBS and the conversion is exact arithmetic.
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['rules', 'exchange-rates'],
+    instruction: 'Convert verified foreign amounts at the NBS middle rate of the rule date.',
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      rt.when(
+        new EventIs('hr.figure.verified').and(
+          new AboutFigure(
+            (k) =>
+              (k.kind === 'invoice' && ['currency', 'issueDate', 'supplyDate', 'amount'].includes(k.field)) ||
+              (k.kind === 'draft' && k.field === 'amount') ||
+              k.kind === 'fx',
+          ),
+        ),
+        async (e: HrEvent) => {
+          const { key } = e.payload as { key: string };
+          const p = parseKey(key);
+          if (p?.kind === 'invoice' && ['currency', 'issueDate', 'supplyDate', 'amount'].includes(p.field)) {
+            await convertInvoice(p.invNo);
+            await checkBookRate(p.invNo);
+          }
+          if (p?.kind === 'draft' && p.field === 'amount') await convertDraft();
+          // A rate the user typed in: convert what was waiting for it.
+          if (p?.kind === 'fx' && state.verified(key)?.sources.some((s) => s.type === 'user_answer')) {
+            const numbers = new Set<string>();
+            for (const f of state.figuresWhere((x) => x.key.startsWith('invoice:'))) {
+              const k = parseKey(f.key);
+              if (k?.kind === 'invoice') numbers.add(k.invNo);
+            }
+            for (const invNo of numbers) await convertInvoice(invNo);
+            await convertDraft();
+          }
+        },
+      ),
+      rt.when(
+        new EventIs('hr.figure.conflict', 'hr.figure.proposed').and(
+          new AboutFigure((k) => k.kind === 'invoice' && k.field === 'amountRSD'),
+        ),
+        async (e: HrEvent) => {
+          const key =
+            (e.payload as { key?: string; figure?: { key: string } }).key ??
+            (e.payload as { figure?: { key: string } }).figure?.key;
+          const p = key ? parseKey(key) : undefined;
+          if (p?.kind === 'invoice' && p.field === 'amountRSD') await checkBookRate(p.invNo);
+        },
+      ),
+      // LimitKeeper asks for the rate of a foreign payment's date to measure an E1's effect on the total.
+      // What-if: a changed draft (amount, currency or date) is converted again at the right rate.
+      rt.when(new EventIs('hr.draft.changed'), async () => {
+        await convertDraft();
+      }),
+      rt.when(new EventIs('hr.rate.needed'), async (e: HrEvent) => {
+        const { currency, date } = e.payload as { currency: string; date: string };
+        await rateFigure(currency, date);
+      }),
+      rt.when(new AnswerToMyQuestion(state), (e: HrEvent) => {
+        const { questionId, answer } = e.payload as { questionId: string; answer: string };
+        const q = state.questions.get(questionId);
+        if (!q || q.askedBy !== ID) return;
+        const p = parseKey(q.subjectKey);
+        if (p?.kind !== 'fx' || !/^\d+(\.\d{1,6})?$/.test(answer.trim())) return;
+        const answeredAt = new Date(deps.now()).toISOString();
+        const { figure } = state.postFigure({
+          key: q.subjectKey,
+          kind: 'fx_rate',
+          value: {
+            t: 'rate',
+            rate: answer.trim(),
+            base: p.currency as 'EUR',
+            quote: 'RSD',
+            parity: 1,
+            requestedDate: p.date,
+            rateDate: p.date,
+          },
+          sources: [{ type: 'user_answer', questionId, answeredAt, answer: answer.trim() }],
+          producedBy: ID,
+          idempotencyKey: `${ID}/${q.subjectKey}/answer`,
+        });
+        rateFigures.set(q.subjectKey, figure);
+      }),
+    ],
   });
-
-  rt.on(ID, { types: ['hr.figure.conflict', 'hr.figure.proposed'] }, async (e: HrEvent) => {
-    const key =
-      (e.payload as { key?: string; figure?: { key: string } }).key ??
-      (e.payload as { figure?: { key: string } }).figure?.key;
-    const p = key ? parseKey(key) : undefined;
-    if (p?.kind === 'invoice' && p.field === 'amountRSD') await checkBookRate(p.invNo);
-  });
-
-  // LimitKeeper asks for the rate of a foreign payment's date to measure an E1's effect on the total.
-  // What-if: a changed draft (amount, currency or date) is converted again at the right rate.
-  rt.on(ID, { types: ['hr.draft.changed'] }, async () => {
-    await convertDraft();
-  });
-
-  rt.on(ID, { types: ['hr.rate.needed'] }, async (e: HrEvent) => {
-    const { currency, date } = e.payload as { currency: string; date: string };
-    await rateFigure(currency, date);
-  });
-
-  rt.on(ID, { types: ['hr.question.answered'] }, (e: HrEvent) => {
-    const { questionId, answer } = e.payload as { questionId: string; answer: string };
-    const q = state.questions.get(questionId);
-    if (!q || q.askedBy !== ID) return;
-    const p = parseKey(q.subjectKey);
-    if (p?.kind !== 'fx' || !/^\d+(\.\d{1,6})?$/.test(answer.trim())) return;
-    const answeredAt = new Date(deps.now()).toISOString();
-    const { figure } = state.postFigure({
-      key: q.subjectKey,
-      kind: 'fx_rate',
-      value: {
-        t: 'rate',
-        rate: answer.trim(),
-        base: p.currency as 'EUR',
-        quote: 'RSD',
-        parity: 1,
-        requestedDate: p.date,
-        rateDate: p.date,
-      },
-      sources: [{ type: 'user_answer', questionId, answeredAt, answer: answer.trim() }],
-      producedBy: ID,
-      idempotencyKey: `${ID}/${q.subjectKey}/answer`,
-    });
-    rateFigures.set(q.subjectKey, figure);
-  });
+  rt.join(agent);
 }

@@ -1,6 +1,8 @@
 // IndependenceChecker (PRD 8.5). Per client: the model judges only contract_field criteria (citing the
 // field and its value, checked by code against clients.json); user_answer criteria become questions;
 // criterion 6 is computed by code over every qualifying 12-month window; the status is code.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, AboutMyFigure, AnswerToMyQuestion } from '../situations.ts';
 import { z } from 'zod';
 import { AGENTS, jsonSchema, loadPrompt, setStatus, submitTool, type AgentDeps } from '../common.ts';
 import { attrSafe, fenceSafe } from '../common.ts';
@@ -77,8 +79,6 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
   const exempt = inputs.profile.activityExemptFromIndependenceTest;
   const coverage = coverageStart(inputs);
   let timer: NodeJS.Timeout | undefined;
-
-  rt.join({ id: ID, name: 'IndependenceChecker', kind: 'agent' });
   const ruleSrc = (ruleId: string): SourceRef => ({ type: 'rule', ruleId, url: rules.url(ruleId) });
 
   async function readContract(
@@ -132,10 +132,9 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
       '</criteria>',
     ].join('\n');
     setStatus(rt, ID, { kind: 'reading_contract', clientName: client.name });
-    const result = await rt.startLoop({
-      agentId: ID,
+    const result = await rt.think(agent, {
+      gate: deps.gate,
       loopInputKey: `contract:${client.id}:${sha256(user)}`,
-      system: prompt.text,
       promptHash: prompt.hash,
       user,
       model: state.config.models.reader,
@@ -279,83 +278,89 @@ export function registerIndependenceChecker(deps: AgentDeps): void {
   // A contested contract judgement is read again with the checker's note, at most MAX_REREADS times per
   // criterion; after that the Verifier hands it to the user (PRD 8.6).
   const rereads = new Map<string, number>();
-  rt.on(ID, { types: ['hr.figure.contested'] }, (e: HrEvent) => {
-    const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
-    if (p.producerId !== ID) return;
-    const k = parseKey(p.key);
-    if (k?.kind !== 'criterion' || !contractCriteria.some((c) => c.n === k.n)) return;
-    const client = inputs.clients.find((c) => c.id === k.clientId);
-    if (!client) return;
-    const attempt = (rereads.get(p.key) ?? 0) + 1;
-    if (attempt > MAX_REREADS) return;
-    rereads.set(p.key, attempt);
-    void readContract(client, {
-      attempt,
-      n: k.n,
-      feedback: `${p.key} ${p.reasonCode} ${p.detail}`.trim(),
-    });
-  });
-
-  rt.on(ID, { types: ['hr.run.started'] }, async () => {
-    if (exempt) {
-      for (const client of inputs.clients) {
-        state.postFigure({
-          key: keys.indepStatus(client.id),
-          kind: 'indep_status',
-          value: { t: 'text', text: 'not_applicable' },
-          sources: [ruleSrc('R-INDEP-EXEMPT')],
-          producedBy: ID,
-          idempotencyKey: `${ID}/exempt/${client.id}`,
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['inference', 'reads-contracts'],
+    instruction: prompt.text,
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      ...rt.ownLoops(),
+      rt.when(new EventIs('hr.figure.contested').and(new AboutMyFigure()), (e: HrEvent) => {
+        const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
+        const k = parseKey(p.key);
+        if (k?.kind !== 'criterion' || !contractCriteria.some((c) => c.n === k.n)) return;
+        const client = inputs.clients.find((c) => c.id === k.clientId);
+        if (!client) return;
+        const attempt = (rereads.get(p.key) ?? 0) + 1;
+        if (attempt > MAX_REREADS) return;
+        rereads.set(p.key, attempt);
+        void readContract(client, {
+          attempt,
+          n: k.n,
+          feedback: `${p.key} ${p.reasonCode} ${p.detail}`.trim(),
         });
-      }
-      setStatus(rt, ID, { kind: 'done', summary: 'Activity is exempt from the independence test' });
-      return;
-    }
-    for (const client of inputs.clients) for (const c of questionCriteria) ask(client, c);
-    for (const client of inputs.clients) updateStatus(client.id);
-    await Promise.all(inputs.clients.map((c) => readContract(c)));
-    setStatus(rt, ID, { kind: 'waiting_for', what: 'verified invoice amounts for criterion 6' });
-  });
-
-  rt.on(ID, { types: ['hr.figure.verified', 'hr.figure.superseded'] }, (e: HrEvent) => {
-    const p = parseKey((e.payload as { key: string }).key);
-    if (
-      (p?.kind === 'invoice' && ['amountRSD', 'issueDate', 'client'].includes(p.field)) ||
-      (p?.kind === 'draft' && p.field === 'amountRSD')
-    ) {
-      if (timer) clearTimeout(timer);
-      state.debouncing.add(ID);
-      timer = setTimeout(() => {
-        try {
-          computeShares();
-        } finally {
-          state.debouncing.delete(ID);
+      }),
+      rt.when(new EventIs('hr.run.started'), async () => {
+        if (exempt) {
+          for (const client of inputs.clients) {
+            state.postFigure({
+              key: keys.indepStatus(client.id),
+              kind: 'indep_status',
+              value: { t: 'text', text: 'not_applicable' },
+              sources: [ruleSrc('R-INDEP-EXEMPT')],
+              producedBy: ID,
+              idempotencyKey: `${ID}/exempt/${client.id}`,
+            });
+          }
+          setStatus(rt, ID, { kind: 'done', summary: 'Activity is exempt from the independence test' });
+          return;
         }
-      }, 150);
-    }
-    if (p?.kind === 'criterion') updateStatus(p.clientId);
+        for (const client of inputs.clients) for (const c of questionCriteria) ask(client, c);
+        for (const client of inputs.clients) updateStatus(client.id);
+        await Promise.all(inputs.clients.map((c) => readContract(c)));
+        setStatus(rt, ID, { kind: 'waiting_for', what: 'verified invoice amounts for criterion 6' });
+      }),
+      rt.when(new EventIs('hr.figure.verified', 'hr.figure.superseded'), (e: HrEvent) => {
+        const p = parseKey((e.payload as { key: string }).key);
+        if (
+          (p?.kind === 'invoice' && ['amountRSD', 'issueDate', 'client'].includes(p.field)) ||
+          (p?.kind === 'draft' && p.field === 'amountRSD')
+        ) {
+          if (timer) clearTimeout(timer);
+          state.debouncing.add(ID);
+          timer = setTimeout(() => {
+            try {
+              computeShares();
+            } finally {
+              state.debouncing.delete(ID);
+            }
+          }, 150);
+        }
+        if (p?.kind === 'criterion') updateStatus(p.clientId);
+      }),
+      rt.when(new AnswerToMyQuestion(state), (e: HrEvent) => {
+        const { questionId, answer } = e.payload as { questionId: string; answer: string };
+        const q = state.questions.get(questionId);
+        if (!q || q.askedBy !== ID) return;
+        const value: Tri = answer === 'Yes' ? 'met' : answer === 'No' ? 'not_met' : 'unknown';
+        state.postFigure({
+          key: q.subjectKey,
+          kind: 'criterion',
+          value: { t: 'tri', value },
+          sources: [
+            {
+              type: 'user_answer',
+              questionId,
+              answeredAt: q.answeredAt ?? new Date(deps.now()).toISOString(),
+              answer,
+            },
+            ruleSrc('R-INDEP'),
+          ],
+          producedBy: ID,
+          idempotencyKey: `${ID}/${q.subjectKey}/answer/${answer}`,
+        });
+      }),
+    ],
   });
-
-  rt.on(ID, { types: ['hr.question.answered'] }, (e: HrEvent) => {
-    const { questionId, answer } = e.payload as { questionId: string; answer: string };
-    const q = state.questions.get(questionId);
-    if (!q || q.askedBy !== ID) return;
-    const value: Tri = answer === 'Yes' ? 'met' : answer === 'No' ? 'not_met' : 'unknown';
-    state.postFigure({
-      key: q.subjectKey,
-      kind: 'criterion',
-      value: { t: 'tri', value },
-      sources: [
-        {
-          type: 'user_answer',
-          questionId,
-          answeredAt: q.answeredAt ?? new Date(deps.now()).toISOString(),
-          answer,
-        },
-        ruleSrc('R-INDEP'),
-      ],
-      producedBy: ID,
-      idempotencyKey: `${ID}/${q.subjectKey}/answer/${answer}`,
-    });
-  });
+  rt.join(agent);
 }

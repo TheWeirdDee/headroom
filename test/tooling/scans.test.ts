@@ -32,18 +32,21 @@ function write(rel: string, body: string): void {
 beforeAll(() => {
   dir = mkdtempSync(join(tmpdir(), 'headroom-scan-'));
   write('bad/src/a.ts', `// ${MARK}: finish this\n${LOG}('x');\n`);
-  write('bad/src/b.ts', `import { createAgent } from '@mozaik-ai/core';\nexport const a = createAgent;\n`);
+  write(
+    'bad/src/domain/b.ts',
+    `import { createAgent } from '@mozaik-ai/core';\nexport const a = createAgent;\n`,
+  );
   write('bad/web/src/Card.tsx', `export const total = '5.400.000,00';\n`);
   write('bad/web/src/Hero.tsx', `export const title = 'Launch ${EMOJI_CHAR}';\n`);
   write('bad/src/c.ts', `export const copy = 'lorem ipsum, coming soon';\n`);
-  write('bad2/src/d.mts', `import '@mozaik-ai/core';\n// ${MARK.toLowerCase()}: later\n`);
-  write('bad2/src/e.cjs', `const m = require('@jigjoy/mozaik-agent');\n`);
+  write('bad2/src/domain/d.mts', `import '@mozaik-ai/core';\n// ${MARK.toLowerCase()}: later\n`);
+  write('bad2/src/domain/e.cjs', `const m = require('@jigjoy/mozaik-agent');\n`);
   write('good/src/footer.ts', `export const notice = 'Copyright \u00A9 2026';\n`);
   write('good/src/a.ts', `export const add = (a: string): string => a;\n`);
   write('good/web/src/Input.tsx', `export const el = '<input placeholder="Amount" />';\n`);
   write('good/web/src/format/money.ts', `export const sample = '6.000.000,00';\n`);
   write(
-    'good/src/runtime/mozaik/adapter.ts',
+    'good/src/agents/agent.ts',
     `import { createAgent } from '@mozaik-ai/core';\nexport { createAgent };\n`,
   );
 });
@@ -51,12 +54,12 @@ beforeAll(() => {
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe('slop scan', () => {
-  it('fails on markers, debug output, Mozaik imports outside the adapter, filler and UI money literals', () => {
+  it('fails on markers, debug output, Mozaik in domain code, filler and UI money literals', () => {
     const ids = (scan(join(dir, 'bad'), ['.']) as Finding[]).map((f) => f.id).sort();
     expect(ids).toEqual(['coming-soon', 'console-log', 'lorem', 'marker', 'money-literal', 'mozaik-import']);
   });
 
-  it('passes on clean files, input placeholder attributes, format helpers and the adapter', () => {
+  it('passes on clean files, input placeholder attributes, format helpers and agents on Mozaik', () => {
     expect(scan(join(dir, 'good'), ['.'])).toEqual([]);
   });
 });
@@ -64,7 +67,11 @@ describe('slop scan', () => {
 describe('slop scan edge cases', () => {
   it('catches side-effect imports, require, lowercase markers and .mts/.cjs files', () => {
     const ids = (scan(join(dir, 'bad2'), ['.']) as Finding[]).map((f) => `${f.file}:${f.id}`).sort();
-    expect(ids).toEqual(['src/d.mts:marker', 'src/d.mts:mozaik-import', 'src/e.cjs:mozaik-import']);
+    expect(ids).toEqual([
+      'src/domain/d.mts:marker',
+      'src/domain/d.mts:mozaik-import',
+      'src/domain/e.cjs:mozaik-import',
+    ]);
   });
 });
 

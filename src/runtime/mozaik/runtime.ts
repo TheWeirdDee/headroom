@@ -1,10 +1,8 @@
-// The ONLY module that imports Mozaik (@mozaik-ai/core 6.0.0). Implements HrRuntime on Mozaik's
-// runtime: defineRuntime/initializeRuntime per run, RuntimeState subclass holding the Figure Board,
-// createAgent/createHuman participants with situation handlers, runLoop for every agent loop, a custom
-// InferenceRunner (timeouts, retries, replay, recording) and an InterceptionHandler that vetoes board
-// writes without sources. Workarounds for the behaviour read in the 6.0.0 source are marked GAP.
+// A run on Mozaik (@mozaik-ai/core 6.0.0): defineRuntime/initializeRuntime per run, with the Figure Board
+// as the RuntimeState. The agents are Mozaik participants (src/agents/) that react through their own
+// situation specifications; this module gives them what they share: publishing events, following their
+// own runLoop calls to an answer, and a custom InferenceRunner (timeouts, retries, pacing, replay).
 import {
-  createAgent,
   createHuman,
   defineRuntime,
   DeveloperMessageItem,
@@ -14,42 +12,38 @@ import {
   ModelContext,
   ModelMessageItem,
   OutputTokenDetails,
-  RuntimeState,
   SemanticEvent,
   SituationSpecification,
   supportedModels,
   TokenUsage,
-  type ExecutableTransition,
-  type Tool,
+  type Agent,
   type InferenceInput,
   type InferenceOutput,
   type InferenceRunner,
   type InterceptionHandler,
   type Participant,
   type SituationContext,
+  type SituationHandler,
+  type Tool,
 } from '@mozaik-ai/core';
-import { Mailbox } from '../mailbox.ts';
-import { unsourcedVeto } from '../veto.ts';
+import { Inbox } from '../inbox.ts';
 import { patchGeminiSignatures } from './gemini-signatures.ts';
 import { groqInfer, isGroqModel } from './groq.ts';
 import { installBoardMirror } from '../board-mirror.ts';
 import { DEFAULT_RETRY, withRetry } from '../loop.ts';
 import { acquire as paceRequest, pacerRpm } from '../pacer.ts';
 import type { HeadroomState } from '../state.ts';
-import {
-  type EventFilter,
-  type HrEvent,
-  type HrHandler,
-  type HrInferenceRequest,
-  type HrInferenceResponse,
-  type HrParticipant,
-  type HrRuntime,
-  type InferenceObserver,
-  type LoopHandle,
-  type LoopInput,
-  type LoopMetric,
-  type LoopResult,
-  type ModelBackend,
+import type {
+  HrEvent,
+  HrHandler,
+  HrInferenceRequest,
+  HrInferenceResponse,
+  InferenceObserver,
+  LoopHandle,
+  LoopInput,
+  LoopMetric,
+  LoopResult,
+  ModelBackend,
 } from '../types.ts';
 
 // ---------------------------------------------------------------------------------------------------
@@ -82,19 +76,45 @@ function filterCloudWarnings(): void {
 
 export const MOZAIK_PACKAGE = { name: '@mozaik-ai/core', version: '6.0.0' } as const;
 
-/** Marker returned as the model answer when inference failed after retries (GAP: runLoop never rejects). */
+/** Marker returned as the model answer when inference failed: runLoop reports no failure of its own. */
 const FAIL_MARK = '\u0000HEADROOM_INFERENCE_FAILED\u0000';
 
-class HeadroomRuntimeState extends RuntimeState {
-  constructor(readonly hr: HeadroomState) {
+/** An event of one of the participant's own loops. Every thinking agent follows these two. */
+export class MyLoopEvent extends SituationSpecification {
+  constructor(readonly type: 'message_received.started' | 'model.answer') {
     super();
+  }
+
+  isSatisfiedBy({ event, participant }: SituationContext): boolean {
+    return event.type === this.type && event.producerId === participant.getId();
   }
 }
 
-class EveryEvent extends SituationSpecification {
-  isSatisfiedBy(_ctx: SituationContext): boolean {
-    return true;
-  }
+/** The InterceptionHandler for one loop (the Verifier's evidence gate). */
+export type LoopGate = (loop: { agentId: string; loopId: string }) => InterceptionHandler;
+
+/** What an agent asks its model; who asks and under which instruction come from the participant. */
+export type ThinkInput = Omit<LoopInput, 'agentId' | 'system'> & { gate?: LoopGate };
+
+export interface HeadroomRuntime {
+  readonly runId: string;
+  /** The RuntimeState every participant shares: the Figure Board. */
+  readonly state: HeadroomState;
+  join(participant: Participant): void;
+  /** A situation handler: when the specification is satisfied, `apply` runs, one at a time per participant. */
+  when(specification: SituationSpecification, apply: HrHandler): SituationHandler;
+  /** The handlers an agent needs to hear the answers of its own loops. */
+  ownLoops(): SituationHandler[];
+  /** Send a semantic event as the named participant (as the runtime itself if there is none). */
+  publish(type: string, producerId: string, payload: unknown): HrEvent;
+  /** The transcript's view of any Mozaik event, with names instead of ids. */
+  asHrEvent(event: SemanticEvent): HrEvent;
+  /** runLoop for this agent, with a fresh context; `done` resolves with its answer or failure. */
+  think(agent: Agent, input: ThinkInput): LoopHandle;
+  /** For the quiescence detector. */
+  activity(): { runningLoops: number; queuedEvents: number; busyMailboxes: number };
+  loopMetrics(): LoopMetric[];
+  shutdown(): Promise<void>;
 }
 
 interface LoopRecord {
@@ -107,7 +127,7 @@ interface LoopRecord {
   answered: boolean;
 }
 
-export interface MozaikAdapterOptions {
+export interface RuntimeOptions {
   state: HeadroomState;
   /** Scripted fakes or recorded responses; omit to call the live provider through Mozaik's endpoints. */
   backend?: ModelBackend;
@@ -126,18 +146,16 @@ function retryReason(error: unknown): string {
   return message.replace(/\s+/g, ' ').slice(0, 160);
 }
 
-export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
+export function createRuntime(opts: RuntimeOptions): HeadroomRuntime {
   disableMozaikCloud();
   filterCloudWarnings();
   const now = opts.now ?? ((): number => Date.now());
-  const hrState = opts.state;
-  const runId = hrState.runId;
+  const runId = opts.state.runId;
 
   const loopsByContext = new Map<string, LoopRecord>();
   const loopsById = new Map<string, LoopRecord>();
-  const mailboxes = new Map<string, Mailbox>();
-  const mozaikIdToHr = new Map<string, string>();
-  const hrToMozaik = new Map<string, Participant>();
+  const participants = new Map<string, Participant>(); // by manifest name
+  const inboxes = new Map<Participant, Inbox>();
   const converted = new WeakMap<object, HrEvent>();
   let loopSeq = 0;
 
@@ -216,21 +234,17 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     return model.endpoint.infer(input);
   }
 
+  const failed = (reason: string): InferenceOutput => ({
+    items: [ModelMessageItem.rehydrate({ text: `${FAIL_MARK}${reason}` })],
+    tokenUsage: undefined,
+    rowResponse: null,
+  });
+
   const runner: InferenceRunner = {
     async run(input: InferenceInput): Promise<InferenceOutput> {
       const rec = loopsByContext.get(input.context.id);
-      if (!rec)
-        return {
-          items: [ModelMessageItem.rehydrate({ text: `${FAIL_MARK}unknown loop context` })],
-          tokenUsage: undefined,
-          rowResponse: null,
-        };
-      if (rec.cancelled)
-        return {
-          items: [ModelMessageItem.rehydrate({ text: `${FAIL_MARK}loop cancelled` })],
-          tokenUsage: undefined,
-          rowResponse: null,
-        };
+      if (!rec) return failed('unknown loop context');
+      if (rec.cancelled) return failed('loop cancelled');
       const request = toRequest(rec, input);
       try {
         const t0 = now();
@@ -275,19 +289,14 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
         rec.metric.tokensIn += neutral.tokensIn;
         rec.metric.tokensOut += neutral.tokensOut;
         opts.observer?.onResponse?.(request, neutral, now() - t0);
-        // GAP: the loop's TransitionResolver throws (an unhandled rejection) when an output holds neither
-        // a function call nor an assistant message (e.g. only reasoning). Guarantee a terminal item.
+        // An output with neither a function call nor an assistant message (reasoning only) leaves the loop
+        // without a next state, as an unhandled rejection. Guarantee a terminal item.
         const callable = out.items.some(
           (i) => i instanceof FunctionCallItem || i instanceof ModelMessageItem,
         );
         return callable ? out : { ...out, items: [...out.items, ModelMessageItem.rehydrate({ text: '' })] };
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          items: [ModelMessageItem.rehydrate({ text: `${FAIL_MARK}${message}` })],
-          tokenUsage: undefined,
-          rowResponse: null,
-        };
+        return failed(error instanceof Error ? error.message : String(error));
       }
     },
     async *stream(input: InferenceInput) {
@@ -296,27 +305,67 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
   };
 
   // --- runtime --------------------------------------------------------------------------------------
-  const {
-    initializeRuntime,
-    join: mozaikJoin,
-    runLoop,
-    resolveRuntime,
-  } = defineRuntime<HeadroomRuntimeState>();
-  initializeRuntime({ state: new HeadroomRuntimeState(hrState), inferenceRunnerConfig: { runner } });
+  const mozaik = defineRuntime<HeadroomState>();
+  mozaik.initializeRuntime({ state: opts.state, inferenceRunnerConfig: { runner } });
+  const state = (): HeadroomState => mozaik.resolveRuntime().state;
+
+  const self = createHuman({ name: 'runtime', capabilities: [], handlers: [] });
+  mozaik.join(self);
 
   function publish(type: string, producerId: string, payload: unknown): HrEvent {
+    const sender = participants.get(producerId) ?? self;
+    const semantic = new SemanticEvent(type, sender.getId(), new Date(now()), payload);
     const event: HrEvent = {
       eventId: opts.newEventId(),
       runId,
       type,
       producerId,
-      occurredAt: new Date(now()).toISOString(),
+      occurredAt: semantic.occurredAt.toISOString(),
       payload,
     };
-    const semantic = new SemanticEvent(type, producerId, new Date(now()), event);
     converted.set(semantic, event);
-    resolveRuntime().publish(semantic);
+    mozaik.sendEvent(semantic, sender.getId());
     return event;
+  }
+
+  function asHrEvent(e: SemanticEvent): HrEvent {
+    const known = converted.get(e);
+    if (known) return known;
+    const p = (e.payload ?? {}) as { loopId?: string };
+    const event: HrEvent = {
+      eventId: opts.newEventId(),
+      runId,
+      type: e.type,
+      producerId: state().getParticipant(e.producerId)?.getManifest().name ?? e.producerId,
+      occurredAt: e.occurredAt.toISOString(),
+      // Native payloads hold whole model contexts; only the loop id is forwarded.
+      payload: p.loopId ? { loopId: loopsById.get(p.loopId)?.metric.loopId ?? p.loopId } : {},
+    };
+    converted.set(e, event);
+    return event;
+  }
+
+  function reportHandlerError(participantId: string, event: HrEvent, error: unknown): void {
+    const err = error instanceof Error ? error : new Error(String(error));
+    state().handlerErrors.push(`${participantId}: ${err.message}`);
+    publish('hr.participant.error', 'runtime', {
+      participantId,
+      eventId: event.eventId,
+      eventType: event.type,
+      message: err.message,
+      ...(err.stack ? { stack: err.stack } : {}),
+    });
+  }
+
+  function inboxOf(p: Participant): Inbox {
+    let inbox = inboxes.get(p);
+    if (!inbox) {
+      inbox = new Inbox(p.getManifest().name, ({ participantId, event, error }) =>
+        reportHandlerError(participantId, event, error),
+      );
+      inboxes.set(p, inbox);
+    }
+    return inbox;
   }
 
   function finishLoop(
@@ -332,7 +381,7 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     if (rec.timer) clearTimeout(rec.timer);
     rec.cancelled = true;
     if (status === 'failed')
-      hrState.failedLoops.push({
+      state().failedLoops.push({
         agentId: rec.input.agentId,
         loopId: rec.metric.loopId,
         error: error ?? 'failed',
@@ -352,120 +401,42 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
     rec.resolve(result);
   }
 
-  /** Native Mozaik events seen by the runtime itself (loop bookkeeping). */
-  function onNative(e: SemanticEvent): void {
-    const payload = e.payload as {
-      loopId?: string;
-      input?: { context?: ModelContext };
-      answer?: ModelMessageItem;
-    };
-    if (e.type === 'message_received.started' && payload.input?.context && payload.loopId) {
-      const rec = loopsByContext.get(payload.input.context.id);
-      if (rec) loopsById.set(payload.loopId, rec);
-    }
-    if (e.type === 'model.answer' && payload.loopId) {
-      const rec = loopsById.get(payload.loopId);
-      if (!rec || rec.answered) return;
-      rec.answered = true;
-      const text = payload.answer?.content.text ?? '';
-      if (text.startsWith(FAIL_MARK)) finishLoop(rec, 'failed', undefined, text.slice(FAIL_MARK.length));
-      else finishLoop(rec, 'completed', text);
-    }
+  /** The agent learns which Mozaik loop id belongs to the context it started. */
+  function onLoopStarted({ event }: SituationContext): void {
+    const payload = event.payload as { loopId?: string; input?: { context?: ModelContext } };
+    const rec = payload.input?.context ? loopsByContext.get(payload.input.context.id) : undefined;
+    if (rec && payload.loopId) loopsById.set(payload.loopId, rec);
   }
 
-  function toHrEvent(e: SemanticEvent): HrEvent {
-    const known = converted.get(e);
-    if (known) return known;
-    const p = (e.payload ?? {}) as { loopId?: string };
-    const ev: HrEvent = {
-      eventId: opts.newEventId(),
-      runId,
-      type: e.type,
-      producerId: mozaikIdToHr.get(e.producerId) ?? e.producerId,
-      occurredAt: e.occurredAt.toISOString(),
-      // Native payloads hold whole model contexts; only the loop id is forwarded.
-      payload: p.loopId ? { loopId: loopsById.get(p.loopId)?.metric.loopId ?? p.loopId } : {},
-    };
-    converted.set(e, ev);
-    return ev;
+  /** The agent hears the answer to one of its loops. */
+  function onAnswer({ event }: SituationContext): void {
+    const payload = event.payload as { loopId?: string; answer?: ModelMessageItem };
+    const rec = loopsById.get(payload.loopId ?? '');
+    if (!rec || rec.answered) return;
+    rec.answered = true;
+    const text = payload.answer?.content.text ?? '';
+    if (text.startsWith(FAIL_MARK)) finishLoop(rec, 'failed', undefined, text.slice(FAIL_MARK.length));
+    else finishLoop(rec, 'completed', text);
   }
 
-  const system = createHuman({
-    name: 'runtime',
-    capabilities: [],
-    handlers: [{ specification: new EveryEvent(), processor: { apply: ({ event }) => onNative(event) } }],
-  });
-  mozaikJoin(system);
-
-  function reportHandlerError(participantId: string, event: HrEvent, error: unknown): void {
-    const err = error instanceof Error ? error : new Error(String(error));
-    hrState.handlerErrors.push(`${participantId}: ${err.message}`);
-    publish('hr.participant.error', 'runtime', {
-      participantId,
-      eventId: event.eventId,
-      eventType: event.type,
-      message: err.message,
-      ...(err.stack ? { stack: err.stack } : {}),
-    });
-  }
-
-  function join(p: HrParticipant): void {
-    if (mailboxes.has(p.id)) return;
-    const mailbox = new Mailbox(p.id, ({ participantId, event, error }) =>
-      reportHandlerError(participantId, event, error),
-    );
-    mailboxes.set(p.id, mailbox);
-    const handlers = [
-      {
-        specification: new EveryEvent(),
-        processor: { apply: ({ event }: SituationContext) => mailbox.deliver(toHrEvent(event)) },
-      },
-    ];
-    const participant =
-      p.kind === 'agent'
-        ? createAgent({ name: p.id, capabilities: ['inference'], instruction: '', tools: [], handlers })
-        : createHuman({ name: p.id, capabilities: [], handlers });
-    mozaikIdToHr.set(participant.getId(), p.id);
-    hrToMozaik.set(p.id, participant);
-    mozaikJoin(participant);
-  }
-
-  function interception(rec: LoopRecord): InterceptionHandler {
-    return {
-      isSatisfiedBy(t: ExecutableTransition): boolean {
-        return t.nextStateId === 'function_call';
-      },
-      async handle(t: ExecutableTransition): Promise<ExecutableTransition> {
-        if (t.nextStateId !== 'function_call') return t;
-        const veto = unsourcedVeto(t.input.call.name, t.input.call.args);
-        if (!veto) return t;
-        hrState.vetoedWrites.push({ agentId: rec.input.agentId, reason: veto });
-        publish('hr.write.vetoed', 'verifier', {
-          agentId: rec.input.agentId,
-          loopId: rec.metric.loopId,
-          reason: veto,
-        });
-        // Rewrite the call so the tool receives an explicit refusal instead of the unsourced write.
-        const call = FunctionCallItem.rehydrate({
-          callId: t.input.call.callId,
-          name: t.input.call.name,
-          args: JSON.stringify({ __vetoed: veto }),
-        });
-        return { nextStateId: 'function_call', input: { ...t.input, call } };
-      },
-    };
-  }
-
-  function startLoop(input: LoopInput): LoopHandle {
-    const participant = hrToMozaik.get(input.agentId);
-    if (!participant) throw new Error(`Agent ${input.agentId} has not joined`);
-    const loopId = `${input.agentId}#${++loopSeq}`;
+  function think(agent: Agent, request: ThinkInput): LoopHandle {
+    const agentId = agent.getManifest().name;
+    if (participants.get(agentId) !== agent) throw new Error(`Agent ${agentId} has not joined`);
+    if (
+      !agent
+        .getHandlers()
+        .some((h) => h.specification instanceof MyLoopEvent && h.specification.type === 'model.answer')
+    )
+      throw new Error(`Agent ${agentId} does not listen to its own loops (rt.ownLoops())`);
+    const { gate, ...rest } = request;
+    const input: LoopInput = { ...rest, agentId, system: agent.getDeveloperMessage() };
+    const loopId = `${agentId}#${++loopSeq}`;
     const context = ModelContext.create().addContextItem(DeveloperMessageItem.create(input.system));
     let resolve!: (r: LoopResult) => void;
     const done = new Promise<LoopResult>((r) => (resolve = r));
     const metric: LoopMetric = {
       loopId,
-      agentId: input.agentId,
+      agentId,
       loopInputKey: input.loopInputKey,
       startedAt: now(),
       status: 'running',
@@ -502,14 +473,14 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
         () => finishLoop(rec, 'failed', undefined, `Loop timed out after ${overall} ms`),
         overall,
       );
-    publish('hr.loop.started', input.agentId, {
+    publish('hr.loop.started', agentId, {
       loopId,
-      agentId: input.agentId,
+      agentId,
       loopInputKey: input.loopInputKey,
       startedAt: metric.startedAt,
     });
-    runLoop(
-      participant.getId(),
+    mozaik.runLoop(
+      agent.getId(),
       input.user,
       {
         model: input.model,
@@ -526,43 +497,56 @@ export function createMozaikRuntime(opts: MozaikAdapterOptions): HrRuntime {
             }
           : {}),
       },
-      interception(rec),
+      gate?.({ agentId, loopId }),
     );
-    return { loopId, agentId: input.agentId, startedAt: metric.startedAt, done };
+    return { loopId, agentId, startedAt: metric.startedAt, done };
   }
 
-  const unmirror = installBoardMirror(hrState, publish);
+  const unmirror = installBoardMirror(opts.state, publish);
 
   return {
     runId,
-    state: hrState,
-    publish,
-    on(participantId: string, filter: EventFilter, handler: HrHandler): void {
-      const mb = mailboxes.get(participantId);
-      if (!mb) throw new Error(`Participant ${participantId} has not joined`);
-      mb.subscribe(filter, handler);
+    get state() {
+      return state();
     },
-    join,
-    startLoop,
+    join(participant) {
+      const name = participant.getManifest().name;
+      if (participants.has(name)) throw new Error(`A participant named ${name} has already joined`);
+      participants.set(name, participant);
+      mozaik.join(participant);
+    },
+    when(specification, apply) {
+      return {
+        specification,
+        processor: {
+          apply: ({ event, participant }) => inboxOf(participant).push(asHrEvent(event), apply),
+        },
+      };
+    },
+    ownLoops: () => [
+      { specification: new MyLoopEvent('message_received.started'), processor: { apply: onLoopStarted } },
+      { specification: new MyLoopEvent('model.answer'), processor: { apply: onAnswer } },
+    ],
+    publish,
+    asHrEvent,
+    think,
     activity() {
       let queuedEvents = 0;
       let busyMailboxes = 0;
-      for (const mb of mailboxes.values()) {
-        queuedEvents += mb.queued;
-        if (mb.busy) busyMailboxes += 1;
+      for (const inbox of inboxes.values()) {
+        queuedEvents += inbox.queued;
+        if (inbox.busy) busyMailboxes += 1;
       }
       const runningLoops = [...loopsByContext.values()].filter((r) => r.metric.status === 'running').length;
       return { runningLoops, queuedEvents, busyMailboxes };
     },
-    loopMetrics(): LoopMetric[] {
-      return [...loopsByContext.values()].map((r) => ({ ...r.metric }));
-    },
-    async shutdown(): Promise<void> {
+    loopMetrics: () => [...loopsByContext.values()].map((r) => ({ ...r.metric })),
+    async shutdown() {
       for (const rec of loopsByContext.values()) {
         if (rec.metric.status === 'running') finishLoop(rec, 'failed', undefined, 'Run shut down');
       }
       unmirror();
-      await Promise.all([...mailboxes.values()].map((m) => m.idle()));
+      await Promise.all([...inboxes.values()].map((i) => i.idle()));
     },
   };
 }

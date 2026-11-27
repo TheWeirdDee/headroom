@@ -1,6 +1,8 @@
 // InvoiceReader (PRD 8.1): one loop per invoice document (at most INVOICE_READER_CONCURRENCY at a time).
 // The model reads; code checks every excerpt against the extracted text, normalises values and posts
 // figures on the shared invoice keys with document sources.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, AboutMyFigure } from '../situations.ts';
 import {
   AGENTS,
   Semaphore,
@@ -157,8 +159,6 @@ export function registerInvoiceReader(deps: AgentDeps): void {
   const docOfKey = new Map<string, string>(); // figure key -> docId
   let outstanding = 0;
 
-  rt.join({ id: ID, name: 'InvoiceReader', kind: 'agent' });
-
   async function readDoc(doc: ReadableDocument, feedback?: string): Promise<void> {
     const attempt = (attempts.get(doc.docId) ?? 0) + 1;
     attempts.set(doc.docId, attempt);
@@ -205,10 +205,9 @@ export function registerInvoiceReader(deps: AgentDeps): void {
       .join('\n');
     await limit.run(async () => {
       setStatus(rt, ID, { kind: 'reading_invoice', fileName: doc.fileName });
-      const handle = rt.startLoop({
-        agentId: ID,
+      const handle = rt.think(agent, {
+        gate: deps.gate,
         loopInputKey: `doc:${doc.sha256}:read${attempt}${feedback ? `:${feedback}` : ''}`,
-        system: prompt.text,
         promptHash: prompt.hash,
         user,
         model: rt.state.config.models.reader,
@@ -253,29 +252,36 @@ export function registerInvoiceReader(deps: AgentDeps): void {
       }
     }
   }
-
-  rt.on(ID, { types: ['hr.run.started'] }, () => {
-    for (const doc of inputs.documents) {
-      if (doc.kind === 'unreadable') raiseUnreadable(doc.docId, doc.fileName, doc.reason);
-    }
-    const readable = inputs.documents.filter((d): d is ReadableDocument => d.kind === 'readable');
-    if (readable.length === 0) {
-      setStatus(rt, ID, { kind: 'done', summary: 'No readable invoices' });
-      rt.state.progress.invoicesRead = true;
-      rt.publish('hr.reader.done', ID, { agentId: ID });
-      return;
-    }
-    for (const doc of readable) void track(readDoc(doc));
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['inference', 'reads-invoices'],
+    instruction: prompt.text,
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      ...rt.ownLoops(),
+      rt.when(new EventIs('hr.run.started'), () => {
+        for (const doc of inputs.documents) {
+          if (doc.kind === 'unreadable') raiseUnreadable(doc.docId, doc.fileName, doc.reason);
+        }
+        const readable = inputs.documents.filter((d): d is ReadableDocument => d.kind === 'readable');
+        if (readable.length === 0) {
+          setStatus(rt, ID, { kind: 'done', summary: 'No readable invoices' });
+          rt.state.progress.invoicesRead = true;
+          rt.publish('hr.reader.done', ID, { agentId: ID });
+          return;
+        }
+        for (const doc of readable) void track(readDoc(doc));
+      }),
+      rt.when(new EventIs('hr.figure.contested').and(new AboutMyFigure()), (e: HrEvent) => {
+        const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
+        const docId = docOfKey.get(p.key);
+        const doc = inputs.documents.find(
+          (d): d is ReadableDocument => d.kind === 'readable' && d.docId === docId,
+        );
+        if (!doc || (attempts.get(doc.docId) ?? 0) > MAX_REREADS) return;
+        void track(readDoc(doc, `${p.key} ${p.reasonCode} ${p.detail}`.trim()));
+      }),
+    ],
   });
-
-  rt.on(ID, { types: ['hr.figure.contested'] }, (e: HrEvent) => {
-    const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
-    if (p.producerId !== ID) return;
-    const docId = docOfKey.get(p.key);
-    const doc = inputs.documents.find(
-      (d): d is ReadableDocument => d.kind === 'readable' && d.docId === docId,
-    );
-    if (!doc || (attempts.get(doc.docId) ?? 0) > MAX_REREADS) return;
-    void track(readDoc(doc, `${p.key} ${p.reasonCode} ${p.detail}`.trim()));
-  });
+  rt.join(agent);
 }

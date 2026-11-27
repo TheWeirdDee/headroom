@@ -1,13 +1,23 @@
-// Transcript observer (PRD 8.8): receives every event, forwards a serialised copy to its sinks (SSE hub,
-// recorder, in-memory log). It never writes to the board.
+// The transcript: a Mozaik participant that reacts to every event and forwards a serialised copy to its
+// sinks (SSE stream, recorder, in-memory log). It never writes to the board.
+import { createHuman } from '@mozaik-ai/core';
 import { AGENTS } from './common.ts';
-import type { HrEvent, HrRuntime } from '../runtime/types.ts';
+import { AnyEvent } from './situations.ts';
+import type { HeadroomRuntime } from '../runtime/mozaik/runtime.ts';
+import type { HrEvent } from '../runtime/types.ts';
 
 export type EventSink = (e: HrEvent) => void;
 
-export function registerObserver(rt: HrRuntime, sinks: EventSink[]): void {
-  rt.join({ id: AGENTS.observer, name: 'Transcript', kind: 'observer' });
-  rt.on(AGENTS.observer, { includeLifecycle: true }, (e) => {
-    for (const sink of sinks) sink(e);
-  });
+export function registerObserver(rt: HeadroomRuntime, sinks: EventSink[]): void {
+  rt.join(
+    createHuman({
+      name: AGENTS.observer,
+      capabilities: ['transcript'],
+      handlers: [
+        rt.when(new AnyEvent(), (e) => {
+          for (const sink of sinks) sink(e);
+        }),
+      ],
+    }),
+  );
 }

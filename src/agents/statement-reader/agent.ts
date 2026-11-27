@@ -1,6 +1,8 @@
 // StatementReader (PRD 8.2): code parses the statement, the model classifies incoming rows and proposes
 // invoice links in chunks of 25 (one loop per chunk, at most 4 at a time). After its own loops and the
 // InvoiceReader's are done, a code pass raises E1 for client payments with no matching invoice.
+import { createAgent } from '@mozaik-ai/core';
+import { EventIs, AboutFigure, AboutMyFigure, ReaderFinished } from '../situations.ts';
 import { z } from 'zod';
 import {
   AGENTS,
@@ -103,8 +105,6 @@ export function registerStatementReader(deps: AgentDeps): void {
   let ownDone = false;
   let invoicesDone = false;
 
-  rt.join({ id: ID, name: 'StatementReader', kind: 'agent' });
-
   function postRow(c: Classified, attempt = 0): void {
     const ref = statementRowRef(c.row, inputs.statements);
     const src = [rowSource(c.row)];
@@ -189,10 +189,9 @@ export function registerStatementReader(deps: AgentDeps): void {
     ].join('\n');
     await limit.run(async () => {
       setStatus(rt, ID, { kind: 'reading_statement_chunk', file, from: first, to: last });
-      const result = await rt.startLoop({
-        agentId: ID,
+      const result = await rt.think(agent, {
+        gate: deps.gate,
         loopInputKey: `stmt:${sha256(user)}`,
-        system: prompt.text,
         promptHash: prompt.hash,
         user,
         model: rt.state.config.models.reader,
@@ -310,49 +309,60 @@ export function registerStatementReader(deps: AgentDeps): void {
     });
   }
 
-  rt.on(ID, { types: ['hr.figure.verified', 'hr.figure.needs_user'] }, (e: HrEvent) => {
-    const key = (e.payload as { key: string }).key;
-    if (
-      key.startsWith('payment:') ||
-      key.startsWith('link:payment:') ||
-      (key.startsWith('invoice:') && (key.endsWith(':amount') || key.endsWith(':issueDate')))
-    )
-      checkUnmatched();
-  });
-
-  rt.on(ID, { types: ['hr.run.started'] }, () => {
-    const work: Array<Promise<void>> = [];
-    for (const st of inputs.statements) {
-      const incoming = st.rows.filter((r) => r.direction === 'in');
-      for (const rows of chunk(incoming, CHUNK)) work.push(readChunk(st.file, rows));
-    }
-    void Promise.all(work).then(() => {
-      ownDone = true;
-      rt.state.progress.statementsRead = true;
-      rt.publish('hr.reader.done', ID, { agentId: ID });
-      checkUnmatched();
-    });
-  });
-
   // A contested judgement is read again with the checker's note, at most MAX_REREADS times per row; after
   // that the Verifier hands the figure to the user (PRD 8.6).
-  const rereads = new Map<string, number>(); // row ref -> re-reads
-  rt.on(ID, { types: ['hr.figure.contested'] }, (e: HrEvent) => {
-    const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
-    if (p.producerId !== ID) return;
-    const k = parseKey(p.key);
-    const ref = k?.kind === 'payment' || k?.kind === 'link' ? k.rowRef : undefined;
-    const c = ref ? classified.find((x) => statementRowRef(x.row, inputs.statements) === ref) : undefined;
-    if (!c || !ref) return;
-    const attempt = (rereads.get(ref) ?? 0) + 1;
-    if (attempt > MAX_REREADS) return;
-    rereads.set(ref, attempt);
-    void readChunk(c.row.file, [c.row], { attempt, feedback: `${p.key} ${p.reasonCode} ${p.detail}`.trim() });
+  const rereads = new Map<string, number>();
+  const agent = createAgent({
+    name: ID,
+    capabilities: ['inference', 'reads-statements'],
+    instruction: prompt.text,
+    tools: [], // each loop brings its own submit tool
+    handlers: [
+      ...rt.ownLoops(),
+      rt.when(
+        new EventIs('hr.figure.verified', 'hr.figure.needs_user').and(
+          new AboutFigure(
+            (k) =>
+              k.kind === 'payment' ||
+              k.kind === 'link' ||
+              (k.kind === 'invoice' && (k.field === 'amount' || k.field === 'issueDate')),
+          ),
+        ),
+        () => checkUnmatched(),
+      ),
+      rt.when(new EventIs('hr.run.started'), () => {
+        const work: Array<Promise<void>> = [];
+        for (const st of inputs.statements) {
+          const incoming = st.rows.filter((r) => r.direction === 'in');
+          for (const rows of chunk(incoming, CHUNK)) work.push(readChunk(st.file, rows));
+        }
+        void Promise.all(work).then(() => {
+          ownDone = true;
+          rt.state.progress.statementsRead = true;
+          rt.publish('hr.reader.done', ID, { agentId: ID });
+          checkUnmatched();
+        });
+      }),
+      rt.when(new EventIs('hr.figure.contested').and(new AboutMyFigure()), (e: HrEvent) => {
+        const p = e.payload as { key: string; reasonCode: string; detail: string; producerId?: string };
+        const k = parseKey(p.key);
+        const ref = k?.kind === 'payment' || k?.kind === 'link' ? k.rowRef : undefined;
+        const c = ref ? classified.find((x) => statementRowRef(x.row, inputs.statements) === ref) : undefined;
+        if (!c || !ref) return;
+        const attempt = (rereads.get(ref) ?? 0) + 1;
+        if (attempt > MAX_REREADS) return;
+        rereads.set(ref, attempt);
+        void readChunk(c.row.file, [c.row], {
+          attempt,
+          feedback: `${p.key} ${p.reasonCode} ${p.detail}`.trim(),
+        });
+      }),
+      rt.when(new ReaderFinished(AGENTS.invoiceReader), () => {
+        invoicesDone = true;
+        if (!ownDone) setStatus(rt, ID, { kind: 'waiting_for', what: 'own statement chunks' });
+        checkUnmatched();
+      }),
+    ],
   });
-
-  rt.on(ID, { types: ['hr.reader.done'], producerId: AGENTS.invoiceReader }, () => {
-    invoicesDone = true;
-    if (!ownDone) setStatus(rt, ID, { kind: 'waiting_for', what: 'own statement chunks' });
-    checkUnmatched();
-  });
+  rt.join(agent);
 }

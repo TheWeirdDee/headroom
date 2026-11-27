@@ -10,7 +10,8 @@ const TRUTH_TEMPLATE = {
   selector: 'TemplateElement[value.raw=/_truth/]',
   message: TRUTH_PATH.message,
 };
-const MOZAIK_MESSAGE = 'Only src/runtime/mozaik/** may import Mozaik (PRD 7.1 rule 2).';
+const MOZAIK_MESSAGE =
+  'Rules, parsing, exports and the claims package stay independent of the agent runtime.';
 const MOZAIK_DYNAMIC = [
   { selector: 'ImportExpression[source.value=/^@(mozaik-ai|jigjoy)\\//]', message: MOZAIK_MESSAGE },
   {
@@ -18,7 +19,16 @@ const MOZAIK_DYNAMIC = [
     message: MOZAIK_MESSAGE,
   },
 ];
-const BASE = [TRUTH_PATH, TRUTH_TEMPLATE, ...MOZAIK_DYNAMIC];
+const BASE = [TRUTH_PATH, TRUTH_TEMPLATE];
+/** Where importing the agent runtime is a mistake. */
+const WITHOUT_MOZAIK = [
+  'src/domain/**',
+  'src/inputs/**',
+  'src/exporters/**',
+  'src/integrations/**',
+  'packages/claims/src/**',
+  'web/src/**',
+];
 const NO_FLOAT_PARSE = [
   {
     selector: "CallExpression[callee.name='Number']",
@@ -84,17 +94,6 @@ export default tseslint.config(
       'no-console': 'error',
       'no-debugger': 'error',
       'no-restricted-syntax': ['error', ...BASE],
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@mozaik-ai/*', '@jigjoy/*'],
-              message: 'Only src/runtime/mozaik/** may import Mozaik (PRD 7.1 rule 2).',
-            },
-          ],
-        },
-      ],
     },
   },
   {
@@ -103,16 +102,22 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser } },
   },
   {
-    files: ['src/runtime/mozaik/**'],
-    rules: { 'no-restricted-imports': 'off', 'no-restricted-syntax': ['error', TRUTH_PATH, TRUTH_TEMPLATE] },
+    files: WITHOUT_MOZAIK,
+    rules: {
+      'no-restricted-syntax': ['error', ...BASE, ...MOZAIK_DYNAMIC],
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['@mozaik-ai/*', '@jigjoy/*'], message: MOZAIK_MESSAGE }] },
+      ],
+    },
   },
   {
     files: ['src/domain/**'],
-    rules: { 'no-restricted-syntax': ['error', ...BASE, ...NO_FLOAT_PARSE] },
+    rules: { 'no-restricted-syntax': ['error', ...BASE, ...MOZAIK_DYNAMIC, ...NO_FLOAT_PARSE] },
   },
   {
     files: ['packages/claims/src/**'],
-    rules: { 'no-restricted-syntax': ['error', ...BASE, ...SYNC_ONLY] },
+    rules: { 'no-restricted-syntax': ['error', ...BASE, ...MOZAIK_DYNAMIC, ...SYNC_ONLY] },
   },
   {
     // eval.ts and tests read ground truth; the generator files only write it.

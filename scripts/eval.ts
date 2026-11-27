@@ -17,7 +17,7 @@ import { defaultRunConfig } from '../src/config/defaults.ts';
 import { createKursClient, liveFetcher } from '../src/integrations/kurs/client.ts';
 import { cmp } from '../src/domain/money.ts';
 import { loadEnv } from '../src/config/env.ts';
-import { MOZAIK_PACKAGE } from '../src/runtime/mozaik/adapter.ts';
+import { MOZAIK_PACKAGE } from '../src/runtime/mozaik/runtime.ts';
 import { detectCsv } from '../src/inputs/detect.ts';
 import { parseStatement, parseKpoBook } from '../src/inputs/tables.ts';
 import { fakeModel } from '../test/helpers/fake-model.ts';
