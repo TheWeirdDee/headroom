@@ -87,10 +87,7 @@
       "R-FX-NONPUB",
       "R-FX-ROUNDING",
       "R-INDEP-C6-BASIS",
-      "R-INDEP-WHO-FILES",
       "R-KPO-DATE",
-      "R-PAYMENT-NO-INVOICE",
-      "R-NUMBERING",
       "R-LIMIT-6M-BASIS",
       "R-VAT-8M-BASIS"
     ],
@@ -206,7 +203,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
-          "fetchedAt": "2026-11-27T10:06:31.693Z",
+          "fetchedAt": "2026-11-27T13:28:51.644Z",
           "httpStatus": 200,
           "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
           "jsonPath": "$.exchange_middle"
@@ -220,7 +217,7 @@
         {
           "type": "url",
           "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
-          "fetchedAt": "2026-11-27T10:06:31.699Z",
+          "fetchedAt": "2026-11-27T13:28:51.649Z",
           "httpStatus": 200,
           "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
           "jsonPath": "$.exchange_middle"

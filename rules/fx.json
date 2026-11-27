@@ -55,9 +55,16 @@
           "title": "Kurs API documentation (data from the National Bank of Serbia)",
           "accessed": "2026-11-26",
           "quote": "If the rate is not published ... rate from the last known day will be used for that day."
+        },
+        {
+          "url": "https://www.nbs.rs/en/finansijsko_trziste/kurs-dinara-napomene/",
+          "title": "National Bank of Serbia: The dinar exchange rate",
+          "accessed": "2026-11-27",
+          "quote": "the NBS also publishes the official middle exchange rate of the dinar against the euro, applicable from 8 a.m. next business day"
         }
       ],
-      "params": {}
+      "params": {},
+      "note": "The NBS publishes on business days only. No official text read here states in words which rate a weekend takes."
     },
     {
       "id": "R-FX-ROUNDING",

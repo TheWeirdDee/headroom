@@ -54,7 +54,7 @@ function splitCounter(raw: string): { prefix: string; digits: string; suffix: st
 
 /**
  * E8: within each series (same text around the counter), list numbers missing between the lowest and
- * highest seen. Shown as "worth checking" (R-NUMBERING is an assumption).
+ * highest seen. Shown as "worth checking" (R-NUMBERING: a Headroom convention).
  */
 export function numberingGaps(invoiceNumbers: string[]): NumberingGap[] {
   const series = new Map<string, Array<{ n: number; raw: string; digits: string }>>();

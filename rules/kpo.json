@@ -87,7 +87,7 @@
     },
     {
       "id": "R-PAYMENT-NO-INVOICE",
-      "status": "assumption",
+      "status": "product",
       "title": "Payment with no invoice",
       "statement_sr": "Uplata za koju nije pronađena faktura.",
       "statement_en": "A payment was received with no matching invoice. Headroom states only the fact and its statement row; no legal obligation or deadline is claimed.",
@@ -99,11 +99,12 @@
           "locator": "Član 43 stav 4"
         }
       ],
-      "params": {}
+      "params": {},
+      "note": "A Headroom convention about what is reported, not a legal rule."
     },
     {
       "id": "R-NUMBERING",
-      "status": "assumption",
+      "status": "product",
       "title": "Invoice numbering gaps",
       "statement_sr": "Praznina u numeraciji faktura, vredi proveriti.",
       "statement_en": "A gap in invoice numbering is shown as worth checking, not as an error.",
@@ -116,7 +117,7 @@
         }
       ],
       "params": {},
-      "note": "Whether continuous numbering is legally required was not confirmed."
+      "note": "A Headroom convention, not a legal rule. Whether continuous numbering is legally required was not confirmed."
     }
   ]
 }

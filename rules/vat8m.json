@@ -87,12 +87,19 @@
           "title": "Minimax help: Upozorenje za ulazak paušalaca u knjigaše ili za ulazak u sistem PDV-a (updated 23 Jul 2026), quoting Ministry of Finance opinion 011-00-00369/2017-04 of 9 Jun 2017",
           "accessed": "2026-11-26",
           "quote": "Program račune, odnosno prihode, gleda prema datumu prometa."
+        },
+        {
+          "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
+          "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
+          "accessed": "2026-11-27",
+          "locator": "VAT, example",
+          "quote": "issued an invoice for the amount of RSD 200,000.00 on 18.08.2023. With this amount, he achieved a total turnover of RSD 8,095,560.00 in the previous 12 months"
         }
       ],
       "params": {
         "dateBasis": "invoice_issue_date"
       },
-      "note": "Minimax uses the supply date. Usually the same date on an invoice."
+      "note": "The VAT law dates a supply (Art. 14 and 15), not an invoice. The Tax Administration's example dates turnover by an invoice; Minimax uses the supply date. The two are usually the same day."
     }
   ]
 }

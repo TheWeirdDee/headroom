@@ -27,7 +27,8 @@ export const KEY_ENV: Record<Provider, string[]> = {
 
 /** Requests per minute when HEADROOM_MAX_RPM is not set: paced for the Gemini free tier, unpaced otherwise. */
 export const DEFAULT_RPM: Record<Provider, number> = {
-  google: 10,
+  // The Gemini free tier allows 15 requests a minute per model (read from its own refusal); one is kept spare.
+  google: 14,
   anthropic: 0,
   openai: 0,
   deepseek: 0,

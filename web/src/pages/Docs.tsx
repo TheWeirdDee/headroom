@@ -176,9 +176,10 @@ npm run demo:catch                 # the Verifier rejects an injected misread`}<
           </div>
           <p>Headroom has been run with the Gemini and Groq models above, not with Claude or OpenAI ones.</p>
           <p>
-            Requests are paced so a free tier slows a run down instead of failing it (10 a minute for Gemini,
-            8 for Groq; change it with <code className="font-mono text-text">HEADROOM_MAX_RPM</code>). Rate
-            limits are waited out; a used-up daily quota stops the run with a clear message.
+            Requests are paced so a free tier slows a run down instead of failing it (14 a minute for Gemini,
+            whose free tier allows 15, 8 for Groq; change it with{' '}
+            <code className="font-mono text-text">HEADROOM_MAX_RPM</code>). Rate limits are waited out; a
+            used-up daily quota stops the run with a clear message.
           </p>
         </Section>
 

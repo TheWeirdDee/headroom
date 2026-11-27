@@ -197,11 +197,18 @@
     },
     {
       "id": "R-INDEP-WHO-FILES",
-      "status": "assumption",
-      "title": "Who files when the client is foreign",
-      "statement_sr": "Proverite ko podnosi prijavu i plaća porez.",
-      "statement_en": "Check who files and pays. Not confirmed for foreign clients.",
+      "status": "verified",
+      "title": "Who pays when a foreign payer does not",
+      "statement_sr": "Obveznik koji ostvaruje zarade i druge prihode u ili iz druge države, kod diplomatskog ili konzularnog predstavništva strane države, odnosno međunarodne organizacije ili kod predstavnika i službenika takvog predstavništva, odnosno organizacije, dužan je da sam obračuna i uplati porez po odbitku po odredbama ovog zakona, ako porez ne obračuna i ne uplati isplatilac prihoda.",
+      "statement_en": "If you earn this income from or in another country and the payer does not calculate and pay the tax, you must calculate and pay it yourself.",
       "sources": [
+        {
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html",
+          "title": "Zakon o porezu na dohodak građana (\"Sl. glasnik RS\" 24/2001 ... 80/2026), consolidated text on paragraf.rs",
+          "accessed": "2026-11-27",
+          "locator": "Član 100a",
+          "quote": "Obveznik koji ostvaruje zarade i druge prihode u ili iz druge države, kod diplomatskog ili konzularnog predstavništva strane države, odnosno međunarodne organizacije ili kod predstavnika i službenika takvog predstavništva, odnosno organizacije, dužan je da sam obračuna i uplati porez po odbitku po odredbama ovog zakona, ako porez ne obračuna i ne uplati isplatilac prihoda."
+        },
         {
           "url": "https://www.purs.gov.rs/upload/media/2025/6/30/759981/Tax_bulletins_for_natural_persons_who_are_self_-_employed.pdf",
           "title": "Poreska uprava: Tax bulletins for natural persons who are self-employed (2025)",
@@ -209,7 +216,8 @@
           "locator": "Independence test, p. 27-29"
         }
       ],
-      "params": {}
+      "params": {},
+      "note": "This covers the tax. Confirm the filing form and the contributions with the Tax Administration."
     }
   ]
 }

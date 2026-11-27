@@ -64,9 +64,12 @@ describe('rule data', () => {
   it('marks unsettled rules as assumptions', () => {
     const assumed = rules.assumptions().map((r) => r.id);
     expect(assumed).toEqual(
-      expect.arrayContaining(['R-FX-DATE', 'R-FX-ROUNDING', 'R-INDEP-C6-BASIS', 'R-KPO-DATE', 'R-NUMBERING']),
+      expect.arrayContaining(['R-FX-DATE', 'R-FX-ROUNDING', 'R-INDEP-C6-BASIS', 'R-KPO-DATE']),
     );
     expect(rules.get('R-INDEP-C6-HORIZON').status).toBe('product');
+    // A display choice is not a legal claim, and a rule settled by the law's own words is not assumed.
+    expect(rules.get('R-NUMBERING').status).toBe('product');
+    expect(rules.get('R-INDEP-WHO-FILES').sources[0]?.quote).toContain('dužan je da sam obračuna');
     expect(rules.get('R-INDEP-C6-WINDOWS').params).toEqual({
       shareThreshold: '0.70',
       windowUnit: 'calendar_month',

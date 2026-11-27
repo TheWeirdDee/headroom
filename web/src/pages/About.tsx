@@ -36,7 +36,7 @@ export function About() {
           The problem: above {limit} of yearly turnover a paušalac has to keep full books, and above {vat} in
           12 months must register for VAT. Whether the invoice about to be sent crosses a line depends on
           every earlier invoice, the exchange rate of each foreign one, and money that arrived without an
-          invoice, which an invoicing app does not see.
+          invoice, which a total of issued invoices does not show.
         </p>
         <p className="rounded border border-line bg-panel p-3">{health?.authorityBoundary}</p>
         <p className="text-sm text-muted">
