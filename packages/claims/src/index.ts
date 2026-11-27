@@ -227,15 +227,23 @@ export function createClaimStore<V>(options: ClaimStoreOptions<V> = {}): ClaimSt
         flush();
         return { kind: 'corroborated', record: same };
       }
+      // A participant proposing a new value for a key it already claimed is revising its own claim (for
+      // example a total recomputed from more inputs): its earlier versions are superseded, not contradicted.
+      // Only another participant's claim can conflict.
+      const own = active.filter((r) => r.proposedBy === by);
+      const others = active.filter((r) => r.proposedBy !== by);
       const opponent =
-        active.find((r) => r.status === 'verified') ?? [...active].sort((a, b) => b.version - a.version)[0];
-      if (opponent) {
-        const proposed = create(key, value, by, idempotencyKey, opponent.id);
-        emit(proposed, { type: 'conflict', by, relatedId: opponent.id });
-        flush();
-        return { kind: 'conflict', existing: opponent, proposed };
+        others.find((r) => r.status === 'verified') ?? [...others].sort((a, b) => b.version - a.version)[0];
+      const record = create(key, value, by, idempotencyKey, opponent?.id);
+      for (const o of own) {
+        o.status = 'superseded';
+        emit(o, { type: 'superseded', by, relatedId: record.id, reason: 'revised by the same participant' });
       }
-      const record = create(key, value, by, idempotencyKey);
+      if (opponent) {
+        emit(record, { type: 'conflict', by, relatedId: opponent.id });
+        flush();
+        return { kind: 'conflict', existing: opponent, proposed: record };
+      }
       emit(record, { type: 'claimed', by });
       flush();
       return { kind: 'claimed', record };

@@ -21,7 +21,8 @@ export interface RecordedRun {
   failedLoops: number;
   verified: number;
   unsourcedFigures: number;
-  conflicts: { raised: number; resolved: number; escalated: number };
+  /** Conflicts between two different agents in the recorded run (an agent revising itself is not one). */
+  agentConflicts: number | null;
   /** Every loop of the recorded run with its real start and end. */
   loopTimes: LoopMetric[];
 }

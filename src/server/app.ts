@@ -277,7 +277,7 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
           failedLoops: s.failedLoops,
           verified: s.figures?.verified,
           unsourcedFigures: s.unsourcedFigures,
-          conflicts: s.conflicts,
+          agentConflicts: d.runs.recordedAgentConflicts('p07') ?? null,
           loopTimes: d.runs.recordedLoops('p07'),
         }
       : null;

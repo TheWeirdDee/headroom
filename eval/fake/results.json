@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-27T01:27:26.603Z",
+  "generatedAt": "2026-11-27T06:30:59.611Z",
   "conditions": {
     "date": "2026-11-27",
     "mode": "fake",
@@ -99,7 +99,7 @@
     },
     {
       "name": "Median loop time / wall time",
-      "value": "0.14",
+      "value": "0.16",
       "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
     },
     {

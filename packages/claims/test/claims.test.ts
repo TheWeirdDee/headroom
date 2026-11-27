@@ -16,6 +16,23 @@ function store<V>() {
 }
 
 describe('propose', () => {
+  it('a participant proposing a new value for its own claim revises it instead of conflicting', () => {
+    const s = store<string>();
+    const events: ClaimEvent[] = [];
+    s.onChange((e) => events.push(e));
+    const first = s.propose({ key: 'k', value: 'met', by: 'checker', idempotencyKey: 'v1' });
+    const second = s.propose({ key: 'k', value: 'not_met', by: 'checker', idempotencyKey: 'v2' });
+    expect(second.kind).toBe('claimed');
+    expect(first.kind === 'claimed' && s.getById(first.record.id)?.status).toBe('superseded');
+    expect(events.map((e) => e.type)).not.toContain('conflict');
+    // Another participant disagreeing is still a conflict, against the revised value.
+    const third = s.propose({ key: 'k', value: 'met', by: 'reader', idempotencyKey: 'r1' });
+    expect(third.kind).toBe('conflict');
+    expect(third.kind === 'conflict' && second.kind === 'claimed' && third.existing.id).toBe(
+      second.kind === 'claimed' ? second.record.id : '',
+    );
+  });
+
   it('first proposal claims the key with status proposed and the proposer as owner', () => {
     const s = store<number>();
     const r = s.propose({ key: 'k', value: 1, by: 'a', idempotencyKey: 'a1' });

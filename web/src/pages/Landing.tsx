@@ -95,7 +95,14 @@ function Stats({ r }: { r: RecordedRun }) {
     { value: formatSr(String(r.verified), 0), label: 'figures verified against their source' },
     { value: formatSr(String(r.unsourcedFigures), 0), label: 'figures shown without a source' },
     { value: formatSr(String(r.maxConcurrentLoops), 0), label: 'agent loops running at once (peak)' },
-    { value: formatSr(String(r.conflicts.raised), 0), label: 'conflicts between agents, all settled' },
+    ...(r.agentConflicts !== null
+      ? [
+          {
+            value: formatSr(String(r.agentConflicts), 0),
+            label: 'conflicts between two agents, settled by the source',
+          },
+        ]
+      : []),
   ];
   return (
     <div>

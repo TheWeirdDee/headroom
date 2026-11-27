@@ -148,8 +148,38 @@ export function replaySource(
   backend(profileId: string, override?: { preserveTiming?: boolean }): LoadedRecording | undefined;
   summary(profileId: string): unknown;
   loops(profileId: string): unknown[];
+  agentConflicts(profileId: string): number | undefined;
 } {
   return {
+    /**
+     * Conflicts in the recorded run between two different agents. Recordings made before the claims helper
+     * treated an agent's own revision as a revision also logged those as conflicts; they are not counted.
+     */
+    agentConflicts(profileId) {
+      const file = join(runsDir, `demo-${profileId}`, 'events.jsonl');
+      if (!existsSync(file)) return undefined;
+      const producer = new Map<string, string>();
+      let n = 0;
+      for (const line of readFileSync(file, 'utf8').split('\n')) {
+        if (!line.trim()) continue;
+        const e = JSON.parse(line) as {
+          type: string;
+          payload: {
+            figure?: { id?: string; producedBy?: string };
+            existingId?: string;
+            proposedId?: string;
+          };
+        };
+        const f = e.payload.figure;
+        if (f?.id && f.producedBy) producer.set(f.id, f.producedBy);
+        if (e.type === 'hr.figure.conflict') {
+          const a = producer.get(e.payload.existingId ?? '');
+          const b = producer.get(e.payload.proposedId ?? '');
+          if (a && b && a !== b) n += 1;
+        }
+      }
+      return n;
+    },
     /** The recorded run's loops with their real start and end times (from hr.loop.finished/failed). */
     loops(profileId) {
       const file = join(runsDir, `demo-${profileId}`, 'events.jsonl');

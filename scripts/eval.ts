@@ -9,6 +9,7 @@
 // model accuracy, which is why they go to a separate folder the Evidence page does not read.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { loadInputSet } from '../src/engine/load-inputs.ts';
 import { startRun, type RunSummary } from '../src/engine/run-engine.ts';
 import { loadRules } from '../src/domain/rules/loader.ts';
@@ -24,6 +25,15 @@ import type { HrEvent } from '../src/runtime/types.ts';
 import { configurePacer } from '../src/runtime/pacer.ts';
 
 const ROOT = join(import.meta.dirname, '..');
+const COMMIT = (() => {
+  try {
+    return execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: join(import.meta.dirname, '..') })
+      .toString()
+      .trim();
+  } catch {
+    return undefined;
+  }
+})();
 const arg = (name: string): string | undefined => {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : undefined;
@@ -80,6 +90,8 @@ interface RunResult {
   emergent: string[];
   models: { reader: string; verifier: string };
   failedLoops: string[];
+  /** The git commit the run was made on (runs saved before this field existed have none). */
+  commit?: string;
 }
 
 const errKey = (type: string, subject: string): string => `${type}:${type === 'E8' ? '' : subject}`;
@@ -202,6 +214,7 @@ async function runOnce(profileId: string, n: number): Promise<RunResult> {
     emergent,
     models: mode === 'fake' ? { reader: 'fake-model (test)', verifier: 'fake-model (test)' } : env.models,
     failedLoops,
+    ...(COMMIT ? { commit: COMMIT } : {}),
   };
 }
 

@@ -83,6 +83,7 @@ export interface ReplaySource {
   /** The recorded run's own summary.json (real timing), when there is one. */
   summary?(profileId: string): unknown;
   loops?(profileId: string): unknown[];
+  agentConflicts?(profileId: string): number | undefined;
 }
 
 export interface RunManagerOptions {
@@ -162,6 +163,10 @@ export class RunManager {
 
   recordedSummary(profileId: string): unknown {
     return this.o.replay?.summary?.(profileId);
+  }
+
+  recordedAgentConflicts(profileId: string): number | undefined {
+    return this.o.replay?.agentConflicts?.(profileId);
   }
 
   recordedLoops(profileId: string): unknown[] {
