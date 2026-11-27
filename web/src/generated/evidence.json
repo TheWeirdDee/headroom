@@ -212,7 +212,7 @@
       "metrics": [
         {
           "name": "Planted errors detected",
-          "value": "80 / 80 (100.0%)",
+          "value": "82 / 82 (100.0%)",
           "note": "on 14 synthetic profiles we designed"
         },
         {
@@ -246,10 +246,10 @@
         { "name": "Median loops running at once (peak)", "value": "15" },
         {
           "name": "Median loop time / wall time",
-          "value": "0.26",
+          "value": "0.64",
           "note": "the test model answers instantly, so wall time is mostly the quiet period that ends a run"
         },
-        { "name": "Median wall time per run", "value": "1.9 s" },
+        { "name": "Median wall time per run", "value": "2.3 s" },
         { "name": "Median tokens per run (in / out)", "value": "19000 / 4582" },
         {
           "name": "Verifier contests by reason (all runs)",
@@ -257,7 +257,7 @@
         },
         {
           "name": "Planted book errors that surfaced as real agent conflicts",
-          "value": "34 / 34",
+          "value": "36 / 36",
           "note": "E2, E4, E5, E7: KpoReader against InvoiceReader or RateClerk"
         },
         {
@@ -271,7 +271,7 @@
         { "type": "E2", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
         { "type": "E3", "planted": 10, "found": 10, "missed": 0, "extra": 0 },
         { "type": "E4", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
-        { "type": "E5", "planted": 10, "found": 10, "missed": 0, "extra": 0 },
+        { "type": "E5", "planted": 12, "found": 12, "missed": 0, "extra": 0 },
         { "type": "E6", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
         { "type": "E7", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
         { "type": "E8", "planted": 8, "found": 8, "missed": 0, "extra": 0 },
@@ -331,7 +331,7 @@
     },
     {
       "id": "p07",
-      "errors": ["E1", "E2", "E3", "E5", "E9"],
+      "errors": ["E1", "E2", "E3", "E5", "E5", "E9"],
       "invoices": 11,
       "statementRows": 17,
       "bookRows": 10,
@@ -381,28 +381,28 @@
     { "id": "c02", "errors": [], "invoices": 9, "statementRows": 14, "bookRows": 9, "traits": [] }
   ],
   "recorded": {
-    "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" },
-    "loops": 65,
+    "models": { "reader": "gemini-3.1-flash-lite", "verifier": "gemini-3.1-flash-lite" },
+    "loops": 66,
     "failedLoops": 0,
-    "wallTimeMs": 482755,
+    "wallTimeMs": 376312,
     "maxConcurrentLoops": 15,
-    "figures": { "proposed": 0, "verified": 215, "contested": 2, "superseded": 26, "needs_user": 0 },
+    "figures": { "proposed": 0, "verified": 219, "contested": 3, "superseded": 24, "needs_user": 0 },
     "rejections": {
       "UNSOURCED": 0,
       "SOURCE_MISMATCH": 0,
       "DERIVATION_MISMATCH": 0,
-      "NOT_SUPPORTED_BY_SOURCE": 2,
+      "NOT_SUPPORTED_BY_SOURCE": 3,
       "IMPLAUSIBLE": 0
     },
     "tokens": {
-      "in": 67277,
-      "out": 7161,
+      "in": 70309,
+      "out": 7422,
       "byAgent": {
         "independence-checker": { "in": 5277, "out": 690 },
         "kpo-reader": { "in": 1681, "out": 375 },
         "statement-reader": { "in": 3652, "out": 602 },
-        "invoice-reader": { "in": 38595, "out": 3292 },
-        "verifier": { "in": 18072, "out": 2202 }
+        "invoice-reader": { "in": 41637, "out": 3519 },
+        "verifier": { "in": 18062, "out": 2236 }
       }
     }
   },

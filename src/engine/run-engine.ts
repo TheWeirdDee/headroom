@@ -30,6 +30,8 @@ export interface RunSummary {
   mode: 'live' | 'replay';
   mozaik: { package: string; version: string };
   models: { reader: string; verifier: string };
+  /** Backup models that answered part of this run because a daily quota was used up. */
+  answeredByBackup?: string[];
   promptHashes: Record<string, string>;
   wallTimeMs: number;
   sumLoopTimeMs: number;
@@ -126,6 +128,7 @@ export function startRun(o: RunOptions): Run {
     now,
     defaultLoopTimeoutMs: o.config.loopTimeoutMs,
     maxRetries: o.config.maxRetries,
+    ...(o.config.backupModels ? { backupModels: o.config.backupModels } : {}),
   });
   const events: HrEvent[] = [];
   const deps: AgentDeps = {
@@ -240,6 +243,7 @@ export function startRun(o: RunOptions): Run {
       mode: o.mode,
       mozaik: { package: MOZAIK_PACKAGE.name, version: MOZAIK_PACKAGE.version },
       models: o.config.models,
+      ...(rt.backupsUsed().length > 0 ? { answeredByBackup: rt.backupsUsed() } : {}),
       promptHashes,
       wallTimeMs: end - started,
       sumLoopTimeMs: loops.reduce((s, l) => s + ((l.endedAt ?? end) - l.startedAt), 0),

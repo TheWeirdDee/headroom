@@ -66,7 +66,7 @@ const samples = plan.profiles.map((p) => {
   ].filter(Boolean);
   return {
     id: p.id,
-    errors: p.errors,
+    errors: [...p.errors, ...(p['offRateAmount'] ? ['E5'] : [])].sort(),
     invoices: readdirSync(join(ROOT, dir, 'invoices')).length,
     statementRows: lines('statement.csv'),
     bookRows: lines('kpo.csv'),

@@ -21,6 +21,10 @@ interface Mapper {
 }
 
 const MAX_BY_KEY = 5000;
+// Shared by every patched endpoint: a loop that moves to a backup model keeps its signatures.
+const byItem = new WeakMap<object, string>();
+// Fallback when the loop stores a copy of the item (e.g. a rewritten call): same id, name and args.
+const byKey = new Map<string, string>();
 
 /** Patches `endpoint.endpointMapper` if it is a Gemini mapper; other endpoints are left as they are. */
 export function patchGeminiSignatures(endpoint: unknown): void {
@@ -28,9 +32,6 @@ export function patchGeminiSignatures(endpoint: unknown): void {
   if (!mapper || mapper.__hrSignatures || mapper.constructor?.name !== 'GeminiGenerateContentMapper') return;
   mapper.__hrSignatures = true;
 
-  const byItem = new WeakMap<object, string>();
-  // Fallback when the loop stores a copy of the item (e.g. a rewritten call): same id, name and args.
-  const byKey = new Map<string, string>();
   const keyOf = (callId: string, name: string, args: string): string => `${callId}\u0000${name}\u0000${args}`;
 
   const toResponse = mapper.toResponse.bind(mapper);

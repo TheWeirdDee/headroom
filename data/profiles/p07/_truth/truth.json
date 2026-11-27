@@ -24,6 +24,11 @@
       "note": "book used the payment-date rate: 493032.96 instead of 493002.30"
     },
     {
+      "type": "E5",
+      "subjectKey": "invoice:2026-011",
+      "note": "book amount 532240.60 instead of 552240.60: no NBS rate gives it"
+    },
+    {
       "type": "E9",
       "subjectKey": "invoice:2026-002",
       "note": "invoice address in Serbia, client details say DE"
@@ -298,7 +303,7 @@
       "committed": "369704.79",
       "withDraft": "369704.79"
     },
-    "bookYearTotal": "4279297.78"
+    "bookYearTotal": "4259297.78"
   },
   "criterion6": {
     "heron": {

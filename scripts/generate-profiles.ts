@@ -32,6 +32,8 @@ const PLAN = z.object({
       exempt: z.boolean().optional(),
       injection: z.boolean().optional(),
       showcase: z.boolean().optional(),
+      /** One foreign invoice booked at an amount that matches no NBS rate (a second E5). */
+      offRateAmount: z.boolean().optional(),
     }),
   ),
 });
@@ -631,6 +633,28 @@ async function buildProfile(
       type: 'E5',
       subjectKey: `invoice:${t.spec.number}`,
       note: `book used the payment-date rate: ${t.paidRSD} instead of ${t.amountRSD}`,
+    });
+  }
+  if (plan.offRateAmount) {
+    // The latest paid foreign invoice that carries no other error, booked 20,000 RSD short.
+    const t = invoices
+      .filter(
+        (x) =>
+          x.spec.currency !== 'RSD' &&
+          x.payDate &&
+          x !== e2Target &&
+          x !== e3Target &&
+          x.docCountry !== 'RS' &&
+          !planted.some((p) => p.subjectKey === `invoice:${x.spec.number}`),
+      )
+      .at(-1);
+    if (!t) throw new Error(`${plan.id}: no paid foreign invoice for an off-rate amount`);
+    const wrong = money(sub(t.amountRSD, '20000'));
+    book = book.map((r) => (r.invNo === t.spec.number ? rowFor(t, r.date, wrong) : r));
+    planted.push({
+      type: 'E5',
+      subjectKey: `invoice:${t.spec.number}`,
+      note: `book amount ${wrong} instead of ${t.amountRSD}: no NBS rate gives it`,
     });
   }
   if (has('E6')) {

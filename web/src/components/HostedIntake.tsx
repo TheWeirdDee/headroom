@@ -81,8 +81,9 @@ npm start                 # open http://localhost:4317`}</Code>
             </p>
           )}
           <p className="text-sm text-muted">
-            The sample is an invented freelancer with five planted mistakes: money with no invoice, an invoice
-            missing from the book, a wrong date, a wrong exchange rate and a wrong client country.
+            The sample is an invented freelancer with six planted mistakes: money with no invoice, an invoice
+            missing from the book, a wrong date, a wrong exchange rate, a wrong amount and a wrong client
+            country.
           </p>
         </section>
       </div>

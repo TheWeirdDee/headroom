@@ -29,6 +29,8 @@ import {
 import { Inbox } from '../inbox.ts';
 import { patchGeminiSignatures } from './gemini-signatures.ts';
 import { groqInfer, isGroqModel } from './groq.ts';
+import { extraGeminiInfer, isExtraGeminiModel } from './gemini-extra.ts';
+import { createBackups } from '../backup.ts';
 import { installBoardMirror } from '../board-mirror.ts';
 import { DEFAULT_RETRY, withRetry } from '../loop.ts';
 import { acquire as paceRequest, pacerRpm } from '../pacer.ts';
@@ -111,6 +113,8 @@ export interface HeadroomRuntime {
   asHrEvent(event: SemanticEvent): HrEvent;
   /** runLoop for this agent, with a fresh context; `done` resolves with its answer or failure. */
   think(agent: Agent, input: ThinkInput): LoopHandle;
+  /** Backup models that answered at least one request of this run. */
+  backupsUsed(): string[];
   /** For the quiescence detector. */
   activity(): { runningLoops: number; queuedEvents: number; busyMailboxes: number };
   loopMetrics(): LoopMetric[];
@@ -137,6 +141,8 @@ export interface RuntimeOptions {
   defaultLoopTimeoutMs: number;
   maxRetries?: number;
   sleep?: (ms: number) => Promise<void>;
+  /** Models to move to when a model's daily quota is used up, in order. */
+  backupModels?: readonly string[];
 }
 
 /** The provider's own words for a failed request, on one line and short (HTTP status and message). */
@@ -158,6 +164,9 @@ export function createRuntime(opts: RuntimeOptions): HeadroomRuntime {
   const inboxes = new Map<Participant, Inbox>();
   const converted = new WeakMap<object, HrEvent>();
   let loopSeq = 0;
+  const backups = createBackups(opts.backupModels ?? [], (from, to) =>
+    process.stderr.write(`Daily quota of ${from} used up: continuing on backup model ${to}.\n`),
+  );
 
   // --- inference ------------------------------------------------------------------------------------
   function toRequest(rec: LoopRecord, input: InferenceInput): HrInferenceRequest {
@@ -223,6 +232,7 @@ export function createRuntime(opts: RuntimeOptions): HeadroomRuntime {
   async function providerInfer(input: InferenceInput): Promise<InferenceOutput> {
     if (isGroqModel(input.model)) return groqInfer(input);
     const model = supportedModels.find((m) => m.specification.name === input.model);
+    if (!model && isExtraGeminiModel(input.model)) return extraGeminiInfer(input);
     if (!model)
       throw new Error(
         `Model ${input.model} is not supported by ${MOZAIK_PACKAGE.name} ${MOZAIK_PACKAGE.version}`,
@@ -248,43 +258,46 @@ export function createRuntime(opts: RuntimeOptions): HeadroomRuntime {
       const request = toRequest(rec, input);
       try {
         const t0 = now();
-        const answer = async (): Promise<InferenceOutput> => {
-          const answered = opts.observer?.onRequest?.(request);
+        const send = async (model: string): Promise<InferenceOutput> => {
+          const asked = model === request.model ? request : { ...request, model };
+          const answered = opts.observer?.onRequest?.(asked);
           try {
-            if (opts.backend) return toMozaikOutput(await opts.backend.infer(request), request.step);
-            return await providerInfer(input);
+            if (opts.backend) return toMozaikOutput(await opts.backend.infer(asked), request.step);
+            return await providerInfer(model === input.model ? input : { ...input, model });
           } finally {
             answered?.();
           }
         };
+        const attempt = (model: string): Promise<InferenceOutput> =>
+          withRetry(() => send(model), {
+            ...DEFAULT_RETRY,
+            retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
+            timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
+            ...(opts.sleep ? { sleep: opts.sleep } : {}),
+            // Live waits are reported on stderr (agent, attempt, the provider's reason), never with keys.
+            ...(!opts.backend
+              ? {
+                  onRetry: (attempt: number, error: unknown) =>
+                    process.stderr.write(
+                      `Model request retry ${attempt} for ${rec.input.agentId}: ${retryReason(error)}\n`,
+                    ),
+                }
+              : {}),
+            // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
+            // waiting in the quota queue is never mistaken for a hung loop.
+            ...(!opts.backend && pacerRpm() > 0
+              ? {
+                  before: async () => {
+                    await paceRequest(now);
+                    rec.timer?.refresh();
+                  },
+                  rateLimitRetries: 6,
+                }
+              : {}),
+          });
         const out = opts.backend?.recorded
-          ? await answer()
-          : await withRetry(answer, {
-              ...DEFAULT_RETRY,
-              retries: opts.maxRetries ?? DEFAULT_RETRY.retries,
-              timeoutMs: rec.input.timeoutMs ?? opts.defaultLoopTimeoutMs,
-              ...(opts.sleep ? { sleep: opts.sleep } : {}),
-              // Live waits are reported on stderr (agent, attempt, the provider's reason), never with keys.
-              ...(!opts.backend
-                ? {
-                    onRetry: (attempt: number, error: unknown) =>
-                      process.stderr.write(
-                        `Model request retry ${attempt} for ${rec.input.agentId}: ${retryReason(error)}\n`,
-                      ),
-                  }
-                : {}),
-              // Only live provider calls are paced; each granted slot restarts the loop's overall timer, so
-              // waiting in the quota queue is never mistaken for a hung loop.
-              ...(!opts.backend && pacerRpm() > 0
-                ? {
-                    before: async () => {
-                      await paceRequest(now);
-                      rec.timer?.refresh();
-                    },
-                    rateLimitRetries: 6,
-                  }
-                : {}),
-            });
+          ? await send(request.model)
+          : await backups.run(request.model, attempt);
         const neutral = fromMozaikOutput(out);
         rec.metric.tokensIn += neutral.tokensIn;
         rec.metric.tokensOut += neutral.tokensOut;
@@ -530,6 +543,7 @@ export function createRuntime(opts: RuntimeOptions): HeadroomRuntime {
     publish,
     asHrEvent,
     think,
+    backupsUsed: () => backups.used(),
     activity() {
       let queuedEvents = 0;
       let busyMailboxes = 0;

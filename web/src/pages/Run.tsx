@@ -79,6 +79,7 @@ export function Run() {
         mode={snap.mode}
         recording={snap.recording}
         rejected={totalRejections(view)}
+        backups={view.summary?.answeredByBackup}
         {...(snap.fault ? { fault: snap.fault.note } : {})}
       />
       <div className="mx-auto max-w-[1440px] space-y-4 px-4 py-4">

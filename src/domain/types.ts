@@ -169,6 +169,8 @@ export interface RunConfig {
   indepIncomeBasis: 'invoiced' | 'received';
   rsdRounding: Rounding;
   models: { reader: string; verifier: string };
+  /** Models to move to when a daily quota is used up. Empty for recordings and evaluations. */
+  backupModels?: string[];
   concurrency: { invoice: number; statement: number; kpo: number; verifier: number };
   loopTimeoutMs: number;
   maxRetries: number;

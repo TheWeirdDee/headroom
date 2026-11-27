@@ -2,7 +2,7 @@
 // logged or written anywhere; the only thing exposed is whether a model key is present.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { DEFAULT_MODELS } from './defaults.ts';
+import { DEFAULT_GEMINI_BACKUP, DEFAULT_MODELS } from './defaults.ts';
 import { DEFAULT_RPM, KEY_ENV, providerOf } from './providers.ts';
 
 export interface AppEnv {
@@ -15,6 +15,8 @@ export interface AppEnv {
   /** Model requests per minute across all agents (0: no pacing). */
   maxRpm: number;
   models: { reader: string; verifier: string };
+  /** Models a live check moves to when a daily quota is used up (HEADROOM_MODEL_BACKUP). */
+  backupModels?: string[];
   root: string;
   /** A hosted read-only sample instance (HEADROOM_PUBLIC_DEMO=1): offline only, uploads refused. */
   publicDemo?: boolean;
@@ -70,6 +72,27 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
   if (!value('GEMINI_API_KEY') && value('GOOGLE_API_KEY'))
     process.env['GEMINI_API_KEY'] = value('GOOGLE_API_KEY');
   const has = providers.every((p) => p !== undefined && KEY_ENV[p].some((n) => value(n) !== ''));
+  // Backups. Unset: on Gemini, another free Gemini model on the same key. Another provider is used only
+  // when named here, because document text then goes to that provider too. "none" turns backups off.
+  const asked = value('HEADROOM_MODEL_BACKUP');
+  const wanted =
+    asked === ''
+      ? providers.length === 1 && providers[0] === 'google'
+        ? [DEFAULT_GEMINI_BACKUP]
+        : []
+      : asked.toLowerCase() === 'none'
+        ? []
+        : asked
+            .split(',')
+            .map((m) => m.trim())
+            .filter(Boolean);
+  for (const model of wanted) {
+    const p = providerOf(model);
+    if (!p) throw new EnvError(`HEADROOM_MODEL_BACKUP: unknown model "${model}"`);
+    if (asked !== '' && !KEY_ENV[p].some((n) => value(n) !== ''))
+      throw new EnvError(`HEADROOM_MODEL_BACKUP: ${model} needs ${KEY_ENV[p][0] ?? 'its key'}`);
+  }
+  const backupModels = wanted.filter((m) => m !== models.reader || m !== models.verifier);
   const main = providerOf(models.reader) ?? 'google';
   return {
     port: int('PORT', 4317),
@@ -79,6 +102,7 @@ export function loadEnv(root: string, argv: string[] = process.argv): AppEnv {
     keyEnv: KEY_ENV[main][0] ?? 'GEMINI_API_KEY',
     maxRpm: int('HEADROOM_MAX_RPM', Math.max(...providers.map((p) => (p ? DEFAULT_RPM[p] : 0)))),
     models,
+    backupModels,
     root,
     publicDemo,
     host: (process.env['HOST'] ?? '').trim() || '127.0.0.1',

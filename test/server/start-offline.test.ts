@@ -66,7 +66,7 @@ async function settled(id: string): Promise<Snap> {
 }
 
 describe('npm run start:offline', () => {
-  it('replays the sample: 65 loops, 0 failed, all five planted errors, then completed', async () => {
+  it('replays the sample: 66 loops, 0 failed, all six planted errors, then completed', async () => {
     const res = await fetch(`${base}/api/runs`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -76,7 +76,7 @@ describe('npm run start:offline', () => {
     const first = await settled(runId);
     expect(first.loops.filter((l) => l.status === 'failed')).toEqual([]);
     expect(first.summary).toMatchObject({
-      loops: 65,
+      loops: 66,
       failedLoops: 0,
       participantErrors: 0,
       unsourcedFigures: 0,
@@ -86,7 +86,7 @@ describe('npm run start:offline', () => {
         .filter((d) => d.status === 'verified')
         .map((d) => d.type)
         .sort(),
-    ).toEqual(['E1', 'E2', 'E3', 'E5', 'E9']);
+    ).toEqual(['E1', 'E2', 'E3', 'E5', 'E5', 'E9']);
     // The sample asks six independence questions only the user can answer.
     expect(first.status).toBe('awaiting_user');
     // The headline: invoices alone leave room, but with the payment that has no invoice the line is crossed.
@@ -117,7 +117,7 @@ describe('npm run start:offline', () => {
       done = await snapshot(runId);
     }
     expect(done.status).toBe('completed');
-    expect(done.summary).toMatchObject({ loops: 65, failedLoops: 0 });
+    expect(done.summary).toMatchObject({ loops: 66, failedLoops: 0 });
   }, 90_000);
 
   it('refuses changes to the landing page showcase over HTTP', async () => {

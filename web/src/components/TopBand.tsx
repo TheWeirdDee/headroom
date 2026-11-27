@@ -15,12 +15,15 @@ export function TopBand({
   recording,
   rejected,
   fault,
+  backups,
 }: {
   data?: 'sample' | 'user';
   mode?: 'live' | 'replay';
   recording?: Recording | null;
   rejected?: number;
   fault?: string;
+  /** Backup models that answered part of the run. */
+  backups?: string[] | undefined;
 }) {
   const health = useApp((s) => s.health);
   const offline = mode === 'replay' || (mode === undefined && health?.mode === 'offline');
@@ -46,6 +49,11 @@ export function TopBand({
           </span>
         )}
         <span>Mode: {modeText}</span>
+        {backups && backups.length > 0 && (
+          <span className="font-medium text-amber">
+            Daily quota used up: partly answered by backup model {backups.join(', ')}
+          </span>
+        )}
         {fault && <span className="font-medium text-danger">{fault}</span>}
         {rejected !== undefined && (
           <span className="inline-flex items-center gap-1">

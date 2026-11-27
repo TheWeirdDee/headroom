@@ -152,12 +152,12 @@ describe('replay', () => {
 });
 
 describe('the committed demo recording', () => {
-  it('replays ten times to the same board, with 65 loops and none failed', async () => {
+  it('replays ten times to the same board, with 66 loops and none failed', async () => {
     let first: string | undefined;
     for (let i = 0; i < 10; i++) {
       const s = await run(manager('runs', 'replay'), 'replay');
       expect(s.loops.filter((l) => l.status === 'failed')).toEqual([]);
-      expect(s.loops).toHaveLength(65);
+      expect(s.loops).toHaveLength(66);
       first ??= board(s);
       expect(board(s)).toBe(first);
     }

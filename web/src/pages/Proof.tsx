@@ -196,7 +196,7 @@ export function Proof() {
         <Block
           id="disagree"
           title="Findings, each with its sources"
-          lead="What the agents found in the synthetic sample, which has five mistakes planted in it. Open Evidence on any line to see the invoice line, bank row or book row."
+          lead="What the agents found in the synthetic sample, which has six mistakes planted in it. Open Evidence on any line to see the invoice line, bank row or book row."
         >
           <ShowcaseProof runId={showcase.runId} />
         </Block>

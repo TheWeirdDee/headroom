@@ -367,7 +367,14 @@ npm run start:offline -- --speed 4 # recorded request times, four times faster`}
               ],
             ]}
           />
-          <p>Rate limits are waited out; a used-up daily quota stops the run with a clear message.</p>
+          <p>
+            Rate limits are waited out. <strong>A free backup:</strong> if the daily quota runs out during a
+            check, the rest of it goes to <M>gemini-3.1-flash-lite</M> on the same free Gemini key, and the
+            run screen says which backup answered. <M>HEADROOM_MODEL_BACKUP</M> names other backups, comma
+            separated (a Groq model there also sends document text to Groq), or <M>none</M>. If every model’s
+            quota is used up, the run stops with a clear message. Recordings and evaluations never switch
+            models.
+          </p>
         </Block>
 
         <Block id="settings" title="Settings">
@@ -381,6 +388,11 @@ npm run start:offline -- --speed 4 # recorded request times, four times faster`}
               [<M key="d">HEADROOM_MAX_RPM</M>, 'by provider', 'Model requests a minute; 0 turns pacing off'],
               [<M key="e">HEADROOM_MODEL_READER</M>, 'gemini-3.5-flash-lite', 'Model of the reading agents'],
               [<M key="f">HEADROOM_MODEL_VERIFIER</M>, 'gemini-3.5-flash-lite', 'Model of the Verifier'],
+              [
+                <M key="k">HEADROOM_MODEL_BACKUP</M>,
+                'gemini-3.1-flash-lite on Gemini',
+                'Models to move to when a daily quota is used up; none turns it off',
+              ],
               [
                 <M key="g">HEADROOM_PUBLIC_DEMO</M>,
                 'off',
@@ -481,7 +493,7 @@ npm run start:offline -- --speed 4 # recorded request times, four times faster`}
               ],
               [
                 'Daily quota used up',
-                'The provider’s free daily limit is reached. Try after it resets, or set another model.',
+                'Every model in the list reached its free daily limit. Try after it resets, or add a backup.',
               ],
               [
                 'A PDF listed as unreadable',

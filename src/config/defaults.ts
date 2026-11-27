@@ -4,6 +4,9 @@ import type { RunConfig } from '../domain/types.ts';
 // Gemini by default: it has a free tier. Any other supported model can be set in .env.
 export const DEFAULT_MODELS = { reader: 'gemini-3.5-flash-lite', verifier: 'gemini-3.5-flash-lite' } as const;
 
+/** The free Gemini model a check moves to when the default model's daily quota is used up. */
+export const DEFAULT_GEMINI_BACKUP = 'gemini-3.1-flash-lite';
+
 export function defaultRunConfig(year: number, asOf: string, overrides: Partial<RunConfig> = {}): RunConfig {
   return {
     year,

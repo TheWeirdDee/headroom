@@ -14,7 +14,8 @@
       "errors": ["E1", "E2", "E3", "E5", "E9"],
       "crossVia": "E1",
       "criterion6": true,
-      "showcase": true
+      "showcase": true,
+      "offRateAmount": true
     },
     { "id": "p08", "errors": ["E4", "E6", "E8"] },
     { "id": "p09", "errors": ["E1", "E3", "E7"], "crossVia": "E3", "weekendForeignInvoice": true },

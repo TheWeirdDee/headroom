@@ -326,7 +326,12 @@ export class RunManager {
     const faultyDoc = faulty && inputs.documents.find((d) => d.fileName === `${faulty.invoice}.pdf`);
     if (faulty && !faultyDoc) throw new RunError('BAD_FAULT', 'The faulted invoice is missing.');
     // A replay asks the models it was recorded with, so its request hashes match the recording.
-    const config = defaultRunConfig(year, asOf, { models: replay?.models ?? env.models });
+    // A recording is of one model, so a recorded run never moves to a backup; nor does a replay.
+    const backups = req.mode === 'live' && !recorder && !this.o.modelBackend ? (env.backupModels ?? []) : [];
+    const config = defaultRunConfig(year, asOf, {
+      models: replay?.models ?? env.models,
+      ...(backups.length > 0 ? { backupModels: backups } : {}),
+    });
     const run = startRun({
       runId,
       inputs,

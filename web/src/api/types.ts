@@ -197,6 +197,7 @@ export interface RunSummary {
   mode: 'live' | 'replay';
   mozaik: { package: string; version: string };
   models: { reader: string; verifier: string };
+  answeredByBackup?: string[];
   wallTimeMs: number;
   sumLoopTimeMs: number;
   maxConcurrentLoops: number;
