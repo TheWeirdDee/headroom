@@ -6,8 +6,8 @@ web/dist/
 !.env.example
 runs/*
 !runs/demo-p07/
-eval/raw/
-eval/**/raw/
+# Live eval runs are kept (small, no document text) so batches on different days add up; fake-mode raw is not.
+eval/fake/raw/
 uploads/
 data/user/
 coverage/
