@@ -162,8 +162,6 @@ npm run demo:catch                 # the Verifier rejects an injected misread`}<
                 {[
                   ['Google (default)', 'gemini-3.5-flash-lite', 'GEMINI_API_KEY'],
                   ['Groq', 'groq/openai/gpt-oss-120b', 'GROQ_API_KEY'],
-                  ['Anthropic', 'claude-sonnet-5-5', 'ANTHROPIC_API_KEY'],
-                  ['OpenAI', 'gpt-5.4-mini', 'OPENAI_API_KEY'],
                 ].map(([p, m, k]) => (
                   <tr key={p}>
                     <td className="px-4 py-2">{p}</td>
@@ -174,7 +172,7 @@ npm run demo:catch                 # the Verifier rejects an injected misread`}<
               </tbody>
             </table>
           </div>
-          <p>Headroom has been run with the Gemini and Groq models above, not with Claude or OpenAI ones.</p>
+          <p>These are the providers Headroom has been run with.</p>
           <p>
             Requests are paced so a free tier slows a run down instead of failing it (14 a minute for Gemini,
             whose free tier allows 15, 8 for Groq; change it with{' '}

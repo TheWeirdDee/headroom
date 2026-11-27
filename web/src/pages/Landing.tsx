@@ -203,7 +203,7 @@ const FAQ: Array<{ q: string; a: ReactNode }> = [
   },
   {
     q: 'Which AI model does it use?',
-    a: 'Google Gemini (gemini-3.5-flash-lite) by default, because it has a free tier. Claude, GPT, DeepSeek and Groq models work too, with that provider’s key. Models only read text; code does every calculation.',
+    a: 'Google Gemini (gemini-3.5-flash-lite) by default, because it has a free tier. Groq models have also been run, with a Groq key. Models only read text; code does every calculation.',
   },
   {
     q: 'What if a model misreads something?',

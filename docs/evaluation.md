@@ -97,4 +97,4 @@ The table below is from **fake mode** (14 synthetic profiles we designed, two ru
 - The current code has run against a real model once, on a small profile. The 14 sample profiles have not been re-run live since the pipeline changed.
 - The Groq re-run of `c02` and `p01` after the false-finding fix stopped at Groq's daily quota and was not counted. The fix has a unit test (`packages/claims/test/claims.test.ts`).
 - No profile was run three times live, and the showcase sample raises two conflicts between agents.
-- Claude and OpenAI models have not been run.
+- Only Gemini and Groq models have been run.

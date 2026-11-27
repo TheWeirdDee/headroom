@@ -218,7 +218,7 @@ A client list file (`clients.json`) is optional and fills the client form. Its `
 ```
 
 - The default model is `gemini-3.5-flash-lite`, which has a free tier. Requests are paced (14 a minute, under the free tier's 15; `HEADROOM_MAX_RPM`), so a year of about a dozen invoices needs some 85 requests and about 6 minutes, out of the free tier's 500 requests a day.
-- Groq models work as `groq/<model>` with `GROQ_API_KEY` (`HEADROOM_MODEL_READER`, `HEADROOM_MODEL_VERIFIER`); [groq.ts](src/runtime/mozaik/groq.ts) points Mozaik's chat-completions endpoint at Groq. Claude and OpenAI models Mozaik supports can be selected the same way; they have not been run here.
+- Groq models work as `groq/<model>` with `GROQ_API_KEY` (`HEADROOM_MODEL_READER`, `HEADROOM_MODEL_VERIFIER`); [groq.ts](src/runtime/mozaik/groq.ts) points Mozaik's chat-completions endpoint at Groq.
 - CI runs the tests on Linux and Windows. macOS is not tested.
 
 ## What you will see
