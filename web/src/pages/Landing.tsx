@@ -1,27 +1,22 @@
-// The front door: the problem, the promise, and the real product. The card, findings and timeline below are
-// the run screen's own components fed by a replay of the committed real-model recording (GET /api/showcase);
-// the headline figures are that recording's own summary. Every rule quoted here comes from the rules table.
+// The front door. The card, findings and timeline are the run screen's own components showing the committed
+// real-model recording (live from the server, or a bundled snapshot of it when no server answers); the
+// headline figures are that recording's own summary; every rule quoted comes from the rules table.
 import { Link } from 'react-router';
 import {
   ArrowRight,
+  ArrowUpRight,
   BookOpenCheck,
   Calculator,
-  ChevronDown,
-  ExternalLink,
+  Check,
   FileCheck2,
-  FileSearch,
-  Files,
   Landmark,
-  Laptop,
   Layers,
+  Minus,
   PlayCircle,
+  Plus,
   ReceiptText,
   Scale,
   ScanSearch,
-  Send,
-  ShieldCheck,
-  Users,
-  XCircle,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useApp } from '../state/app.ts';
@@ -40,26 +35,31 @@ import { REPO_URL } from '../components/Layout.tsx';
 
 const SHOWCASE = 'p07';
 
+const btnPrimary =
+  'inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-strong';
+const btnSecondary =
+  'inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-muted hover:bg-panel disabled:opacity-60';
+
 function Cited({ rule, quote, gloss }: { rule: Rule | undefined; quote?: boolean; gloss?: string }) {
   if (!rule) return null;
   const src = quote ? (rule.sources.find((s) => s.quote) ?? rule.sources[0]) : rule.sources[0];
   return (
-    <figure className="space-y-3">
-      <blockquote className="text-lg leading-relaxed text-text">
-        {quote && src?.quote ? <span lang="sr">"{src.quote}"</span> : rule.statement_en}
+    <figure>
+      <blockquote className="font-serif text-2xl leading-snug md:text-[1.75rem]">
+        {quote && src?.quote ? <span lang="sr">&ldquo;{src.quote}&rdquo;</span> : rule.statement_en}
       </blockquote>
-      {quote && src?.quote && gloss && <p className="text-sm text-muted">{gloss}</p>}
+      {quote && src?.quote && gloss && <p className="mt-3 text-sm text-muted">{gloss}</p>}
       {src && (
-        <figcaption className="text-xs text-muted">
+        <figcaption className="mt-4 text-xs text-muted">
           <a
             href={src.url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 hover:text-text"
+            className="inline-flex items-center gap-1 underline decoration-line underline-offset-4 hover:text-text"
           >
             {src.title}
             {src.locator ? `, ${src.locator}` : ''}
-            <ExternalLink size={12} aria-hidden />
+            <ArrowUpRight size={12} aria-hidden />
           </a>
         </figcaption>
       )}
@@ -67,58 +67,62 @@ function Cited({ rule, quote, gloss }: { rule: Rule | undefined; quote?: boolean
   );
 }
 
+function Kicker({ n, children }: { n: string; children: ReactNode }) {
+  return (
+    <p className="flex items-center gap-3 font-mono text-xs tracking-wide text-muted uppercase">
+      <span className="text-signal">{n}</span>
+      <span className="h-px w-8 bg-line" aria-hidden />
+      {children}
+    </p>
+  );
+}
+
 function SectionHead({
   id,
+  n,
   kicker,
   title,
   children,
 }: {
   id: string;
+  n: string;
   kicker: string;
-  title: string;
+  title: ReactNode;
   children?: ReactNode;
 }) {
   return (
-    <div className="max-w-2xl">
-      <p className="text-xs font-medium tracking-[0.14em] text-accent uppercase">{kicker}</p>
-      <h2 id={id} className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+    <div className="max-w-3xl">
+      <Kicker n={n}>{kicker}</Kicker>
+      <h2 id={id} className="mt-5 font-serif text-4xl leading-[1.05] tracking-tight md:text-5xl">
         {title}
       </h2>
-      {children && <p className="mt-4 text-muted">{children}</p>}
+      {children && <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{children}</p>}
     </div>
   );
 }
 
 function Stats({ r }: { r: RecordedRun }) {
-  const ratio = r.wallTimeMs > 0 ? formatSr(String((r.sumLoopTimeMs / r.wallTimeMs).toFixed(1)), 1) : '';
   const items = [
-    { value: formatSr(String(r.verified), 0), label: 'figures verified against their source' },
-    { value: formatSr(String(r.unsourcedFigures), 0), label: 'figures shown without a source' },
-    { value: formatSr(String(r.maxConcurrentLoops), 0), label: 'agent loops running at once (peak)' },
+    { value: formatSr(String(r.verified), 0), label: 'figures checked against their source' },
+    { value: formatSr(String(r.unsourcedFigures), 0), label: 'numbers shown without a source' },
+    { value: formatSr(String(r.maxConcurrentLoops), 0), label: 'agent loops running at once' },
     ...(r.agentConflicts !== null
-      ? [
-          {
-            value: formatSr(String(r.agentConflicts), 0),
-            label: 'conflicts between two agents, settled by the source',
-          },
-        ]
+      ? [{ value: formatSr(String(r.agentConflicts), 0), label: 'disagreements between agents, settled' }]
       : []),
   ];
   return (
     <div>
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-4">
-        {items.map((i) => (
-          <div key={i.label} className="bg-panel px-5 py-4">
-            <dt className="text-xs text-muted">{i.label}</dt>
-            <dd className="num mt-1 text-2xl font-semibold">{i.value}</dd>
+      <dl className="grid grid-cols-2 border-y border-line md:grid-cols-4">
+        {items.map((i, k) => (
+          <div key={i.label} className={`px-1 py-6 md:px-6 ${k > 0 ? 'md:border-l md:border-line' : ''}`}>
+            <dd className="num text-4xl font-medium tracking-tight">{i.value}</dd>
+            <dt className="mt-2 text-sm text-muted">{i.label}</dt>
           </div>
         ))}
       </dl>
-      <p className="mt-2 text-xs text-muted">
-        From the recorded run of the synthetic sample p07 with {r.models.reader}:{' '}
-        {formatSr(String(r.loops), 0)} loops,{' '}
-        {r.failedLoops === 0 ? 'none failed' : `${r.failedLoops} failed`}
-        {ratio ? `, ${ratio} loops' worth of work in flight on average` : ''}.
+      <p className="mt-3 font-mono text-[11px] text-muted">
+        Recorded run of synthetic sample p07, {r.models.reader}: {r.loops} loops,{' '}
+        {r.failedLoops === 0 ? 'none failed' : `${r.failedLoops} failed`}.
       </p>
     </div>
   );
@@ -126,19 +130,16 @@ function Stats({ r }: { r: RecordedRun }) {
 
 const STEPS = [
   {
-    Icon: Files,
-    title: 'Add your files',
-    text: 'Your bank statement CSV, invoice PDFs, your KPO book and the invoice you are about to send. Any bank layout: columns it does not recognise, you map once.',
+    title: 'Bring your files',
+    text: 'Bank statement CSV from any bank, your invoice PDFs, your KPO book, and the invoice you are about to send. Columns it does not recognise, you map once.',
   },
   {
-    Icon: Users,
-    title: 'Seven agents work at once',
-    text: 'Readers, a rate clerk, a limit keeper and an independence checker run in parallel on one shared board. Where two of them claim the same fact, a disagreement is a real conflict.',
+    title: 'Seven agents read at once',
+    text: 'Invoices, bank rows and your own book are read in parallel by separate agents. Where two of them state the same fact differently, the source document settles it.',
   },
   {
-    Icon: ShieldCheck,
     title: 'Only checked numbers count',
-    text: 'A separate Verifier re-derives every figure from its cited line before it reaches the card. Click any number to see the invoice line, statement row or NBS rate behind it.',
+    text: 'A Verifier re-derives every figure from the line it cites before it reaches your card. Click any number to see the invoice line, bank row or NBS rate behind it.',
   },
 ];
 
@@ -146,37 +147,44 @@ const AGENTS = [
   {
     Icon: ReceiptText,
     name: 'InvoiceReader',
-    job: 'Reads each invoice PDF: number, dates, amount, currency, client and kind, each with its line.',
+    job: 'Reads each invoice PDF',
+    writes: 'number, dates, amount, currency, client, kind',
   },
   {
     Icon: Landmark,
     name: 'StatementReader',
-    job: 'Classifies incoming bank rows and links payments to invoices; finds money with no invoice.',
+    job: 'Classifies incoming bank rows',
+    writes: 'payments, invoice links, money with no invoice',
   },
   {
     Icon: BookOpenCheck,
     name: 'KpoReader',
-    job: 'Reads your own KPO book and claims each row against the invoices.',
+    job: 'Reads your existing KPO book',
+    writes: 'each row, claimed against the invoices',
   },
   {
     Icon: Scale,
     name: 'RateClerk',
-    job: 'Fetches the NBS middle rate for each foreign invoice date and converts to RSD.',
+    job: 'Fetches official NBS middle rates',
+    writes: 'rate per invoice date, amount in RSD',
   },
   {
     Icon: Calculator,
     name: 'LimitKeeper',
-    job: 'Totals verified turnover for the 6M limit and the 8M VAT window, and says which finding moves the band.',
+    job: 'Keeps the running totals',
+    writes: '6M and 8M totals, which finding moves the band',
   },
   {
     Icon: Layers,
     name: 'IndependenceChecker',
-    job: 'Checks the nine independence criteria per client, including the income share of criterion 6.',
+    job: 'Tests each client against nine criteria',
+    writes: 'criteria, income share (criterion 6)',
   },
   {
     Icon: ScanSearch,
     name: 'Verifier',
-    job: 'Checks every figure against its source before it counts; contests what does not match.',
+    job: 'Checks every figure before it counts',
+    writes: 'verified, contested, or a question for you',
   },
 ];
 
@@ -187,11 +195,11 @@ const FAQ: Array<{ q: string; a: ReactNode }> = [
   },
   {
     q: 'What files do I need?',
-    a: 'A bank statement export (CSV), your invoice PDFs (with a text layer, not scans), your KPO book (CSV) and the details of the invoice you are about to send. Clients are filled in on the intake page.',
+    a: 'A bank statement export (CSV), your invoice PDFs (with a text layer, not scans), your KPO book (CSV) and the details of the invoice you are about to send. Clients are entered on the intake page or added as a file.',
   },
   {
     q: 'Where does my data go?',
-    a: 'Your files stay on your computer. When you run a live check, the extracted text of invoices, statement rows and KPO rows is sent to the model provider to be read. Rates come from the public Kurs API, which only sees a currency and a date. Arithmetic, rules and totals run locally.',
+    a: 'Your files stay on your computer. In a live check, the extracted text of invoices, statement rows and KPO rows is sent to the model provider to be read. Rates come from the public Kurs API, which only sees a currency and a date. Arithmetic, rules and totals run locally.',
   },
   {
     q: 'Which AI model does it use?',
@@ -203,15 +211,11 @@ const FAQ: Array<{ q: string; a: ReactNode }> = [
   },
   {
     q: 'Why seven agents and not one?',
-    a: 'Because the same fact is stated in more than one place. The invoice, the bank and your book each say something about an invoice; separate readers claim those facts independently, so a mismatch shows up as a conflict that the source document settles, instead of being smoothed over.',
+    a: 'Because the same fact is stated in more than one place. The invoice, the bank and your book each say something about an invoice; separate readers claim those facts independently, so a mismatch shows up as a disagreement the source document settles, instead of being smoothed over.',
   },
   {
     q: 'Can I try it without my own files?',
-    a: 'Yes. "Try with sample data" replays a real recorded run of a synthetic entrepreneur with planted mistakes. No key and no network are needed for that.',
-  },
-  {
-    q: 'What does it not do?',
-    a: 'No OCR for scanned PDFs, no SEF e-invoicing, no credit notes or advances, no special VAT place-of-supply cases, and no tax amounts.',
+    a: '“Try with sample data” replays a real recorded run of a synthetic entrepreneur with planted mistakes. No key and no network are needed for that.',
   },
 ];
 
@@ -226,246 +230,279 @@ export function Landing() {
   const showcase = useShowcaseRun();
 
   const sampleButton = (label: string) => (
-    <button
-      type="button"
-      disabled={busy}
-      onClick={() => start(SHOWCASE)}
-      className="inline-flex items-center gap-2 rounded-md border border-line bg-panel px-5 py-3 font-medium transition-colors hover:border-accent/60 disabled:opacity-60"
-    >
-      <PlayCircle size={18} aria-hidden /> {busy ? 'Starting...' : label}
+    <button type="button" disabled={busy || !health} onClick={() => start(SHOWCASE)} className={btnSecondary}>
+      <PlayCircle size={16} aria-hidden /> {busy ? 'Starting...' : label}
     </button>
   );
 
   return (
     <div>
       {/* Hero */}
-      <section className="grid-lines relative border-b border-line" aria-labelledby="hero">
-        <div className="mx-auto grid max-w-[1200px] gap-12 px-4 py-16 md:py-24 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
+      <section className="relative overflow-hidden border-b border-line" aria-labelledby="hero">
+        <div
+          className="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+          aria-hidden
+        />
+        <div className="relative mx-auto grid max-w-[1200px] gap-14 px-4 pt-16 pb-12 md:pt-24 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
           <Reveal>
-            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1 text-xs text-muted">
-              <span className="pulse-dot size-1.5 rounded-full bg-accent" aria-hidden />
-              For Serbian flat-rate entrepreneurs (paušalci)
+            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-panel/60 px-3 py-1 font-mono text-[11px] tracking-wide text-muted uppercase">
+              <span className="pulse-dot size-1.5 rounded-full bg-signal" aria-hidden />
+              For Serbian flat-rate entrepreneurs
             </p>
-            <h1 id="hero" className="mt-6 text-4xl leading-[1.08] font-semibold tracking-tight md:text-6xl">
-              Before you send an invoice, see how much room is left under the 6M limit.
-              <span className="text-accent"> Every number proven.</span>
+            <h1
+              id="hero"
+              className="mt-7 font-serif text-[3.25rem] leading-[0.98] tracking-tight md:text-[5rem]"
+            >
+              Before you send an invoice, see how much room is left under the 6M limit.{' '}
+              <em className="text-signal">Every number proven.</em>
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-muted">
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted">
               Headroom reads your bank statement, invoices and KPO book, finds what does not match, and shows
-              the room left under the {limit} limit, the {vat} VAT threshold and the independence test. Each
-              figure links to the line it came from.
+              the room left under the <span className="num text-text">{limit}</span> paušal limit, the{' '}
+              <span className="num text-text">{vat}</span> VAT threshold and the independence test.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                to="/check"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 font-medium text-ink transition-colors hover:bg-accent-strong"
-              >
-                <FileCheck2 size={18} aria-hidden /> Check my invoice
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link to="/check" className={btnPrimary}>
+                <FileCheck2 size={16} aria-hidden /> Check my invoice
               </Link>
               {sampleButton('Try with sample data')}
             </div>
-            <p className="mt-3 text-sm text-muted">
-              {offline || needsKey
-                ? 'The sample runs as a recorded run: real agents on Mozaik, with the model answers played back. No key needed.'
-                : 'The sample is synthetic: an invented entrepreneur with planted mistakes.'}
-            </p>
+            <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+              {['Runs on your computer', 'Source behind every number', 'Not financial or tax advice'].map(
+                (t) => (
+                  <li key={t} className="flex items-center gap-1.5">
+                    <Check size={12} className="text-signal" aria-hidden /> {t}
+                  </li>
+                ),
+              )}
+            </ul>
+            {(offline || needsKey) && (
+              <p className="mt-4 max-w-xl text-xs text-muted">
+                The sample plays a recorded run: real agents on Mozaik, with the model&apos;s answers played
+                back.
+              </p>
+            )}
             {error && (
               <p role="alert" className="mt-3 text-sm text-danger">
                 {error}
               </p>
             )}
           </Reveal>
-          {showcase.runId && (
-            <Reveal delay={120}>
-              <aside aria-label="Headroom card from the recorded sample run" className="lg:sticky lg:top-24">
+          <Reveal delay={150}>
+            <aside aria-label="Headroom card from the recorded sample run" className="relative">
+              <div
+                className="absolute -inset-px rounded-2xl bg-gradient-to-b from-line to-transparent"
+                aria-hidden
+              />
+              <div className="relative rounded-2xl bg-ink p-2 shadow-2xl shadow-black/60">
                 <ShowcaseCard runId={showcase.runId} />
-              </aside>
-            </Reveal>
-          )}
-          {showcase.error && <p className="text-sm text-muted">{showcase.error}</p>}
+              </div>
+            </aside>
+          </Reveal>
         </div>
-        {showcase.recorded && (
-          <div className="mx-auto max-w-[1200px] px-4 pb-14">
-            <Reveal>
-              <Stats r={showcase.recorded} />
-            </Reveal>
-          </div>
-        )}
+        <div className="relative mx-auto max-w-[1200px] px-4 pb-16">
+          <Reveal>
+            <Stats r={showcase.recorded} />
+          </Reveal>
+        </div>
       </section>
 
       <div className="mx-auto max-w-[1200px] px-4">
         {/* Problem */}
-        <section className="py-20" aria-labelledby="problem">
+        <section className="py-24" aria-labelledby="problem">
           <Reveal>
             <SectionHead
               id="problem"
+              n="01"
               kicker="The problem"
-              title="A limit that has not moved since 2013, and money your invoice app cannot see"
+              title={
+                <>
+                  A limit frozen since 2013, and money your invoice app <em>cannot see</em>.
+                </>
+              }
             >
               Invoice apps only know the invoices you issued inside them. A payment that landed without an
               invoice, or a euro invoice converted at the wrong rate, stays invisible until the year is over.
             </SectionHead>
           </Reveal>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            <Reveal className="rounded-lg border border-line bg-panel p-6">
-              <h3 className="mb-4 text-sm font-medium text-muted">The limit has not moved</h3>
+          <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+            <Reveal className="bg-ink p-8">
+              <p className="mb-5 font-mono text-[11px] tracking-wide text-muted uppercase">
+                The limit has not moved
+              </p>
               <Cited
                 rule={rule('R-LIMIT-6M')}
                 quote
-                gloss="In English: the key limit for staying in the flat-rate system, annual turnover of six million dinars, has not changed since 2013."
+                gloss="The key limit for staying in the flat-rate system, annual turnover of six million dinars, has not changed since 2013."
               />
             </Reveal>
-            <Reveal className="rounded-lg border border-line bg-panel p-6" delay={100}>
-              <h3 className="mb-4 text-sm font-medium text-muted">What crossing it means</h3>
+            <Reveal className="bg-ink p-8" delay={100}>
+              <p className="mb-5 font-mono text-[11px] tracking-wide text-muted uppercase">
+                What crossing it means
+              </p>
               <Cited rule={rule('R-LIMIT-6M-CONSEQUENCE')} />
             </Reveal>
           </div>
-          {!rules && <p className="mt-4 text-sm text-muted">Loading the rules and their sources...</p>}
         </section>
 
         {/* How it works */}
-        <section id="how" className="border-t border-line py-20" aria-labelledby="how-title">
+        <section id="how" className="border-t border-line py-24" aria-labelledby="how-title">
           <Reveal>
             <SectionHead
               id="how-title"
+              n="02"
               kicker="How it works"
-              title="From your files to a checked answer in three steps"
+              title="From your files to a checked answer."
             />
           </Reveal>
-          <ol className="mt-12 grid gap-6 md:grid-cols-3">
+          <ol className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
             {STEPS.map((s, i) => (
-              <Reveal
-                key={s.title}
-                delay={i * 100}
-                className="relative rounded-lg border border-line bg-panel p-6"
-              >
-                <li className="list-none">
-                  <span className="num absolute top-5 right-6 text-5xl font-semibold text-line" aria-hidden>
-                    {i + 1}
-                  </span>
-                  <span className="grid size-10 place-items-center rounded-md bg-accent/10 text-accent">
-                    <s.Icon size={20} aria-hidden />
-                  </span>
-                  <p className="mt-5 text-lg font-medium">{s.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{s.text}</p>
-                </li>
-              </Reveal>
+              <li key={s.title} className="bg-ink">
+                <Reveal delay={i * 100} className="h-full p-8">
+                  <span className="num text-sm text-signal">0{i + 1}</span>
+                  <p className="mt-10 font-serif text-2xl">{s.title}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{s.text}</p>
+                </Reveal>
+              </li>
             ))}
           </ol>
         </section>
 
         {/* Agents */}
-        <section id="agents" className="border-t border-line py-20" aria-labelledby="agents-title">
+        <section id="agents" className="border-t border-line py-24" aria-labelledby="agents-title">
           <Reveal>
             <SectionHead
               id="agents-title"
+              n="03"
               kicker="Seven agents, one board"
-              title="They run together, and they check each other"
+              title={
+                <>
+                  They run together, and they <em>check each other</em>.
+                </>
+              }
             >
               Each agent is a participant on one Mozaik runtime with its own loops. They write to a shared
               Figure Board; the Verifier decides what counts.
             </SectionHead>
           </Reveal>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {AGENTS.map((a, i) => (
-              <Reveal
-                key={a.name}
-                delay={(i % 4) * 80}
-                className={`rounded-lg border p-5 ${a.name === 'Verifier' ? 'border-accent/50 bg-accent/5 lg:col-span-2' : 'border-line bg-panel'}`}
-              >
-                <a.Icon size={20} className="text-accent" aria-hidden />
-                <p className="mt-4 font-medium">{a.name}</p>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{a.job}</p>
-              </Reveal>
-            ))}
-          </div>
-          <Reveal>
-            <p className="mt-8 rounded-lg border border-line bg-panel px-5 py-4 text-sm">
-              <span className="font-medium">Who decides what. </span>
-              <span className="text-muted">{health?.authorityBoundary}</span>
+          <Reveal className="mt-14">
+            <div className="overflow-x-auto rounded-xl border border-line">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-line font-mono text-[11px] tracking-wide text-muted uppercase">
+                    <th className="px-5 py-3 font-normal">Agent</th>
+                    <th className="px-5 py-3 font-normal">Job</th>
+                    <th className="px-5 py-3 font-normal">Writes to the board</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {AGENTS.map((a) => (
+                    <tr
+                      key={a.name}
+                      className={a.name === 'Verifier' ? 'bg-panel' : 'transition-colors hover:bg-panel/60'}
+                    >
+                      <td className="px-5 py-4">
+                        <span className="flex items-center gap-3 font-mono text-[13px]">
+                          <a.Icon
+                            size={16}
+                            className={a.name === 'Verifier' ? 'text-signal' : 'text-muted'}
+                            aria-hidden
+                          />
+                          {a.name}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">{a.job}</td>
+                      <td className="px-5 py-4 text-muted">{a.writes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-6 max-w-3xl font-serif text-xl leading-snug text-muted">
+              &ldquo;
+              {health?.authorityBoundary ??
+                'Models read documents, code does the arithmetic and applies the rules, a second agent checks every figure, and you decide whether to send the invoice.'}
+              &rdquo;
             </p>
           </Reveal>
         </section>
 
         {/* Proof */}
-        {showcase.runId && (
-          <section id="proof" className="border-t border-line py-20" aria-labelledby="proof-title">
-            <Reveal>
-              <SectionHead
-                id="proof-title"
-                kicker="See the proof"
-                title="What the agents found in the sample"
-              >
-                Every finding carries the figures behind it. Open one to follow it back to the statement row,
-                invoice line or NBS rate it came from. The sample entrepreneur and the mistakes are invented.
-              </SectionHead>
-            </Reveal>
-            <Reveal className="mt-10">
-              <ShowcaseProof runId={showcase.runId} />
-            </Reveal>
-            <Reveal className="mt-10">
-              <h3 className="mb-3 text-sm font-medium text-muted">
-                Every agent loop of that run, on one timeline: bars that overlap ran at the same time.
-              </h3>
-              {showcase.recorded && <ShowcaseTimeline recorded={showcase.recorded} />}
-            </Reveal>
-          </section>
-        )}
+        <section id="proof" className="border-t border-line py-24" aria-labelledby="proof-title">
+          <Reveal>
+            <SectionHead
+              id="proof-title"
+              n="04"
+              kicker="See the proof"
+              title="What the agents found in the sample."
+            >
+              An invented entrepreneur with planted mistakes. The headline: a payment that arrived with no
+              invoice, which takes the year over the line.
+            </SectionHead>
+          </Reveal>
+          <Reveal className="mt-14">
+            <ShowcaseProof runId={showcase.runId} />
+          </Reveal>
+          <Reveal className="mt-12">
+            <p className="mb-3 font-mono text-[11px] tracking-wide text-muted uppercase">
+              Every agent loop of that run. Overlapping bars ran at the same time.
+            </p>
+            <ShowcaseTimeline recorded={showcase.recorded} />
+          </Reveal>
+        </section>
 
         {/* Data */}
-        <section id="data" className="border-t border-line py-20" aria-labelledby="data-title">
+        <section id="data" className="border-t border-line py-24" aria-labelledby="data-title">
           <Reveal>
-            <SectionHead id="data-title" kicker="Your data" title="Your files stay on your computer" />
+            <SectionHead
+              id="data-title"
+              n="05"
+              kicker="Your data"
+              title="Your files stay on your computer."
+            />
           </Reveal>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <Reveal className="rounded-lg border border-line bg-panel p-6">
-              <Laptop size={20} className="text-accent" aria-hidden />
-              <p className="mt-4 font-medium">Stays local</p>
-              <p className="mt-2 text-sm text-muted">
-                Your uploaded files, every total, every rule check and the corrected KPO book. Delete my files
-                removes the upload and its run.
-              </p>
-            </Reveal>
-            <Reveal className="rounded-lg border border-line bg-panel p-6" delay={100}>
-              <Send size={20} className="text-accent" aria-hidden />
-              <p className="mt-4 font-medium">Sent to be read</p>
-              <p className="mt-2 text-sm text-muted">
-                In a live check, the extracted text of invoices, statement rows and KPO rows goes to the model
-                provider ({health?.models.reader ?? 'the configured model'}). The Kurs API sees only a
-                currency and a date.
-              </p>
-            </Reveal>
-            <Reveal className="rounded-lg border border-line bg-panel p-6" delay={200}>
-              <FileSearch size={20} className="text-accent" aria-hidden />
-              <p className="mt-4 font-medium">Samples are synthetic</p>
-              <p className="mt-2 text-sm text-muted">
-                The bundled profiles are invented people with planted mistakes. Runs on your own files are
-                never recorded.
-              </p>
-            </Reveal>
+          <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
+            {[
+              {
+                t: 'Stays local',
+                d: 'Your files, every total, every rule check and the corrected KPO book. Delete my files removes the upload and its run.',
+              },
+              {
+                t: 'Sent to be read',
+                d: `In a live check, the extracted text of invoices, statement rows and KPO rows goes to the model provider (${health?.models.reader ?? 'the configured model'}). The Kurs API sees only a currency and a date.`,
+              },
+              {
+                t: 'Samples are synthetic',
+                d: 'The bundled profiles are invented people with planted mistakes. Runs on your own files are never recorded.',
+              },
+            ].map((x, i) => (
+              <Reveal key={x.t} delay={i * 100} className="bg-ink p-8">
+                <p className="font-serif text-2xl">{x.t}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{x.d}</p>
+              </Reveal>
+            ))}
           </div>
         </section>
 
         {/* Limits */}
-        <section id="limits" className="border-t border-line py-20" aria-labelledby="limits-title">
-          <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
+        <section id="limits" className="border-t border-line py-24" aria-labelledby="limits-title">
+          <div className="grid gap-12 md:grid-cols-[1fr_1.1fr]">
             <Reveal>
-              <SectionHead id="limits-title" kicker="Honest limits" title="What Headroom does not do">
-                It runs on a rules table sourced from public Serbian guidance; rules marked as assumptions
-                still need an accountant&apos;s confirmation, and it does not calculate tax owed.
+              <SectionHead id="limits-title" n="06" kicker="Honest limits" title="What Headroom does not do.">
+                A rules table sourced from public Serbian guidance; rules marked as assumptions still need an
+                accountant&apos;s confirmation.
               </SectionHead>
             </Reveal>
             <Reveal>
-              <ul className="divide-y divide-line rounded-lg border border-line bg-panel">
+              <ul className="divide-y divide-line border-y border-line">
                 {[
-                  'No OCR: scanned PDFs without a text layer are listed as unreadable.',
-                  'No tax amounts and no advice on what to do.',
-                  'No SEF e-invoicing integration.',
-                  'Only the products and services split of the KPO book; no credit notes or advances.',
-                  'Special VAT place-of-supply cases are not modelled.',
+                  'Calculate tax owed, or advise what to do',
+                  'Read scanned PDFs (no OCR)',
+                  'Connect to SEF e-invoicing',
+                  'Handle credit notes, advances or special VAT place-of-supply cases',
                 ].map((t) => (
-                  <li key={t} className="flex gap-3 px-5 py-3 text-sm">
-                    <XCircle size={16} className="mt-0.5 shrink-0 text-muted" aria-hidden />
+                  <li key={t} className="flex items-center gap-4 py-4 text-sm">
+                    <Minus size={16} className="shrink-0 text-muted" aria-hidden />
                     {t}
                   </li>
                 ))}
@@ -475,57 +512,66 @@ export function Landing() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="border-t border-line py-20" aria-labelledby="faq-title">
-          <Reveal>
-            <SectionHead id="faq-title" kicker="FAQ" title="Questions people ask first" />
-          </Reveal>
-          <div className="mt-10 divide-y divide-line rounded-lg border border-line bg-panel">
-            {FAQ.map((f) => (
-              <details key={f.q} className="group px-5">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 py-4 font-medium">
-                  {f.q}
-                  <ChevronDown
-                    size={18}
-                    className="faq-chevron shrink-0 text-muted transition-transform"
-                    aria-hidden
-                  />
-                </summary>
-                <p className="pb-5 text-sm leading-relaxed text-muted">{f.a}</p>
-              </details>
-            ))}
+        <section id="faq" className="border-t border-line py-24" aria-labelledby="faq-title">
+          <div className="grid gap-12 md:grid-cols-[1fr_1.6fr]">
+            <Reveal>
+              <SectionHead id="faq-title" n="07" kicker="FAQ" title="Questions people ask first." />
+            </Reveal>
+            <Reveal>
+              <div className="divide-y divide-line border-y border-line">
+                {FAQ.map((f) => (
+                  <details key={f.q} className="group">
+                    <summary className="flex cursor-pointer items-center justify-between gap-4 py-5 text-base">
+                      {f.q}
+                      <Plus
+                        size={16}
+                        className="faq-chevron shrink-0 text-muted transition-transform group-open:rotate-45"
+                        aria-hidden
+                      />
+                    </summary>
+                    <p className="pb-6 text-sm leading-relaxed text-muted">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
         {/* Closing call to action */}
-        <section className="py-20" aria-labelledby="cta-title">
-          <Reveal className="rounded-xl border border-accent/40 bg-accent/5 px-6 py-12 text-center md:px-12">
-            <h2 id="cta-title" className="text-3xl font-semibold tracking-tight">
-              Know your headroom before you press send
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted">
-              Run it on your own files on your computer, or watch the recorded sample first.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link
-                to="/check"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 font-medium text-ink transition-colors hover:bg-accent-strong"
-              >
-                <FileCheck2 size={18} aria-hidden /> Check my invoice
-              </Link>
-              {sampleButton('Watch the sample run')}
-              <Link
-                to="/docs"
-                className="inline-flex items-center gap-2 rounded-md px-5 py-3 font-medium text-muted hover:text-text"
-              >
-                Read the docs <ArrowRight size={16} aria-hidden />
-              </Link>
+        <section className="pb-24" aria-labelledby="cta-title">
+          <Reveal className="relative overflow-hidden rounded-2xl border border-line px-6 py-16 text-center md:px-12">
+            <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+            <div className="relative">
+              <h2 id="cta-title" className="font-serif text-4xl tracking-tight md:text-5xl">
+                Know your headroom <em className="text-signal">before</em> you press send.
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-muted">
+                Run it on your own files on your computer, or watch the recorded sample first.
+              </p>
+              <div className="mt-9 flex flex-wrap justify-center gap-3">
+                <Link to="/check" className={btnPrimary}>
+                  <FileCheck2 size={16} aria-hidden /> Check my invoice
+                </Link>
+                {sampleButton('Watch the sample run')}
+                <Link
+                  to="/docs"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm text-muted hover:text-text"
+                >
+                  Read the docs <ArrowRight size={14} aria-hidden />
+                </Link>
+              </div>
+              <p className="mt-8 font-mono text-[11px] text-muted">
+                Open source ·{' '}
+                <a
+                  href={REPO_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-4 hover:text-text"
+                >
+                  {REPO_URL.replace('https://', '')}
+                </a>
+              </p>
             </div>
-            <p className="mt-6 text-xs text-muted">
-              Open source:{' '}
-              <a href={REPO_URL} target="_blank" rel="noreferrer" className="underline hover:text-text">
-                {REPO_URL.replace('https://', '')}
-              </a>
-            </p>
           </Reveal>
         </section>
       </div>

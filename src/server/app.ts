@@ -87,9 +87,10 @@ export async function buildApp(d: AppDeps): Promise<FastifyInstance> {
 
   // A frontend hosted on another origin (HEADROOM_CORS_ORIGINS) may call the API; nobody else.
   const corsOrigins = new Set(d.env.corsOrigins ?? []);
+  // A public sample instance is read-only (no uploads, no key), so any site may show its samples.
   const allowedOrigin = (o: unknown): string | undefined =>
-    typeof o === 'string' && corsOrigins.has(o) ? o : undefined;
-  if (corsOrigins.size > 0)
+    typeof o === 'string' && (d.env.publicDemo === true || corsOrigins.has(o)) ? o : undefined;
+  if (corsOrigins.size > 0 || d.env.publicDemo)
     app.addHook('onRequest', async (req, reply) => {
       const origin = allowedOrigin(req.headers.origin);
       if (!origin) return;

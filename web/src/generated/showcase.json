@@ -1,0 +1,1024 @@
+{
+  "recording": {
+    "recordedAt": "2026-11-26T20:50:08.398Z",
+    "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" }
+  },
+  "card": {
+    "asOf": "2026-11-26",
+    "limit6m": {
+      "committed": { "display": "4.789.841,85 RSD", "amount": "4789841.85", "figureId": "f000201" },
+      "withDraft": { "display": "5.795.691,21 RSD", "amount": "5795691.21", "figureId": "f000202" },
+      "headroomWithDraft": { "display": "204.308,79 RSD", "amount": "204308.79", "figureId": "f000204" },
+      "limit": { "display": "6.000.000,00 RSD", "amount": "6000000.00", "ruleId": "R-LIMIT-6M" },
+      "ratioWithDraft": { "display": "96,6%", "value": "0.965949", "figureId": "f000205" },
+      "band": "red"
+    },
+    "vat8m": {
+      "committed": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000206" },
+      "withDraft": { "display": "369.704,79 RSD", "amount": "369704.79", "figureId": "f000207" },
+      "headroomWithDraft": { "display": "7.630.295,21 RSD", "amount": "7630295.21", "figureId": "f000209" },
+      "threshold": { "display": "8.000.000,00 RSD", "amount": "8000000.00", "ruleId": "R-VAT-8M" },
+      "band": "green",
+      "assumptionRuleIds": ["R-VAT-8M-BASIS"]
+    },
+    "independence": [
+      {
+        "clientId": "heron",
+        "clientName": "Heron Systems GmbH",
+        "met": 2,
+        "notMet": 5,
+        "unknown": 2,
+        "status": "passes",
+        "statusFigureId": "f000143",
+        "share12mWithDraft": {
+          "display": "100,0%",
+          "value": "1.000000",
+          "figureId": "f000213",
+          "window": { "from": "2025-12-01", "to": "2026-11-30" }
+        }
+      },
+      {
+        "clientId": "larkspur",
+        "clientName": "Larkspur Data B.V.",
+        "met": 2,
+        "notMet": 5,
+        "unknown": 2,
+        "status": "passes",
+        "statusFigureId": "f000221",
+        "share12mWithDraft": {
+          "display": "0,0%",
+          "value": "0.000000",
+          "figureId": "f000216",
+          "window": { "from": "2025-12-01", "to": "2026-11-30" }
+        }
+      },
+      {
+        "clientId": "bor",
+        "clientName": "Bor Studio d.o.o.",
+        "met": 2,
+        "notMet": 5,
+        "unknown": 2,
+        "status": "passes",
+        "statusFigureId": "f000222",
+        "share12mWithDraft": {
+          "display": "0,0%",
+          "value": "0.000000",
+          "figureId": "f000219",
+          "window": { "from": "2025-12-01", "to": "2026-11-30" }
+        }
+      }
+    ],
+    "draft": {
+      "amount": { "display": "8.550,00 EUR", "amount": "8550.00", "currency": "EUR", "figureId": "f000004" },
+      "amountRSD": { "display": "1.005.849,36 RSD", "amount": "1005849.36", "figureId": "f000119" }
+    },
+    "assumptionRuleIds": [
+      "R-FX-DATE",
+      "R-FX-NONPUB",
+      "R-FX-ROUNDING",
+      "R-INDEP-C6-BASIS",
+      "R-INDEP-WHO-FILES",
+      "R-KPO-DATE",
+      "R-PAYMENT-NO-INVOICE",
+      "R-NUMBERING",
+      "R-LIMIT-6M-BASIS",
+      "R-VAT-8M-BASIS"
+    ],
+    "disclaimer": "Synthetic data only. Not financial or tax advice. Headroom shows calculations from the documents you give it, with their sources. Rules marked as assumptions are not confirmed. Check with an accountant or the Tax Administration before you act."
+  },
+  "crossings": [
+    {
+      "bandBefore": "red",
+      "bandAfter": "crossed",
+      "discrepancyId": "f000181",
+      "discrepancyType": "E1",
+      "subjectKey": "payment:S1-12",
+      "baseline": "corrected",
+      "baseRSD": "5795691.21",
+      "deltaRSD": "240000"
+    },
+    {
+      "bandBefore": "amber",
+      "bandAfter": "red",
+      "discrepancyId": "f000211",
+      "discrepancyType": "E3",
+      "subjectKey": "invoice:2026-010",
+      "baseline": "book",
+      "baseRSD": "5285147.14",
+      "deltaRSD": "510574.73"
+    }
+  ],
+  "discrepancies": [
+    {
+      "id": "f000181",
+      "type": "E1",
+      "title": "Payment received with no matching invoice",
+      "detail": "2026-08-25: 240000 RSD from Lipa Studio. No invoice names it and none has the same amount and currency.",
+      "figureIds": ["f000073", "f000074"],
+      "sources": [
+        {
+          "type": "statement_row",
+          "file": "statement.csv",
+          "rowIndex": 12,
+          "rawLine": "2026-08-25,2026-08-25,Uplata za konsultacije,Lipa Studio,,240000.00,RSD,PRILIV,3508164.34",
+          "rawLineSha256": "d9e602d5d15318150ccf79ad880dcc02fc322823dbf9bedcdf15c7cc663e2c60"
+        },
+        { "type": "derived", "figureIds": ["f000073", "f000074"] },
+        {
+          "type": "rule",
+          "ruleId": "R-PAYMENT-NO-INVOICE",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "payment:S1-12",
+      "producedBy": "statement-reader",
+      "deltaRSD": "240000",
+      "baseline": "corrected",
+      "payment": { "currency": "RSD", "amount": "240000", "date": "2026-08-25" }
+    },
+    {
+      "id": "f000183",
+      "type": "E9",
+      "title": "Client country differs between invoice and client details",
+      "detail": "Invoice 2026-002 gives the client's country as RS; the client details say DE. This decides whether the invoice counts toward the 8M VAT threshold.",
+      "figureIds": ["f000101"],
+      "sources": [
+        {
+          "type": "document",
+          "docId": "2026-002",
+          "page": 1,
+          "lineStart": 7,
+          "lineEnd": 7,
+          "excerpt": "Srbija",
+          "excerptSha256": "15177c05fdf8a7c2b567bd7b9bd4e97693c4286457c810b3ad886c0db67371c8"
+        },
+        {
+          "type": "document",
+          "docId": "2026-002",
+          "page": 1,
+          "lineStart": 2,
+          "lineEnd": 2,
+          "excerpt": "2026-002",
+          "excerptSha256": "eab06910dd15a9dfb02baee5cdf078c13a82612b1598cc0bf114dde0c0b49063"
+        },
+        { "type": "contract_field", "clientId": "heron", "field": "country", "value": "DE" }
+      ],
+      "status": "verified",
+      "subjectKey": "invoice:2026-002",
+      "producedBy": "verifier",
+      "baseline": "book"
+    },
+    {
+      "id": "f000184",
+      "type": "E2",
+      "title": "KPO book uses a different date than the invoice",
+      "detail": "The KPO book enters invoice 2026-001 on 2026-02-09; the invoice is dated 2026-01-16.",
+      "figureIds": ["f000090", "f000121"],
+      "sources": [
+        {
+          "type": "document",
+          "docId": "2026-001",
+          "page": 1,
+          "lineStart": 3,
+          "lineEnd": 3,
+          "excerpt": "2026-01-16",
+          "excerptSha256": "8aa91119090e8092ace8971cb213cbd596c48e52418a7edc4ad9f76a8e3b0c3b"
+        },
+        {
+          "type": "document",
+          "docId": "2026-001",
+          "page": 1,
+          "lineStart": 2,
+          "lineEnd": 2,
+          "excerpt": "2026-001",
+          "excerptSha256": "0da8a7b45e773dcb4cb0a3e84a0a0740890cb0befcc64a8dc9cb0d549576916c"
+        },
+        {
+          "type": "kpo_row",
+          "file": "kpo.csv",
+          "rowIndex": 2,
+          "rawLine": "2,2026-02-09,\"Faktura 2026-001, Heron Systems GmbH\",0.00,310975.38,310975.38",
+          "rawLineSha256": "b4ea10c1410ac754cae4eb8548e6292489b11bc3afc88a1789d657a1aea245a4"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "invoice:2026-001",
+      "producedBy": "verifier",
+      "baseline": "book"
+    },
+    {
+      "id": "f000191",
+      "type": "E5",
+      "title": "KPO amount uses a rate other than the NBS middle rate",
+      "detail": "The KPO book records 493032.96 RSD for 4200 EUR, an implied rate of 117.3888: the NBS rate of the payment date 2026-03-02. Converted at 117.3815 (NBS, 2026-02-13) it is 493002.30 RSD.",
+      "figureIds": ["f000123", "f000189", "f000188", "f000190"],
+      "sources": [
+        {
+          "type": "kpo_row",
+          "file": "kpo.csv",
+          "rowIndex": 3,
+          "rawLine": "3,2026-02-16,\"Faktura 2026-003, Heron Systems GmbH\",0.00,493032.96,493032.96",
+          "rawLineSha256": "e8fb292523d353a065a97507b1a19a3917be24b32d726e81019f1088e049cfaf"
+        },
+        {
+          "type": "url",
+          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-02-16",
+          "fetchedAt": "2026-11-27T07:12:14.781Z",
+          "httpStatus": 200,
+          "responseSha256": "47b0fe12425e815c40b363effea9324b1adb3164ab4d214ee7c24deaeccdce78",
+          "jsonPath": "$.exchange_middle"
+        },
+        {
+          "type": "rule",
+          "ruleId": "R-FX",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
+        },
+        { "type": "rule", "ruleId": "R-FX-NONPUB", "url": "https://kurs.resenje.org/doc/" },
+        {
+          "type": "url",
+          "url": "https://kurs.resenje.org/api/v1/currencies/eur/rates/2026-03-02",
+          "fetchedAt": "2026-11-27T07:12:14.781Z",
+          "httpStatus": 200,
+          "responseSha256": "73c82f9a0baa2d6fe6623ce612ea2b312ee7537c350f7228f5e0f8f8acb66fb8",
+          "jsonPath": "$.exchange_middle"
+        },
+        {
+          "type": "rule",
+          "ruleId": "R-FX",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_deviznom_poslovanju.html"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "invoice:2026-003",
+      "producedBy": "rate-clerk",
+      "deltaRSD": "-30.66",
+      "baseline": "book"
+    },
+    {
+      "id": "f000211",
+      "type": "E3",
+      "title": "Issued invoice missing from the KPO book",
+      "detail": "Invoice 2026-010 (510574.73 RSD) is not in the KPO book.",
+      "figureIds": ["f000169", "f000200"],
+      "sources": [
+        {
+          "type": "document",
+          "docId": "2026-010",
+          "page": 1,
+          "lineStart": 3,
+          "lineEnd": 3,
+          "excerpt": "2026-09-16",
+          "excerptSha256": "135a65c2272a6f586108edc6466120a0ef3dc00849ca966bb3a7cdb4219a36c4"
+        },
+        {
+          "type": "document",
+          "docId": "2026-010",
+          "page": 1,
+          "lineStart": 2,
+          "lineEnd": 2,
+          "excerpt": "2026-010",
+          "excerptSha256": "13c412810514a5b5672c265ac1d3f1dd3678df46e048368dd802c61a0e0f3fe2"
+        },
+        {
+          "type": "rule",
+          "ruleId": "R-KPO",
+          "url": "https://www.paragraf.rs/propisi/zakon_o_porezu_na_dohodak_gradjana.html"
+        }
+      ],
+      "status": "verified",
+      "subjectKey": "invoice:2026-010",
+      "producedBy": "limit-keeper",
+      "deltaRSD": "510574.73",
+      "baseline": "book"
+    }
+  ],
+  "recorded": {
+    "models": { "reader": "gemini-3.5-flash-lite", "verifier": "gemini-3.5-flash-lite" },
+    "wallTimeMs": 482755,
+    "sumLoopTimeMs": 4993078,
+    "maxConcurrentLoops": 15,
+    "loops": 65,
+    "failedLoops": 0,
+    "verified": 215,
+    "unsourcedFigures": 0,
+    "agentConflicts": 2,
+    "loopTimes": [
+      {
+        "loopId": "verifier#10",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:1:met:69c7832541c181c021038206817289bb19edf1e31550b07fda4f66032dd12e8a:a1",
+        "startedAt": 1795725726858,
+        "status": "completed",
+        "tokensIn": 401,
+        "tokensOut": 45,
+        "toolCalls": 0,
+        "endedAt": 1795725727550
+      },
+      {
+        "loopId": "verifier#15",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:8:met:88f0bf73397bfd106083fc8b63568772318ee9d177442e17054a739347aba2cd:a1",
+        "startedAt": 1795725726861,
+        "status": "completed",
+        "tokensIn": 399,
+        "tokensOut": 40,
+        "toolCalls": 0,
+        "endedAt": 1795725787051
+      },
+      {
+        "loopId": "independence-checker#3",
+        "agentId": "independence-checker",
+        "loopInputKey": "contract:bor:6d515310b8781787167f70eccd4cbe27f85ddb18fda9ba52486ebc5976865fef",
+        "startedAt": 1795725725644,
+        "status": "completed",
+        "tokensIn": 1766,
+        "tokensOut": 231,
+        "toolCalls": 1,
+        "endedAt": 1795725787074
+      },
+      {
+        "loopId": "verifier#11",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:2:not_met:30342cff058f96ec2848b5b1274206da7aad19b449ec6dc6a08c3d511b27b47a:a1",
+        "startedAt": 1795725726859,
+        "status": "completed",
+        "tokensIn": 389,
+        "tokensOut": 42,
+        "toolCalls": 0,
+        "endedAt": 1795725787142
+      },
+      {
+        "loopId": "verifier#12",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:3:not_met:a2d5661ac036b213424e120f7801bb98a2cbd32359c12c5c2bc7cff3c81bd34a:a1",
+        "startedAt": 1795725726860,
+        "status": "completed",
+        "tokensIn": 377,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725787173
+      },
+      {
+        "loopId": "verifier#14",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:7:not_met:1667f3ebbc90bbf01357e25a36b78bc9527b172cbc4418709ace47bde22d8b45:a1",
+        "startedAt": 1795725726861,
+        "status": "completed",
+        "tokensIn": 406,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795725787257
+      },
+      {
+        "loopId": "invoice-reader#9",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:14f493833c66998814fcc82ca589ac6e4db1a13d7679eb3d26ab6a9aa85a1111:read1",
+        "startedAt": 1795725725647,
+        "status": "completed",
+        "tokensIn": 2910,
+        "tokensOut": 249,
+        "toolCalls": 1,
+        "endedAt": 1795725787262
+      },
+      {
+        "loopId": "independence-checker#2",
+        "agentId": "independence-checker",
+        "loopInputKey": "contract:larkspur:9ca66d73b58232c836c1eac5d1686a9676cea8e15db5e42a69d8d810253eda81",
+        "startedAt": 1795725725644,
+        "status": "completed",
+        "tokensIn": 1757,
+        "tokensOut": 228,
+        "toolCalls": 1,
+        "endedAt": 1795725787264
+      },
+      {
+        "loopId": "invoice-reader#6",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:82a7c935cc79490379fe17681ce14a360f43fe6e1e4fd517b3241ea73a373443:read1",
+        "startedAt": 1795725725646,
+        "status": "completed",
+        "tokensIn": 2908,
+        "tokensOut": 247,
+        "toolCalls": 1,
+        "endedAt": 1795725787316
+      },
+      {
+        "loopId": "verifier#13",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:bor:5:not_met:a6b779f638f1a128bed89bb3000a2523ba0bac11a2d33afad2df2d561ac19992:a1",
+        "startedAt": 1795725726861,
+        "status": "completed",
+        "tokensIn": 408,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795725787579
+      },
+      {
+        "loopId": "invoice-reader#7",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:7fb5bc89ea0f6ff638675c8678ca43d902b3c1815d3c7920e5cfd59734c6700c:read1",
+        "startedAt": 1795725725647,
+        "status": "completed",
+        "tokensIn": 3019,
+        "tokensOut": 256,
+        "toolCalls": 1,
+        "endedAt": 1795725790545
+      },
+      {
+        "loopId": "kpo-reader#4",
+        "agentId": "kpo-reader",
+        "loopInputKey": "kpo:f70850d7e93f5db54fe2414834687e27310bbcd032aeb2cbe3dbe1bb3a5a7fdb",
+        "startedAt": 1795725725645,
+        "status": "completed",
+        "tokensIn": 1681,
+        "tokensOut": 375,
+        "toolCalls": 1,
+        "endedAt": 1795725846574
+      },
+      {
+        "loopId": "statement-reader#5",
+        "agentId": "statement-reader",
+        "loopInputKey": "stmt:fcca3b2a205c3b8c86d3f7b5d4de6c7bba5801ee77a31a45a5dfb8d3cf599967",
+        "startedAt": 1795725725646,
+        "status": "completed",
+        "tokensIn": 3652,
+        "tokensOut": 602,
+        "toolCalls": 1,
+        "endedAt": 1795725846608
+      },
+      {
+        "loopId": "verifier#16",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:1:not_met:23e4426f8226d67093a0d5f9c34432c5dcda7fc2f0d7086338ab15097aa4a48f:a1",
+        "startedAt": 1795725727552,
+        "status": "completed",
+        "tokensIn": 402,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725846675
+      },
+      {
+        "loopId": "invoice-reader#8",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:dbb07a262e1c54b1b11ed0f0fd8f03dbb741b83f3d346f36b704db1cbcef106e:read1",
+        "startedAt": 1795725725647,
+        "status": "completed",
+        "tokensIn": 2921,
+        "tokensOut": 260,
+        "toolCalls": 1,
+        "endedAt": 1795725846683
+      },
+      {
+        "loopId": "verifier#18",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:3:met:70989796cb20d4544a5fc62aba811df645350ab64afac83aa11348dd63058428:a1",
+        "startedAt": 1795725787143,
+        "status": "completed",
+        "tokensIn": 375,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725846710
+      },
+      {
+        "loopId": "verifier#19",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:5:not_met:a6b779f638f1a128bed89bb3000a2523ba0bac11a2d33afad2df2d561ac19992:a1",
+        "startedAt": 1795725787174,
+        "status": "completed",
+        "tokensIn": 408,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795725846741
+      },
+      {
+        "loopId": "verifier#17",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:2:not_met:30342cff058f96ec2848b5b1274206da7aad19b449ec6dc6a08c3d511b27b47a:a1",
+        "startedAt": 1795725787054,
+        "status": "completed",
+        "tokensIn": 389,
+        "tokensOut": 46,
+        "toolCalls": 0,
+        "endedAt": 1795725846759
+      },
+      {
+        "loopId": "verifier#20",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:7:met:c6db63d3639005f8df409d76a9452b3f7a166f91dd91560b2d71b40d3cb1376f:a1",
+        "startedAt": 1795725787259,
+        "status": "completed",
+        "tokensIn": 404,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725846770
+      },
+      {
+        "loopId": "independence-checker#1",
+        "agentId": "independence-checker",
+        "loopInputKey": "contract:heron:ab3188b0aa1e26da12ac4090946cc2036369afa681c99939d262fafd7a99cd47",
+        "startedAt": 1795725725642,
+        "status": "completed",
+        "tokensIn": 1754,
+        "tokensOut": 231,
+        "toolCalls": 1,
+        "endedAt": 1795725846805
+      },
+      {
+        "loopId": "verifier#23",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:larkspur:8:not_met:fbff926a6ee5afc0b7c4da084a54c780760faa91436d2fd0d0b5337941d1355f:a1",
+        "startedAt": 1795725787581,
+        "status": "completed",
+        "tokensIn": 399,
+        "tokensOut": 40,
+        "toolCalls": 0,
+        "endedAt": 1795725906675
+      },
+      {
+        "loopId": "verifier#29",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-001:kind:service:13c20197d2553e2bb2f51c7138e0b0d98eb4e7e256b7926d3bd2a4516fed97d8:a1",
+        "startedAt": 1795725846761,
+        "status": "completed",
+        "tokensIn": 313,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725906706
+      },
+      {
+        "loopId": "verifier#28",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-001:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795725846745,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 45,
+        "toolCalls": 0,
+        "endedAt": 1795725906742
+      },
+      {
+        "loopId": "verifier#30",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-002:clientCountry:RS:15177c05fdf8a7c2b567bd7b9bd4e97693c4286457c810b3ad886c0db67371c8:a1",
+        "startedAt": 1795725846773,
+        "status": "completed",
+        "tokensIn": 344,
+        "tokensOut": 40,
+        "toolCalls": 0,
+        "endedAt": 1795725906744
+      },
+      {
+        "loopId": "verifier#27",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-004:kind:service:9fef319d2df344d1ef96314ef469ecc76b5a98d63fe2244c6a3bc770cad507a8:a1",
+        "startedAt": 1795725846712,
+        "status": "completed",
+        "tokensIn": 313,
+        "tokensOut": 35,
+        "toolCalls": 0,
+        "endedAt": 1795725906768
+      },
+      {
+        "loopId": "verifier#25",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-004:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795725846680,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 42,
+        "toolCalls": 0,
+        "endedAt": 1795725906771
+      },
+      {
+        "loopId": "invoice-reader#21",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:2eab58f22caa56136f98b0752808d78cf7677efdeaf33375d33dc40c91c202d5:read1",
+        "startedAt": 1795725787262,
+        "status": "completed",
+        "tokensIn": 3014,
+        "tokensOut": 255,
+        "toolCalls": 1,
+        "endedAt": 1795725907327
+      },
+      {
+        "loopId": "verifier#32",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:1:met:69c7832541c181c021038206817289bb19edf1e31550b07fda4f66032dd12e8a:a1",
+        "startedAt": 1795725906707,
+        "status": "completed",
+        "tokensIn": 401,
+        "tokensOut": 43,
+        "toolCalls": 0,
+        "endedAt": 1795725966649
+      },
+      {
+        "loopId": "verifier#37",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:8:not_met:fbff926a6ee5afc0b7c4da084a54c780760faa91436d2fd0d0b5337941d1355f:a1",
+        "startedAt": 1795725906771,
+        "status": "completed",
+        "tokensIn": 399,
+        "tokensOut": 31,
+        "toolCalls": 0,
+        "endedAt": 1795725966680
+      },
+      {
+        "loopId": "verifier#33",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:2:not_met:30342cff058f96ec2848b5b1274206da7aad19b449ec6dc6a08c3d511b27b47a:a1",
+        "startedAt": 1795725906742,
+        "status": "completed",
+        "tokensIn": 389,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795725966683
+      },
+      {
+        "loopId": "verifier#36",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:7:not_met:1667f3ebbc90bbf01357e25a36b78bc9527b172cbc4418709ace47bde22d8b45:a1",
+        "startedAt": 1795725906769,
+        "status": "completed",
+        "tokensIn": 406,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795725966690
+      },
+      {
+        "loopId": "invoice-reader#24",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:33a02407c6414e5f6f21311c2006682722dfd231af4c0037fba376ae5378a4cc:read1",
+        "startedAt": 1795725790545,
+        "status": "completed",
+        "tokensIn": 2912,
+        "tokensOut": 251,
+        "toolCalls": 1,
+        "endedAt": 1795725966717
+      },
+      {
+        "loopId": "verifier#35",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:5:not_met:a6b779f638f1a128bed89bb3000a2523ba0bac11a2d33afad2df2d561ac19992:a1",
+        "startedAt": 1795725906746,
+        "status": "completed",
+        "tokensIn": 408,
+        "tokensOut": 40,
+        "toolCalls": 0,
+        "endedAt": 1795725966749
+      },
+      {
+        "loopId": "verifier#34",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:criterion:heron:3:not_met:a2d5661ac036b213424e120f7801bb98a2cbd32359c12c5c2bc7cff3c81bd34a:a1",
+        "startedAt": 1795725906745,
+        "status": "completed",
+        "tokensIn": 377,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795725966778
+      },
+      {
+        "loopId": "invoice-reader#26",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:8f2385d915b9549be1c0e238c529244528671d1d07268db921ab3f762249c1be:read1",
+        "startedAt": 1795725846683,
+        "status": "completed",
+        "tokensIn": 2910,
+        "tokensOut": 249,
+        "toolCalls": 1,
+        "endedAt": 1795725966783
+      },
+      {
+        "loopId": "invoice-reader#22",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:ced68b58ee3a24833a8b3b856f5d421064be85f0920511077f3ea68a74d048fb:read1",
+        "startedAt": 1795725787316,
+        "status": "completed",
+        "tokensIn": 3035,
+        "tokensOut": 270,
+        "toolCalls": 1,
+        "endedAt": 1795725967464
+      },
+      {
+        "loopId": "verifier#31",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-002:kind:service:d40e9605799a72a2d3a788f36f103426aab5a18e27b50e0280934b242742cc8f:a1",
+        "startedAt": 1795725906676,
+        "status": "completed",
+        "tokensIn": 317,
+        "tokensOut": 39,
+        "toolCalls": 0,
+        "endedAt": 1795725967659
+      },
+      {
+        "loopId": "verifier#45",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-4:class:client_payment:8bf33794e52c21c0c8790334d8f45e81f7f7fbe171b6c7506ce08b5dea74ec78:a1",
+        "startedAt": 1795725966780,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 65,
+        "toolCalls": 0,
+        "endedAt": 1795726026661
+      },
+      {
+        "loopId": "verifier#40",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-003:kind:service:09a41658fb0b85c51f978ace4b403369999755b10299891eb5987fce3c6bb7a9:a1",
+        "startedAt": 1795725966681,
+        "status": "completed",
+        "tokensIn": 315,
+        "tokensOut": 46,
+        "toolCalls": 0,
+        "endedAt": 1795726026695
+      },
+      {
+        "loopId": "verifier#44",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-3:class:client_payment:5d813bbc20f3b9b816a7954e026cd152c6bd99b373ed831b3ab10b1c4db9ef97:a1",
+        "startedAt": 1795725966751,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 61,
+        "toolCalls": 0,
+        "endedAt": 1795726026697
+      },
+      {
+        "loopId": "verifier#41",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-1:class:client_payment:8262042c21a76c81702968d7cc084d21a1d0af0bd5cff86bd52876ad004de14a:a1",
+        "startedAt": 1795725966687,
+        "status": "completed",
+        "tokensIn": 431,
+        "tokensOut": 50,
+        "toolCalls": 0,
+        "endedAt": 1795726026795
+      },
+      {
+        "loopId": "verifier#42",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-2:class:client_payment:a397cc2c2aeab349c6a7c2bf7581bc78d8102894e63adaaa4e3b27556db697ce:a1",
+        "startedAt": 1795725966693,
+        "status": "completed",
+        "tokensIn": 431,
+        "tokensOut": 60,
+        "toolCalls": 0,
+        "endedAt": 1795726026855
+      },
+      {
+        "loopId": "verifier#39",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-003:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795725966653,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 33,
+        "toolCalls": 0,
+        "endedAt": 1795726026885
+      },
+      {
+        "loopId": "invoice-reader#38",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:e241ddc0bef2ce49608eb7b7428e1f6c59ac59466c7e92ebb3013109f1d90993:read1",
+        "startedAt": 1795725907327,
+        "status": "completed",
+        "tokensIn": 2908,
+        "tokensOut": 247,
+        "toolCalls": 1,
+        "endedAt": 1795726086607
+      },
+      {
+        "loopId": "verifier#50",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-8:class:client_payment:d95749f13ba0e8bf3085c005aedf82455487e8c88852d95736dc913c3f5ab15d:a1",
+        "startedAt": 1795726026696,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 62,
+        "toolCalls": 0,
+        "endedAt": 1795726086698
+      },
+      {
+        "loopId": "verifier#49",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-7:class:client_payment:fa963b17810680e1607b53acf9b18bfd8860f1e3a1fb8657c0c040e8c8e2ab0a:a1",
+        "startedAt": 1795726026662,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 65,
+        "toolCalls": 0,
+        "endedAt": 1795726086703
+      },
+      {
+        "loopId": "verifier#51",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-10:class:client_payment:d5a95bb0bc896f92f9392a114f38693bc6a9e978374babcb681f4fe691d35d13:a1",
+        "startedAt": 1795726026698,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 56,
+        "toolCalls": 0,
+        "endedAt": 1795726086704
+      },
+      {
+        "loopId": "verifier#54",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-13:class:client_payment:3ccd1b6db474c64fa1f78778bd70e85e5028f39e529aa9e7d9f4c8f365070e5d:a1",
+        "startedAt": 1795726026886,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 61,
+        "toolCalls": 0,
+        "endedAt": 1795726086731
+      },
+      {
+        "loopId": "invoice-reader#43",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:59d85b57a32bb5531f8ce232911fdb0491a5f3032292d80dfa7fc907ffd1bc0f:read1",
+        "startedAt": 1795725966717,
+        "status": "completed",
+        "tokensIn": 2909,
+        "tokensOut": 250,
+        "toolCalls": 1,
+        "endedAt": 1795726086831
+      },
+      {
+        "loopId": "verifier#48",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-5:class:own_transfer:36d9e21b77671f24ba0d885023cb3b2e333454d0399b73b833a03032e7aa7630:a1",
+        "startedAt": 1795725967661,
+        "status": "completed",
+        "tokensIn": 422,
+        "tokensOut": 59,
+        "toolCalls": 0,
+        "endedAt": 1795726086832
+      },
+      {
+        "loopId": "verifier#52",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-11:class:client_payment:e1a80586b4a93af8685f17c5d99bbac2918a6020a076e5a0633f5213018b86d2:a1",
+        "startedAt": 1795726026797,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 62,
+        "toolCalls": 0,
+        "endedAt": 1795726086836
+      },
+      {
+        "loopId": "verifier#53",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-12:class:client_payment:d9e602d5d15318150ccf79ad880dcc02fc322823dbf9bedcdf15c7cc663e2c60:a1",
+        "startedAt": 1795726026856,
+        "status": "completed",
+        "tokensIn": 413,
+        "tokensOut": 46,
+        "toolCalls": 0,
+        "endedAt": 1795726086879
+      },
+      {
+        "loopId": "invoice-reader#46",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:fc84a8c10f69d1d98f403f39f51a43d352feb09c8121442edaaca4d52fd67b39:read1",
+        "startedAt": 1795725966783,
+        "status": "completed",
+        "tokensIn": 3021,
+        "tokensOut": 260,
+        "toolCalls": 1,
+        "endedAt": 1795726087430
+      },
+      {
+        "loopId": "verifier#56",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-16:class:client_payment:ccaae7797f188feea0cf1e8de44eca44d0d8d8d9abcc92e8ba433ff53f3e125a:a1",
+        "startedAt": 1795726086703,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 57,
+        "toolCalls": 0,
+        "endedAt": 1795726146860
+      },
+      {
+        "loopId": "verifier#59",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-007:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795726086834,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 44,
+        "toolCalls": 0,
+        "endedAt": 1795726147014
+      },
+      {
+        "loopId": "invoice-reader#47",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:82a7c935cc79490379fe17681ce14a360f43fe6e1e4fd517b3241ea73a373443:read2:invoice:2026-001:amount NOT_SUPPORTED_BY_SOURCE excerpt \"2,650.00\" does not show the currency EUR",
+        "startedAt": 1795725967464,
+        "status": "completed",
+        "tokensIn": 3064,
+        "tokensOut": 249,
+        "toolCalls": 1,
+        "endedAt": 1795726147038
+      },
+      {
+        "loopId": "verifier#61",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-010:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795726086884,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 35,
+        "toolCalls": 0,
+        "endedAt": 1795726147039
+      },
+      {
+        "loopId": "verifier#57",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-005:clientCountry:DE:d17d8c27cae64ee20ae1e12aeecf3b2bd226b3664a38dc6810d5ae1f40a97399:a1",
+        "startedAt": 1795726086716,
+        "status": "completed",
+        "tokensIn": 344,
+        "tokensOut": 41,
+        "toolCalls": 0,
+        "endedAt": 1795726147044
+      },
+      {
+        "loopId": "verifier#58",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-008:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795726086733,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 36,
+        "toolCalls": 0,
+        "endedAt": 1795726147121
+      },
+      {
+        "loopId": "verifier#60",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-006:clientCountry:DE:dde7378f6fe1be2c2fda13dab8d2bae04306e806442ce99b89236b5c5d701099:a1",
+        "startedAt": 1795726086837,
+        "status": "completed",
+        "tokensIn": 348,
+        "tokensOut": 48,
+        "toolCalls": 0,
+        "endedAt": 1795726147416
+      },
+      {
+        "loopId": "verifier#62",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-010:kind:service:cab46e85161f193f887d310b4a5ec685fe1ccc8e7396d2d2de63400f1a696e13:a1",
+        "startedAt": 1795726146861,
+        "status": "completed",
+        "tokensIn": 314,
+        "tokensOut": 45,
+        "toolCalls": 0,
+        "endedAt": 1795726148187
+      },
+      {
+        "loopId": "invoice-reader#63",
+        "agentId": "invoice-reader",
+        "loopInputKey": "doc:e241ddc0bef2ce49608eb7b7428e1f6c59ac59466c7e92ebb3013109f1d90993:read2:invoice:2026-009:amount NOT_SUPPORTED_BY_SOURCE excerpt \"4,450.00\" does not show the currency EUR",
+        "startedAt": 1795726147016,
+        "status": "completed",
+        "tokensIn": 3064,
+        "tokensOut": 249,
+        "toolCalls": 1,
+        "endedAt": 1795726206629
+      },
+      {
+        "loopId": "verifier#64",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-009:clientCountry:DE:80db4ccdca106d37b920206331fcfe3e9e50a9e763d89b54ce3ad5ac8cf30f03:a1",
+        "startedAt": 1795726147016,
+        "status": "completed",
+        "tokensIn": 342,
+        "tokensOut": 36,
+        "toolCalls": 0,
+        "endedAt": 1795726206633
+      },
+      {
+        "loopId": "verifier#65",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:invoice:2026-011:clientCountry:DE:dde7378f6fe1be2c2fda13dab8d2bae04306e806442ce99b89236b5c5d701099:a1",
+        "startedAt": 1795726147041,
+        "status": "completed",
+        "tokensIn": 348,
+        "tokensOut": 46,
+        "toolCalls": 0,
+        "endedAt": 1795726206815
+      },
+      {
+        "loopId": "verifier#55",
+        "agentId": "verifier",
+        "loopInputKey": "fidelity:payment:S1-14:class:client_payment:5d14215e400f9bd7c6a1840502d3e19d2620a5f7e5b53245c46ad0dcf0acee5a:a1",
+        "startedAt": 1795726086699,
+        "status": "completed",
+        "tokensIn": 432,
+        "tokensOut": 56,
+        "toolCalls": 0,
+        "endedAt": 1795726206816
+      }
+    ]
+  }
+}

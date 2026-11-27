@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
-import { Menu, ShieldCheck, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { Wordmark } from './Logo.tsx';
 import { useApp, useAppBoot } from '../state/app.ts';
 import { useHashScroll } from '../state/useHashScroll.ts';
 
@@ -39,6 +40,7 @@ export function Layout() {
   useHashScroll();
   const health = useApp((s) => s.health);
   const error = useApp((s) => s.error);
+  const waking = useApp((s) => s.waking);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
@@ -58,14 +60,8 @@ export function Layout() {
         }`}
       >
         <div className="mx-auto flex max-w-[1200px] items-center gap-6 px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-            <span
-              aria-hidden
-              className="grid size-7 place-items-center rounded-md border border-accent/40 bg-accent/10 text-accent"
-            >
-              <ShieldCheck size={16} />
-            </span>
-            Headroom
+          <Link to="/" aria-label="Headroom, home">
+            <Wordmark />
           </Link>
           <nav className="ml-auto hidden items-center gap-1 text-sm lg:flex" aria-label="Main">
             {NAV.map((n) => (
@@ -118,6 +114,15 @@ export function Layout() {
           </div>
         </div>
       )}
+      {waking && !health && (
+        <div role="status" className="border-b border-line bg-panel px-4 py-2 text-sm text-muted">
+          <div className="mx-auto flex max-w-[1200px] items-center gap-2">
+            <span className="pulse-dot size-1.5 rounded-full bg-signal" aria-hidden />
+            Waking the sample server (it sleeps when idle; this takes up to a minute). The page below shows
+            the recorded run meanwhile.
+          </div>
+        </div>
+      )}
       {error && (
         <div role="alert" className="border-b border-danger/40 bg-danger/10 px-4 py-2 text-sm text-danger">
           <div className="mx-auto max-w-[1200px]">{error}</div>
@@ -129,9 +134,7 @@ export function Layout() {
       <footer className="border-t border-line bg-panel/40 text-sm">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="space-y-3">
-            <p className="flex items-center gap-2 font-semibold">
-              <ShieldCheck size={16} className="text-accent" aria-hidden /> Headroom
-            </p>
+            <Wordmark />
             <p className="max-w-sm text-muted">
               Room left under the 6M paušal limit before you send an invoice, with the source of every number.
             </p>

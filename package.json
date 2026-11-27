@@ -28,6 +28,7 @@
     "build": "npm run typecheck && npm run build:web",
     "test:e2e": "npm run build:web && playwright test --trace off",
     "record-demo": "tsx scripts/record-demo.ts",
+    "export:showcase": "tsx scripts/export-showcase.ts",
     "eval": "tsx scripts/eval.ts"
   },
   "dependencies": {

@@ -76,7 +76,12 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     args.length > 0
       ? args
       : ['src', 'web/src', 'web/index.html', 'rules', 'scripts', 'packages', 'README.md'];
-  const findings = scan(base, roots, args.length > 0 ? [] : ['test/fixtures/scans']);
+  const findings = scan(
+    base,
+    roots,
+    // web/src/generated holds pipeline output (npm run export:showcase), not hand-typed figures.
+    args.length > 0 ? [] : ['test/fixtures/scans', 'web/src/generated'],
+  );
   if (findings.length > 0) {
     for (const f of findings) console.error(`${f.file}:${f.line} [${f.id}] ${f.message}`);
     console.error(`slop-scan: ${findings.length} finding(s).`);

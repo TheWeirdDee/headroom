@@ -1,20 +1,22 @@
 @import 'tailwindcss';
 
-/* Design tokens: dark neutral, one periwinkle accent, amber and red for warnings, muted text. */
+/* Design tokens: monochrome with one coral signal; amber and red for warnings. */
 @theme {
-  --color-ink: #0e0f11;
-  --color-panel: #15171a;
-  --color-panel-2: #1b1e22;
-  --color-line: #2a2e33;
-  --color-text: #e8eaed;
-  --color-muted: #9ba1a6;
-  --color-accent: #8ea2ff;
-  --color-accent-strong: #b4c0ff;
-  --color-accent-ink: #0b1030;
-  --color-amber: #e3b341;
-  --color-danger: #e5534b;
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --color-ink: #09090b;
+  --color-panel: #111113;
+  --color-panel-2: #18181b;
+  --color-line: #27272a;
+  --color-text: #fafafa;
+  --color-muted: #a1a1aa;
+  /* Monochrome: the accent is the text colour; one coral signal marks what matters. */
+  --color-accent: #fafafa;
+  --color-accent-strong: #e4e4e7;
+  --color-signal: #ff6b4a;
+  --color-amber: #f5a524;
+  --color-danger: #f2555a;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 
 html,
@@ -27,12 +29,18 @@ body {
   background: var(--color-ink);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-feature-settings: 'cv11', 'ss01';
+  font-feature-settings: 'ss01';
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
 }
 
 .num {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.font-serif {
+  letter-spacing: -0.01em;
 }
 
 :focus-visible {
@@ -44,7 +52,7 @@ body {
 /* Motion marks a real state change only, and respects reduced-motion preferences. */
 @keyframes hr-flash {
   from {
-    background-color: rgb(142 162 255 / 0.18);
+    background-color: #ff6b4a2e;
   }
   to {
     background-color: transparent;
@@ -118,4 +126,11 @@ details[open] .faq-chevron {
   .pulse-dot {
     animation: none;
   }
+}
+
+/* Page titles use the display serif everywhere. */
+main h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }

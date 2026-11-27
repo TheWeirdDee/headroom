@@ -1,15 +1,18 @@
-// The landing page's hero card and proof excerpt (master prompt section 9, items 2 and 5). Both are the real
-// HeadroomCard, DiscrepancyList and SourceDrawer components fed by a replay of the committed demo recording
-// (GET /api/showcase), so every number on them opens its sources like it does on the run screen.
+// The landing page's card, findings and timeline. With a Headroom server, they are the run screen's own
+// components fed by a replay of the committed real-model recording (GET /api/showcase), so every number opens
+// its sources. Without one (a static frontend whose server is asleep), the same components show a snapshot of
+// that replay bundled at build time (npm run export:showcase); sources then open only in the running app.
 import { useEffect, useMemo, useState } from 'react';
 import { getJson } from '../api/client.ts';
+import { useApp } from '../state/app.ts';
 import { useRun, useRunConnection } from '../state/store.ts';
+import { emptyView } from '../state/reducer.ts';
 import { HeadroomCard } from './HeadroomCard.tsx';
 import { DiscrepancyList } from './DiscrepancyList.tsx';
 import { SourceDrawer } from './SourceDrawer.tsx';
 import { Timeline } from './Timeline.tsx';
-import { emptyView } from '../state/reducer.ts';
-import type { LoopMetric } from '../api/types.ts';
+import type { CardVM, Crossing, Discrepancy, LoopMetric } from '../api/types.ts';
+import snapshot from '../generated/showcase.json';
 
 /** Figures of the recorded live run itself (not the delay-free replay shown on the landing page). */
 export interface RecordedRun {
@@ -27,19 +30,39 @@ export interface RecordedRun {
   loopTimes: LoopMetric[];
 }
 
-export function useShowcaseRun(): { runId?: string; recorded?: RecordedRun; error?: string } {
-  const [state, setState] = useState<{ runId?: string; recorded?: RecordedRun; error?: string }>({});
+interface StaticShowcase {
+  recording: { recordedAt: string; models: { reader: string; verifier: string } } | null;
+  card: CardVM | null;
+  crossings: Crossing[];
+  discrepancies: Discrepancy[];
+  recorded: RecordedRun;
+}
+
+const STATIC = snapshot as unknown as StaticShowcase;
+
+export interface Showcase {
+  /** Set when a Headroom server is replaying the recording; absent means the bundled snapshot is shown. */
+  runId?: string;
+  recorded: RecordedRun;
+}
+
+export function useShowcaseRun(): Showcase {
+  const [state, setState] = useState<Showcase>({ recorded: STATIC.recorded });
+  // Ask the server once it is up (a hosted one may be waking); until then the bundled snapshot shows.
+  const healthy = useApp((st) => st.health !== undefined);
   useEffect(() => {
+    if (!healthy) return;
     let live = true;
     getJson<{ runId: string | null; recorded: RecordedRun | null }>('/api/showcase').then(
-      (r) =>
-        live && setState(r.runId ? { runId: r.runId, ...(r.recorded ? { recorded: r.recorded } : {}) } : {}),
-      () => live && setState({ error: 'Could not load the sample run.' }),
+      (r) => {
+        if (live && r.runId) setState({ runId: r.runId, recorded: r.recorded ?? STATIC.recorded });
+      },
+      () => undefined,
     );
     return () => {
       live = false;
     };
-  }, []);
+  }, [healthy]);
   return state;
 }
 
@@ -50,53 +73,76 @@ function useShowcase(runId: string) {
   return { view, open, setOpen };
 }
 
-function Provenance({ runId }: { runId: string }) {
-  const recording = useRun(runId, (s) => s.view.snapshot?.recording);
+const byId = (ds: Discrepancy[]): Record<string, Discrepancy> => Object.fromEntries(ds.map((d) => [d.id, d]));
+
+function Provenance({ recording }: { recording: StaticShowcase['recording'] }) {
   if (!recording) return null;
-  const date = recording.recordedAt.slice(0, 10);
   const models =
     recording.models.reader === recording.models.verifier
       ? recording.models.reader
       : `${recording.models.reader} and ${recording.models.verifier}`;
   return (
-    <p className="mt-2 text-xs text-muted">
-      Sample profile p07 (synthetic), replayed from a run recorded on {date} with {models}. Click a number to
-      see where it came from.
+    <p className="mt-3 text-xs text-muted">
+      Synthetic sample p07, from a run recorded {recording.recordedAt.slice(0, 10)} with {models}.
     </p>
   );
 }
 
-export function ShowcaseCard({ runId }: { runId: string }) {
+function LiveCard({ runId }: { runId: string }) {
   const { view, open, setOpen } = useShowcase(runId);
-  const discrepancies = view.discrepancies;
+  const recording = view.snapshot?.recording ?? STATIC.recording;
+  const live = view.card !== null;
   return (
     <div>
       <HeadroomCard
-        card={view.card}
-        crossings={view.crossings}
-        discrepancies={discrepancies}
+        card={live ? view.card : STATIC.card}
+        crossings={live ? view.crossings : STATIC.crossings}
+        discrepancies={live ? view.discrepancies : byId(STATIC.discrepancies)}
         onOpen={setOpen}
       />
-      <Provenance runId={runId} />
+      <Provenance recording={recording} />
       {open && <SourceDrawer runId={runId} figureId={open} onClose={() => setOpen(undefined)} />}
     </div>
   );
 }
 
-export function ShowcaseProof({ runId }: { runId: string }) {
+export function ShowcaseCard({ runId }: { runId?: string }) {
+  if (runId) return <LiveCard runId={runId} />;
+  return (
+    <div>
+      <HeadroomCard
+        card={STATIC.card}
+        crossings={STATIC.crossings}
+        discrepancies={byId(STATIC.discrepancies)}
+        onOpen={() => undefined}
+      />
+      <Provenance recording={STATIC.recording} />
+    </div>
+  );
+}
+
+function LiveProof({ runId }: { runId: string }) {
   const { view, open, setOpen } = useShowcase(runId);
   const items = useMemo(
     () => Object.values(view.discrepancies).filter((d) => d.status !== 'superseded'),
     [view.discrepancies],
   );
   return (
-    <div className="rounded border border-line bg-panel">
-      {view.loaded ? (
-        <DiscrepancyList items={items} onOpen={setOpen} />
-      ) : (
-        <p className="p-4 text-sm text-muted">Loading the recorded sample run...</p>
-      )}
+    <div className="overflow-hidden rounded-xl border border-line bg-panel">
+      <DiscrepancyList items={items.length ? items : STATIC.discrepancies} onOpen={setOpen} />
       {open && <SourceDrawer runId={runId} figureId={open} onClose={() => setOpen(undefined)} />}
+    </div>
+  );
+}
+
+export function ShowcaseProof({ runId }: { runId?: string }) {
+  if (runId) return <LiveProof runId={runId} />;
+  return (
+    <div className="overflow-hidden rounded-xl border border-line bg-panel">
+      <DiscrepancyList items={STATIC.discrepancies} onOpen={() => undefined} />
+      <p className="border-t border-line px-4 py-3 text-xs text-muted">
+        Sources open in the running app: start the sample run to follow each finding to its line.
+      </p>
     </div>
   );
 }

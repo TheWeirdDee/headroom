@@ -30,7 +30,7 @@ function Code({ children }: { children: string }) {
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-24 border-t border-line pt-10">
-      <h2 id={`${id}-h`} className="text-2xl font-semibold tracking-tight">
+      <h2 id={`${id}-h`} className="font-serif text-3xl tracking-tight">
         {title}
       </h2>
       <div className="mt-4 space-y-4 leading-relaxed text-muted [&_strong]:text-text">{children}</div>
@@ -70,7 +70,7 @@ export function Docs() {
 
       <article className="max-w-3xl space-y-10">
         <header>
-          <h1 className="text-4xl font-semibold tracking-tight">Using Headroom</h1>
+          <h1 className="text-5xl tracking-tight">Using Headroom</h1>
           <p className="mt-4 text-lg text-muted">
             Headroom runs on your own computer. It reads your bank statement, invoices and KPO book, checks
             every figure against its source, and shows the room left under the 6M paušal limit before you send
