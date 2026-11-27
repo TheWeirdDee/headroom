@@ -91,6 +91,7 @@ export function Intake() {
   const [error, setError] = useState<string>();
   const [drag, setDrag] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const picked = useRef<File[]>([]);
   const year = new Date().getFullYear();
   const today = new Date().toISOString().slice(0, 10);
   const [who, setWho] = useState({
@@ -145,10 +146,20 @@ export function Intake() {
     setBusy(true);
     setError(undefined);
     try {
-      if (upload) await del(`/api/uploads/${upload.uploadId}`);
+      // Files added later join the earlier ones; a file with the same name replaces the earlier one.
+      const added = new Set(list.map((f) => f.name));
+      const kept = picked.current.filter((f) => !added.has(f.name));
+      const all = [...kept, ...list];
       const fd = new FormData();
-      for (const f of list) fd.append('files', f, f.name);
+      for (const f of all) fd.append('files', f, f.name);
       const created = await postForm<{ uploadId: string }>('/api/uploads', fd);
+      // Column mappings already chosen for the earlier files carry over.
+      for (const f of upload?.files ?? []) {
+        if (f.mapping && kept.some((k) => k.name === f.name))
+          await postJson(`/api/uploads/${created.uploadId}/mapping`, { file: f.name, mapping: f.mapping });
+      }
+      if (upload) await del(`/api/uploads/${upload.uploadId}`).catch(() => undefined);
+      picked.current = all;
       const u = await refresh(created.uploadId);
       const pre = await readClients(list);
       if (pre.length) setClients(pre);
@@ -170,6 +181,7 @@ export function Intake() {
   const remove = async (): Promise<void> => {
     if (!upload) return;
     await del(`/api/uploads/${upload.uploadId}`).catch(() => undefined);
+    picked.current = [];
     setUpload(undefined);
   };
 
@@ -304,7 +316,10 @@ export function Intake() {
             accept=".csv,.tsv,.txt,.pdf,.json"
             className="sr-only"
             aria-label="Choose files"
-            onChange={(e) => void send([...(e.target.files ?? [])])}
+            onChange={(e) => {
+              void send([...(e.target.files ?? [])]);
+              e.target.value = '';
+            }}
           />
         </div>
         {upload && (

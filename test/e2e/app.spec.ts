@@ -124,15 +124,14 @@ test('your own files: upload, check, contract details kept, KPO book, delete', a
   const dir = join('data', 'profiles', 'p07');
   const invoices = readdirSync(join(dir, 'invoices')).map((f) => join(dir, 'invoices', f));
   await page.goto('/check');
+  // Two batches: the second adds to the first.
+  await page.getByLabel('Choose files').setInputFiles(invoices);
+  await expect(page.getByText('Invoice PDF', { exact: true })).toHaveCount(invoices.length);
   await page
     .getByLabel('Choose files')
-    .setInputFiles([
-      ...invoices,
-      join(dir, 'statement.csv'),
-      join(dir, 'kpo.csv'),
-      join(dir, 'clients.json'),
-    ]);
+    .setInputFiles([join(dir, 'statement.csv'), join(dir, 'kpo.csv'), join(dir, 'clients.json')]);
   await expect(page.getByText('Columns mapped')).toHaveCount(2);
+  await expect(page.getByText('Invoice PDF', { exact: true })).toHaveCount(invoices.length);
   // The client file fills the form.
   await expect(page.getByLabel('Client name').first()).toHaveValue('Heron Systems GmbH');
   await page.getByLabel('Name or business name').fill('Proba PR');
